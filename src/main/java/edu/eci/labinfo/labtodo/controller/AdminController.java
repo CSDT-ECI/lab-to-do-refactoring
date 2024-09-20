@@ -10,7 +10,9 @@ import jakarta.faces.context.FacesContext;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.time.*;
 
 @Component
 @SessionScoped
@@ -82,6 +84,7 @@ public class AdminController {
         try {
             for (User user : selectedUsers) {
                 user.setRole(Role.findByValue(newRole).getValue());
+                user.setUpdateDate(LocalDateTime.now());
                 userService.updateUser(user);
             }
         } catch (Exception e) {
@@ -109,6 +112,7 @@ public class AdminController {
         try {
             for (User user : selectedUsers) {
                 user.setAccountType(AccountType.findByValue(newAccountType).getValue());
+                user.setUpdateDate(LocalDateTime.now());
                 userService.updateUser(user);
             }
         } catch (Exception e) {
@@ -132,14 +136,20 @@ public class AdminController {
      * @return true si se eliminaron los usuarios, false de lo contrario.
      */
     public Boolean deleteUsers() {
+        List<User> no_delete = new ArrayList<>();
+
         try {
             for (User user : selectedUsers) {
-                userService.deleteUser(user.getUserName());
+                if (!user.getConnect()) {
+                    userService.deleteUser(user.getUserName());
+                } else {
+                    no_delete.add(user);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            int size = this.selectedUsers.size();
+            int size = this.selectedUsers.size() - no_delete.size();
             String summary = size > 1 ? size + " usuarios eliminados con éxito" : size + " usuario eliminado con éxito";
             selectedUsers.clear();
             FacesContext.getCurrentInstance().addMessage(null,

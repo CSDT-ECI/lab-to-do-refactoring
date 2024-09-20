@@ -54,15 +54,24 @@ public class LoginController {
         this.createdUserAccount = new User();
     }
 
-   public Boolean saveUserAccount() {
+    public Boolean saveUserAccount() {
         logger.info("Guardando cuenta de usuario");
         // Agregar usuario
-        if (this.createdUserAccount.getUserId() == null) {
-            this.createdUserAccount.setRole(Role.MONITOR.getValue());
-            this.createdUserAccount.setAccountType(AccountType.SIN_VERIFICAR.getValue());
-            this.userService.addUser(this.createdUserAccount);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Cuenta creada exitosamente"));
+        try {
+            if (this.createdUserAccount.getUserId() == null) {
+                this.createdUserAccount.setRole(Role.MONITOR.getValue());
+                this.createdUserAccount.setAccountType(AccountType.SIN_VERIFICAR.getValue());
+                this.userService.addUser(this.createdUserAccount);
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Cuenta creada exitosamente"));
+            }
+
+        } catch (LabToDoExeption e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(e.getMessage()));
+            PrimeFaces.current().executeScript("PF('createAccountDialog').hide()");
+            PrimeFaces.current().ajax().update(LOGIN_FORM_MESSAGES);
+            return false;
         }
+
         PrimeFaces.current().executeScript("PF('createAccountDialog').hide()");
         PrimeFaces.current().ajax().update(LOGIN_FORM_MESSAGES);
         // Resetear el usuario
@@ -81,14 +90,16 @@ public class LoginController {
         }
         // Buscar al usuario por nombre de usuario
         User userToLogin = userService.getUserByUserName(userName);
-        // Si el usuario no existe o la contraseña es incorrecta, mostrar un mensaje de error y salir temprano
-        if (userToLogin == null  || !passwordEncoder.matches(password, userToLogin.getPassword())) {
+        // Si el usuario no existe o la contraseña es incorrecta, mostrar un mensaje de
+        // error y salir temprano
+        if (userToLogin == null || !passwordEncoder.matches(password, userToLogin.getPassword())) {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, LabToDoExeption.CREDENTIALS_INCORRECT, ERROR));
             PrimeFaces.current().ajax().update(LOGIN_FORM_MESSAGES);
             return false;
         }
-        // Si al usuario no se le ha verificado su cuenta, mostrar un mensaje de error y salir temprano
+        // Si al usuario no se le ha verificado su cuenta, mostrar un mensaje de error y
+        // salir temprano
         if (userToLogin.getAccountType().equals(AccountType.SIN_VERIFICAR.getValue())) {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, LabToDoExeption.UNVERIFIED_ACCOUNT, ERROR));
@@ -104,6 +115,8 @@ public class LoginController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        userToLogin.setConnect(true);
+        userService.updateUser(userToLogin);
         return true;
     }
 
@@ -137,7 +150,7 @@ public class LoginController {
         return userService.getUserByUserName(userName).getRole();
     }
 
-     /**
+    /**
      * Función que permite el cierre de sesión
      * 
      * @return True si el cierre de sesión es exitoso, de lo contrario False
@@ -171,6 +184,9 @@ public class LoginController {
             case "config":
                 redirectPath = "./settings.xhtml";
                 break;
+            case "supervision":
+                redirectPath = "./dashboardSupervision.xhtml";
+                break;
             default:
                 redirectPath = "./dashboard.xhtml";
                 break;
@@ -203,5 +219,4 @@ public class LoginController {
         return isAdminUser;
     }
 
-    
 }
