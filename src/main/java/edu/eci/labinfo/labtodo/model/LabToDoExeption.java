@@ -3,6 +3,7 @@ package edu.eci.labinfo.labtodo.model;
 public class LabToDoExeption extends Exception {
 
     public static final String NO_STATE_SELECTED = "Por favor, selecciona un estado.";
+    public static final String USER_NAME_EXISTS = "Por favor, cambia el nombre de usuario el elegido ya existe.";
     public static final String NO_ROLE_SELECTED = "Por favor, selecciona un rol de usuario.";
     public static final String NO_ACCOUNT_TYPE_SELECTED = "Por favor, selecciona un estado de cuenta.";
     public static final String EXISTING_USER = "La cuenta ya existe.";
@@ -15,5 +16,5 @@ public class LabToDoExeption extends Exception {
     public LabToDoExeption(String message) {
         super(message);
     }
-    
+
 }

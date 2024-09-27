@@ -3,6 +3,7 @@ package edu.eci.labinfo.labtodo.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,6 +29,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
     private String fullName;
+    @Column(unique = true)
     private String userName;
     private String role;
     private String accountType;
@@ -49,7 +51,11 @@ public class User {
         tasks.add(taskToAdd);
     }
 
+<<<<<<< HEAD
     public boolean getConnet() {
+=======
+    public Boolean getConnect() {
+>>>>>>> d191e794201f6b0a1da0de6e239ecb4172c6f53d
         return this.connect;
     }
 

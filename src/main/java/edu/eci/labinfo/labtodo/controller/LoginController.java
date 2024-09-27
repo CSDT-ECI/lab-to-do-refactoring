@@ -57,12 +57,21 @@ public class LoginController {
     public Boolean saveUserAccount() {
         logger.info("Guardando cuenta de usuario");
         // Agregar usuario
-        if (this.createdUserAccount.getUserId() == null) {
-            this.createdUserAccount.setRole(Role.MONITOR.getValue());
-            this.createdUserAccount.setAccountType(AccountType.SIN_VERIFICAR.getValue());
-            this.userService.addUser(this.createdUserAccount);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Cuenta creada exitosamente"));
+        try {
+            if (this.createdUserAccount.getUserId() == null) {
+                this.createdUserAccount.setRole(Role.MONITOR.getValue());
+                this.createdUserAccount.setAccountType(AccountType.SIN_VERIFICAR.getValue());
+                this.userService.addUser(this.createdUserAccount);
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Cuenta creada exitosamente"));
+            }
+
+        } catch (LabToDoExeption e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(e.getMessage()));
+            PrimeFaces.current().executeScript("PF('createAccountDialog').hide()");
+            PrimeFaces.current().ajax().update(LOGIN_FORM_MESSAGES);
+            return false;
         }
+
         PrimeFaces.current().executeScript("PF('createAccountDialog').hide()");
         PrimeFaces.current().ajax().update(LOGIN_FORM_MESSAGES);
         // Resetear el usuario
@@ -106,6 +115,8 @@ public class LoginController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        userToLogin.setConnect(true);
+        userService.updateUser(userToLogin);
         return true;
     }
 
@@ -173,6 +184,9 @@ public class LoginController {
             case "config":
                 redirectPath = "./settings.xhtml";
                 break;
+            case "supervision":
+                redirectPath = "./dashboardSupervision.xhtml";
+                break;
             default:
                 redirectPath = "./dashboard.xhtml";
                 break;
@@ -205,6 +219,7 @@ public class LoginController {
         return isAdminUser;
     }
 
+<<<<<<< HEAD
     /**
      * Función que verifica si el usuario es supervisor
      * 
@@ -220,4 +235,6 @@ public class LoginController {
         return isSupervisorUser;
     }
 
+=======
+>>>>>>> d191e794201f6b0a1da0de6e239ecb4172c6f53d
 }

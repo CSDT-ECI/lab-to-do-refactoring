@@ -139,16 +139,27 @@ public class AdminController {
      * @return true si se eliminaron los usuarios, false de lo contrario.
      */
     public Boolean deleteUsers() {
+        List<User> no_delete = new ArrayList<>();
+
         try {
             for (User user : selectedUsers) {
-                userService.deleteUser(user.getUserName());
+                if (!user.getConnect()) {
+                    userService.deleteUser(user.getUserName());
+                } else {
+                    no_delete.add(user);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+<<<<<<< HEAD
             int size = this.selectedUsers.size();
             String summary = size > 1 ? size + " usuarios :) eliminados con éxito"
                     : size + " usuario eliminado con éxito";
+=======
+            int size = this.selectedUsers.size() - no_delete.size();
+            String summary = size > 1 ? size + " usuarios eliminados con éxito" : size + " usuario eliminado con éxito";
+>>>>>>> d191e794201f6b0a1da0de6e239ecb4172c6f53d
             selectedUsers.clear();
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO, summary, "Éxito"));
