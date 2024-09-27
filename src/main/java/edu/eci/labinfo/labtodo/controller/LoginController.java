@@ -219,7 +219,6 @@ public class LoginController {
         return isAdminUser;
     }
 
-<<<<<<< HEAD
     /**
      * Función que verifica si el usuario es supervisor
      * 
@@ -235,6 +234,4 @@ public class LoginController {
         return isSupervisorUser;
     }
 
-=======
->>>>>>> d191e794201f6b0a1da0de6e239ecb4172c6f53d
 }

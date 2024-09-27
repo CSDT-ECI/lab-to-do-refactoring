@@ -152,14 +152,9 @@ public class AdminController {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-<<<<<<< HEAD
-            int size = this.selectedUsers.size();
-            String summary = size > 1 ? size + " usuarios :) eliminados con éxito"
-                    : size + " usuario eliminado con éxito";
-=======
             int size = this.selectedUsers.size() - no_delete.size();
             String summary = size > 1 ? size + " usuarios eliminados con éxito" : size + " usuario eliminado con éxito";
->>>>>>> d191e794201f6b0a1da0de6e239ecb4172c6f53d
+
             selectedUsers.clear();
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO, summary, "Éxito"));

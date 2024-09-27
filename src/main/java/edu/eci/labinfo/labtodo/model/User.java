@@ -51,11 +51,7 @@ public class User {
         tasks.add(taskToAdd);
     }
 
-<<<<<<< HEAD
-    public boolean getConnet() {
-=======
     public Boolean getConnect() {
->>>>>>> d191e794201f6b0a1da0de6e239ecb4172c6f53d
         return this.connect;
     }
 
