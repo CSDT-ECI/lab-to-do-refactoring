@@ -143,11 +143,7 @@ public class AdminController {
 
         try {
             for (User user : selectedUsers) {
-                if (!user.getConnect()) {
-                    userService.deleteUser(user.getUserName());
-                } else {
-                    no_delete.add(user);
-                }
+                userService.deleteUser(user.getUserName());
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -4,7 +4,9 @@ public enum AccountType {
 
     SIN_VERIFICAR("Sin verificar"),
     ACTIVO("Activo"),
-    INACTIVO("Inactivo");
+    ACEPTADO("Aceptado"),
+    INACTIVO("Inactivo"),
+    SOLICITUD_CAMBIO_CONTRASEÑA("Cambio de contraseña");
 
     private String value;
 

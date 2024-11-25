@@ -30,7 +30,6 @@ public class UserService {
             user.setCreationDate(LocalDateTime.now());
             user.setUpdateDate(LocalDateTime.now());
             user.setLastLoginDate(LocalDateTime.now());
-            user.setConnect(false);
         } else {
             throw new LabToDoExeption(LabToDoExeption.USER_NAME_EXISTS);
         }

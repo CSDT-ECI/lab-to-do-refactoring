@@ -1,175 +1,165 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html
-  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core"
-  xmlns:ui="jakarta.faces.facelets" xmlns:p="http://primefaces.org/ui" xmlns:pe="http://primefaces.org/ui/extensions"
-  lang="es">
-<h:head>
-  <title>Dashboard</title>
-  <link rel="shortcut icon" href="img/favicon.png" />
-  <link rel="stylesheet" type="text/css" href="css/normalize.css" />
-  <link rel="stylesheet" type="text/css" href="css/taskdashboard.css" />
-  <link rel="stylesheet" type="text/css" href="css/settings.css" />
-  <link rel="stylesheet" href="https://unpkg.com/primeflex@latest/primeflex.css" />
-</h:head>
-<h:body>
-  <header>
-    <img src="img/logo.png" class="team-image" alt="TeamLogo" />
-    <h1>Laboratorio Informática LabToDo</h1>
-    <div class="user-wrapper">
-      <div class="user-description">
-        <p:outputLabel value="#{loginController.getCurrentFullName(loginController.userName)}"
-          styleClass="username-label" />
-        <p:outputLabel value=" #{loginController.getCurrentUserProfile(loginController.userName)}"
-          styleClass="role-label" />
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:h="jakarta.faces.html"
+  xmlns:f="jakarta.faces.core"
+  xmlns:ui="jakarta.faces.facelets"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:pe="http://primefaces.org/ui/extensions"
+  lang="es"
+>
+  <h:head>
+    <title>Dashboard</title>
+    <link rel="shortcut icon" href="img/favicon.png"/>
+    <link rel="stylesheet" type="text/css" href="css/normalize.css" />
+    <link rel="stylesheet" type="text/css" href="css/taskdashboard.css" />
+    <link rel="stylesheet" type="text/css" href="css/settings.css" />
+    <link rel="stylesheet" href="https://unpkg.com/primeflex@latest/primeflex.css"/>
+  </h:head>
+  <h:body>
+    <header>
+      <img src="img/logo.png" class="team-image" alt="TeamLogo" />
+      <h1>Laboratorio Informática LabToDo</h1>
+      <div class="user-wrapper">
+        <div class="user-description">
+          <p:outputLabel value="#{loginController.getCurrentFullName(loginController.userName)}" styleClass="username-label" />
+          <p:outputLabel value=" #{loginController.getCurrentUserProfile(loginController.userName)}" styleClass="role-label" />
+        </div>
+        <img src="https://www.w3schools.com/howto/img_avatar.png" class="user-image" alt="user" />
       </div>
-      <img src="https://www.w3schools.com/howto/img_avatar.png" class="user-image" alt="user" />
-    </div>
-  </header>
-  <main>
-    <nav class="sidebar">
-      <ul class="sidebar-list">
-        <li class="sidebar-list-element">
-          <p:commandLink styleClass="link"
-            actionListener="#{loginController.getRedirectPath(loginController.userName, 'home')}">
-            <i class="pi pi-home"></i>
-            <span>Inicio</span>
-          </p:commandLink>
-        </li>
-        <li class="sidebar-list-element">
-          <p:commandLink styleClass="link" rendered="#{loginController.isAdmin(loginController.userName)}"
-            actionListener="#{loginController.getRedirectPath(loginController.userName, 'control')}">
-            <i class="pi pi-sliders-h"></i>
-            <span>Control</span>
-          </p:commandLink>
-        </li>
-        <li class="sidebar-list-element">
-          <p:commandLink styleClass="link active" rendered="#{loginController.isAdmin(loginController.userName)}"
-            actionListener="#{loginController.getRedirectPath(loginController.userName, 'config')}">
-            <i class="pi pi-cog"></i>
-            <span>Configuración</span>
-          </p:commandLink>
-        </li>
-        <li class="sidebar-list-element">
-          <p:commandLink styleClass="link" oncomplete="PF('logoutDialog').show()">
-            <i class="pi pi-sign-out"></i>
-            <span>Salir</span>
-          </p:commandLink>
-        </li>
-      </ul>
-    </nav>
-    <div class="user-mod">
-      <h:form id="form" styleClass="card-usermod">
-        <p:growl id="messages" show-detail="true" />
-
-        <p:toolbar styleClass="mi-toolbar">
-          <p:toolbarGroup>
-            <p:commandButton id="edit-users-button" value="#{adminController.roleButtonMessage}" icon="pi pi-user-edit"
-              oncomplete="PF('editDialog').show()" process="@this" styleClass="rounded-button ui-button-success"
-              disabled="#{!adminController.hasSelectedUsers()}">
-            </p:commandButton>
-            <p:commandButton id="delete-users-button" value="#{adminController.deleteButtonMessage}" icon="pi pi-trash"
-              oncomplete="PF('deleteDialog').show()" process="@this" styleClass="rounded-button ui-button-danger"
-              disabled="#{!adminController.hasSelectedUsers()}">
-            </p:commandButton>
-          </p:toolbarGroup>
-          <p:toolbarGroup>
-            <p:commandButton id="account-users-button" value="#{adminController.accountButtonMessage}"
-              icon="pi pi-id-card" oncomplete="PF('verifyDialog').show()" process="@this"
-              styleClass="rounded-button ui-button-help" disabled="#{!adminController.hasSelectedUsers()}">
-            </p:commandButton>
-          </p:toolbarGroup>
-        </p:toolbar>
-
-        <p:dataTable id="users-list" reflow="true" widgetVar="tableUsers" var="user" value="#{loginController.users}"
-          styleClass="users-list" rowKey="#{user.userId}" paginator="true" rows="10" paginatorPosition="bottom"
-          selection="#{adminController.selectedUsers}"
-          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
-          <f:facet name="header" styleClass="header-datatable">
-            <div class="users-list-header">
-              <span style="font-weight: bold">Usuarios</span>
-            </div>
-          </f:facet>
-
-          <p:ajax event="rowSelect"
-            update=":form:edit-users-button :form:delete-users-button :form:account-users-button" />
-          <p:ajax event="rowUnselect"
-            update=":form:edit-users-button :form:delete-users-button  :form:account-users-button" />
-          <p:ajax event="rowSelectCheckbox"
-            update=":form:edit-users-button :form:delete-users-button  :form:account-users-button" />
-          <p:ajax event="rowUnselectCheckbox"
-            update=":form:edit-users-button :form:delete-users-button  :form:account-users-button" />
-          <p:ajax event="toggleSelect"
-            update=":form:edit-users-button :form:delete-users-button  :form:account-users-button" />
-
-          <p:column selectionMode="multiple" exportable="false" styleClass="user-selection" />
-          <p:column headerText="Nombre Completo" filterBy="#{user.fullName}" filterMatchMode="contains">
-            <h:outputText value="#{user.fullName}" />
-          </p:column>
-          <p:column headerText="Rol" filterBy="#{user.role}" filterMatchMode="contains">
-            <h:outputText value="#{user.role}" />
-          </p:column>
-          <p:column headerText="Estado" filterBy="#{user.accountType}" filterMatchMode="contains">
-            <h:outputText value="#{user.accountType}" />
-          </p:column>
-        </p:dataTable>
-      </h:form>
-    </div>
-  </main>
-  <h:form id="dialogs">
-    <!-- Dialogo para edicion de usuarios  -->
-    <p:confirmDialog id="edit-content" widgetVar="editDialog" showEffect="fade" width="350" header="Actualizar Rol"
-      message="Seleccione el nuevo rol para los usuarios seleccionados" severity="info">
-      <p:outputPanel id="update-role-content">
-        <p:selectOneMenu id="role" value="#{adminController.newRole}" label="Text 2"
-          style="width: 12rem; margin-bottom: 15px;">
-          <f:selectItem itemLabel="Rol" itemValue="" noSelectionOption="true" />
-          <f:selectItem itemLabel="Administrador" itemValue="Administrador" />
-          <f:selectItem itemLabel="Supervisor" itemValue="Supervisor" />
-          <f:selectItem itemLabel="Monitor" itemValue="Monitor" />
-        </p:selectOneMenu>
-      </p:outputPanel>
-      <p:commandButton value="Si" icon="pi pi-check" process="update-role-content @this"
-        oncomplete="PF('editDialog').hide()" actionListener="#{adminController.modifyUserRole()}"
-        update="update-role-content" />
-      <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
-        onclick="PF('editDialog').hide()" />
-    </p:confirmDialog>
-    <!-- Dialogo para eliminar usuarios -->
-    <p:confirmDialog id="delete-content" widgetVar="deleteDialog" showEffect="fade" width="300"
-      message="¿Eliminar usuarios seleciionados?" header="Confirmar" severity="warn">
-      <p:commandButton value="Si" icon="pi pi-check" process="@this" oncomplete="PF('deleteDialog').hide()"
-        actionListener="#{adminController.deleteUsers()}" />
-      <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
-        onclick="PF('deleteDialog').hide()" />
-    </p:confirmDialog>
-    <!-- Dialogo para verificacion de usuarios  -->
-    <p:confirmDialog id="edit-account-content" widgetVar="verifyDialog" showEffect="fade" width="350"
-      header="Estado de cuenta de usuario"
-      message="Seleccione el nuevo estado de cuenta para los usuarios seleccionados" severity="info">
-      <p:outputPanel id="update-account-content">
-        <p:selectOneMenu id="accountType" value="#{adminController.newAccountType}" label="Text 2"
-          style="width: 12rem; margin-bottom: 15px;">
-          <f:selectItem itemLabel="Estado" itemValue="" noSelectionOption="true" />
-          <f:selectItem itemLabel="Activo" itemValue="Activo" />
-          <f:selectItem itemLabel="Inactivo" itemValue="Inactivo" />
-        </p:selectOneMenu>
-      </p:outputPanel>
-      <p:commandButton value="Si" icon="pi pi-check" process="update-account-content @this"
-        oncomplete="PF('verifyDialog').hide()" actionListener="#{adminController.modifyUserAccountType()}"
-        update="update-account-content" />
-      <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
-        onclick="PF('verifyDialog').hide()" />
-    </p:confirmDialog>
-    <!-- Dialogo para cerrar sesion -->
-    <p:confirmDialog id="logout-content" widgetVar="logoutDialog" showEffect="fade" width="300"
-      message="¿Desea cerrar sesión?" header="Confirmar cierre" severity="warn">
-      <p:commandButton value="Si" icon="pi pi-check" process="@this" oncomplete="PF('upvoteInitiativeDialog').hide()"
-        actionListener="#{loginController.logout}" />
-      <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
-        onclick="PF('logoutDialog').hide()" />
-    </p:confirmDialog>
-  </h:form>
-</h:body>
-
+    </header>
+    <main>
+      <nav class="sidebar">
+        <ul class="sidebar-list">
+          <li class="sidebar-list-element">
+            <p:commandLink styleClass="link" actionListener="#{loginController.getRedirectPath(loginController.userName, 'home')}" >
+              <i class="pi pi-home"></i>
+              <span>Inicio</span>
+            </p:commandLink>
+          </li>
+          <li class="sidebar-list-element">
+            <p:commandLink styleClass="link" rendered="#{loginController.isAdmin(loginController.userName)}" actionListener="#{loginController.getRedirectPath(loginController.userName, 'control')}" >
+              <i class="pi pi-sliders-h"></i>
+              <span>Control</span>
+            </p:commandLink>
+          </li>
+          <li class="sidebar-list-element">
+            <p:commandLink styleClass="link active" rendered="#{loginController.isAdmin(loginController.userName)}" actionListener="#{loginController.getRedirectPath(loginController.userName, 'config')}" >
+              <i class="pi pi-cog"></i>
+              <span>Configuración</span>
+            </p:commandLink>
+          </li>
+          <li class="sidebar-list-element">
+            <p:commandLink styleClass="link" oncomplete="PF('logoutDialog').show()" >
+              <i class="pi pi-sign-out"></i>
+              <span>Salir</span>
+            </p:commandLink>
+          </li>
+        </ul>
+      </nav>
+      <div class="user-mod">
+        <h:form id="form" styleClass="card-usermod">
+          <p:growl id="messages" show-detail="true" /> 
+  
+          <p:toolbar styleClass="mi-toolbar">
+            <p:toolbarGroup>
+              <p:commandButton id="edit-users-button" value="#{adminController.roleButtonMessage}"
+                icon="pi pi-user-edit" oncomplete="PF('editDialog').show()" process="@this"
+                styleClass="rounded-button ui-button-success" disabled="#{!adminController.hasSelectedUsers()}">
+              </p:commandButton>
+              <p:commandButton id="delete-users-button" value="#{adminController.deleteButtonMessage}"
+                icon="pi pi-trash" oncomplete="PF('deleteDialog').show()" process="@this"
+                styleClass="rounded-button ui-button-danger" disabled="#{!adminController.hasSelectedUsers()}">
+              </p:commandButton>
+            </p:toolbarGroup>
+            <p:toolbarGroup>
+              <p:commandButton id="account-users-button" value="#{adminController.accountButtonMessage}"
+                icon="pi pi-id-card" oncomplete="PF('verifyDialog').show()" process="@this"
+                styleClass="rounded-button ui-button-help" disabled="#{!adminController.hasSelectedUsers()}">
+              </p:commandButton>
+            </p:toolbarGroup>
+          </p:toolbar>
+  
+          <p:dataTable id="users-list" reflow="true" widgetVar="tableUsers" var="user" value="#{loginController.users}" styleClass="users-list"
+            rowKey="#{user.userId}" paginator="true" rows="10" paginatorPosition="bottom" selection="#{adminController.selectedUsers}"
+            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+            <f:facet name="header" styleClass="header-datatable">
+              <div class="users-list-header">
+                <span style="font-weight: bold">Usuarios</span>
+              </div>
+            </f:facet>
+  
+            <p:ajax event="rowSelect" update=":form:edit-users-button :form:delete-users-button :form:account-users-button" />
+            <p:ajax event="rowUnselect" update=":form:edit-users-button :form:delete-users-button  :form:account-users-button" />
+            <p:ajax event="rowSelectCheckbox" update=":form:edit-users-button :form:delete-users-button  :form:account-users-button" />
+            <p:ajax event="rowUnselectCheckbox" update=":form:edit-users-button :form:delete-users-button  :form:account-users-button" />
+            <p:ajax event="toggleSelect" update=":form:edit-users-button :form:delete-users-button  :form:account-users-button" />
+  
+            <p:column selectionMode="multiple" exportable="false" styleClass="user-selection"/>
+            <p:column headerText="Nombre Completo" filterBy="#{user.fullName}" filterMatchMode="contains">
+              <h:outputText value="#{user.fullName}" />
+            </p:column>
+            <p:column headerText="Rol" filterBy="#{user.role}" filterMatchMode="contains">
+              <h:outputText value="#{user.role}"/>
+            </p:column>
+            <p:column headerText="Estado"  filterBy="#{user.accountType}" filterMatchMode="contains">
+              <h:outputText value="#{user.accountType}"/>
+            </p:column>
+          </p:dataTable>
+        </h:form>
+      </div>
+    </main>
+    <h:form id="dialogs">
+      <!-- Dialogo para edicion de usuarios  -->
+      <p:confirmDialog id="edit-content" widgetVar="editDialog" showEffect="fade" width="350"
+        header="Actualizar Rol"  message="Seleccione el nuevo rol para los usuarios seleccionados" severity="info">
+        <p:outputPanel id="update-role-content">
+          <p:selectOneMenu id="role" value="#{adminController.newRole}" label="Text 2" style="width: 12rem; margin-bottom: 15px;">
+            <f:selectItem itemLabel="Rol" itemValue="" noSelectionOption="true"/>
+            <f:selectItem itemLabel="Administrador" itemValue="Administrador"/>
+            <f:selectItem itemLabel="Monitor" itemValue="Monitor"/>
+            <f:selectItem itemLabel="Supervisor" itemValue="Supervisor"/>
+          </p:selectOneMenu>
+        </p:outputPanel>
+        <p:commandButton value="Si" icon="pi pi-check" process="update-role-content @this" oncomplete="PF('editDialog').hide()"
+        actionListener="#{adminController.modifyUserRole()}" update="update-role-content"/>
+        <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+            onclick="PF('editDialog').hide()" />
+      </p:confirmDialog>
+      <!-- Dialogo para eliminar usuarios -->
+      <p:confirmDialog id="delete-content" widgetVar="deleteDialog" showEffect="fade"
+        width="300" message="¿Eliminar usuarios seleciionados?" header="Confirmar" severity="warn">
+        <p:commandButton value="Si" icon="pi pi-check" process="@this" 
+          oncomplete="PF('deleteDialog').hide()" actionListener="#{adminController.deleteUsers()}" />
+        <p:commandButton value="No" type="button" styleClass="ui-button-secondary"
+          icon="pi pi-times" onclick="PF('deleteDialog').hide()" />
+      </p:confirmDialog>
+      <!-- Dialogo para verificacion de usuarios  -->
+      <p:confirmDialog id="edit-account-content" widgetVar="verifyDialog" showEffect="fade" width="350"
+        header="Estado de cuenta de usuario"  message="Seleccione el nuevo estado de cuenta para los usuarios seleccionados" severity="info">
+        <p:outputPanel id="update-account-content">
+          <p:selectOneMenu id="accountType" value="#{adminController.newAccountType}" label="Text 2" style="width: 12rem; margin-bottom: 15px;">
+            <f:selectItem itemLabel="Estado" itemValue="" noSelectionOption="true"/>
+            <f:selectItem itemLabel="Aceptado" itemValue="Aceptado"/>
+            <f:selectItem itemLabel="Activo" itemValue="Activo"/>
+            <f:selectItem itemLabel="Inactivo" itemValue="Inactivo"/>
+            
+          </p:selectOneMenu>
+        </p:outputPanel>
+        <p:commandButton value="Si" icon="pi pi-check" process="update-account-content @this" oncomplete="PF('verifyDialog').hide()"
+        actionListener="#{adminController.modifyUserAccountType()}" update="update-account-content"/>
+        <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+            onclick="PF('verifyDialog').hide()" />
+      </p:confirmDialog>
+      <!-- Dialogo para cerrar sesion -->
+      <p:confirmDialog id="logout-content" widgetVar="logoutDialog" showEffect="fade"
+        width="300" message="¿Desea cerrar sesión?" header="Confirmar cierre" severity="warn">
+        <p:commandButton value="Si" icon="pi pi-check" process="@this"
+          oncomplete="PF('upvoteInitiativeDialog').hide()" actionListener="#{loginController.logout}" />
+        <p:commandButton value="No" type="button" styleClass="ui-button-secondary"
+          icon="pi pi-times" onclick="PF('logoutDialog').hide()" />
+      </p:confirmDialog>
+    </h:form>
+  </h:body>
 </html>

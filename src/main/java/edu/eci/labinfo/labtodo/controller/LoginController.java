@@ -54,6 +54,7 @@ public class LoginController {
         this.createdUserAccount = new User();
     }
 
+
     public Boolean saveUserAccount() {
         logger.info("Guardando cuenta de usuario");
         // Agregar usuario
@@ -79,6 +80,7 @@ public class LoginController {
         return true;
     }
 
+
     public Boolean login() {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         // Verificar que se ingresó un nombre de usuario y una contraseña
@@ -88,16 +90,12 @@ public class LoginController {
             PrimeFaces.current().ajax().update(LOGIN_FORM_MESSAGES);
             return false;
         }
+        
         // Buscar al usuario por nombre de usuario
         User userToLogin = userService.getUserByUserName(userName);
-        // Si el usuario no existe o la contraseña es incorrecta, mostrar un mensaje de
-        // error y salir temprano
-        if (userToLogin == null || !passwordEncoder.matches(password, userToLogin.getPassword())) {
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, LabToDoExeption.CREDENTIALS_INCORRECT, ERROR));
-            PrimeFaces.current().ajax().update(LOGIN_FORM_MESSAGES);
-            return false;
-        }
+
+        //Ingresara una nueva contraseña el usuario despues de haber sido aceptada su solicitud de cambio de contraseña
+
         // Si al usuario no se le ha verificado su cuenta, mostrar un mensaje de error y
         // salir temprano
         if (userToLogin.getAccountType().equals(AccountType.SIN_VERIFICAR.getValue())) {
@@ -106,6 +104,32 @@ public class LoginController {
             PrimeFaces.current().ajax().update(LOGIN_FORM_MESSAGES);
             return false;
         }
+
+        if (userToLogin.getAccountType().equals(AccountType.SOLICITUD_CAMBIO_CONTRASEÑA.getValue())) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, LabToDoExeption.WAIT_RESPONSE,""));
+            PrimeFaces.current().ajax().update(LOGIN_FORM_MESSAGES);
+            return false;
+        }
+
+        if (userToLogin.getAccountType().equals(AccountType.ACEPTADO.getValue())) {
+            String encoderPassword = passwordEncoder.encode(password);
+            userToLogin.setPassword(encoderPassword);
+            userToLogin.setAccountType(AccountType.ACTIVO.getValue());
+            userService.updateUser(userToLogin);
+        }
+
+        // Si el usuario no existe o la contraseña es incorrecta, mostrar un mensaje de
+        // error y salir temprano
+        if (userToLogin == null || !passwordEncoder.matches(password, userToLogin.getPassword())) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, LabToDoExeption.CREDENTIALS_INCORRECT, ERROR));
+            PrimeFaces.current().ajax().update(LOGIN_FORM_MESSAGES);
+            return false;
+        }
+
+        
+
         // Si el usuario está autenticado, redirigirlo a la página correspondiente
         try {
             password = null;
@@ -115,7 +139,32 @@ public class LoginController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        userToLogin.setConnect(true);
+        userService.updateUser(userToLogin);
+        return true;
+    }
+
+    //Metodo para realizar la solicitud de cambio de contraseña
+    
+    public Boolean requiredNewPassword(){
+        User userToLogin = userService.getUserByUserName(userName);
+        if (userToLogin.getAccountType().equals(AccountType.ACTIVO.getValue())) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Solicitud de cambio de contraseña enviada con exito"));
+        }else if(userToLogin.getAccountType().equals(AccountType.SOLICITUD_CAMBIO_CONTRASEÑA.getValue())){
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, LabToDoExeption.PROCCESS_CHANGE_APPLICATION, ""));
+            PrimeFaces.current().ajax().update(LOGIN_FORM_MESSAGES);
+            return false;
+
+        }else{
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, LabToDoExeption.USER_INCORRECT, ERROR));
+            PrimeFaces.current().ajax().update(LOGIN_FORM_MESSAGES);
+            return false;
+        }
+        //Si fue existoso su solicitud de cambio de contraseña redirigirlo a la pagina inicial
+        PrimeFaces.current().executeScript("PF('changePassword').hide()");
+        PrimeFaces.current().ajax().update(LOGIN_FORM_MESSAGES);
+        userToLogin.setAccountType(AccountType.SOLICITUD_CAMBIO_CONTRASEÑA.getValue());
         userService.updateUser(userToLogin);
         return true;
     }
@@ -156,10 +205,12 @@ public class LoginController {
      * @return True si el cierre de sesión es exitoso, de lo contrario False
      */
     public Boolean logout() {
+
         userName = null;
         try {
             ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
             String redirectPath = "./login.xhtml";
+
             ec.redirect(ec.getRequestContextPath() + redirectPath);
         } catch (IOException e) {
             e.printStackTrace();
@@ -218,6 +269,7 @@ public class LoginController {
         }
         return isAdminUser;
     }
+
 
     /**
      * Función que verifica si el usuario es supervisor

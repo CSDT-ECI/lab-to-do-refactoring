@@ -37,7 +37,6 @@ public class User {
     private LocalDateTime creationDate;
     private LocalDateTime updateDate;
     private LocalDateTime lastLoginDate;
-    private boolean connect;
 
     @ManyToMany(mappedBy = "users")
     @ToString.Exclude
@@ -49,10 +48,6 @@ public class User {
 
     public void addTask(Task taskToAdd) {
         tasks.add(taskToAdd);
-    }
-
-    public Boolean getConnect() {
-        return this.connect;
     }
 
 }
