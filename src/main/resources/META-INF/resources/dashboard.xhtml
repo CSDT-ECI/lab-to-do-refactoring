@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html
-  xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:h="jakarta.faces.html"
-  xmlns:f="jakarta.faces.core"
-  xmlns:ui="jakarta.faces.facelets"
-  xmlns:p="http://primefaces.org/ui"
-  xmlns:pe="http://primefaces.org/ui/extensions"
-  lang="es"
->
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core"
+  xmlns:ui="jakarta.faces.facelets" xmlns:p="http://primefaces.org/ui" xmlns:pe="http://primefaces.org/ui/extensions"
+  lang="es">
 <f:metadata>
   <f:event type="preRenderView" listener="#{taskController.onDatabaseLoaded(loginController.userName)}" />
 </f:metadata>
@@ -17,7 +12,7 @@
   <link rel="shortcut icon" href="img/favicon.png" />
   <link rel="stylesheet" type="text/css" href="css/normalize.css" />
   <link rel="stylesheet" type="text/css" href="css/taskdashboard.css" />
-  <link rel="stylesheet" href="https://unpkg.com/primeflex@latest/primeflex.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/primeflex@latest/primeflex.css" />
 </h:head>
 <h:body>
   <header>
@@ -25,8 +20,10 @@
     <h1>Laboratorio Informática LabToDo</h1>
     <div class="user-wrapper">
       <div class="user-description">
-        <p:outputLabel value="#{loginController.getCurrentFullName(loginController.userName)}" styleClass="username-label" />
-        <p:outputLabel value=" #{loginController.getCurrentUserProfile(loginController.userName)}" styleClass="role-label" />
+        <p:outputLabel value="#{loginController.getCurrentFullName(loginController.userName)}"
+          styleClass="username-label" />
+        <p:outputLabel value=" #{loginController.getCurrentUserProfile(loginController.userName)}"
+          styleClass="role-label" />
       </div>
       <img src="https://www.w3schools.com/howto/img_avatar.png" class="user-image" alt="user" />
     </div>
@@ -35,7 +32,8 @@
     <nav class="sidebar">
       <ul class="sidebar-list">
         <li class="sidebar-list-element">
-          <p:commandLink styleClass="link active" actionListener="#{loginController.getRedirectPath(loginController.userName, 'home')}">
+          <p:commandLink styleClass="link active"
+            actionListener="#{loginController.getRedirectPath(loginController.userName, 'home')}">
             <i class="pi pi-home"></i>
             <span>Inicio</span>
           </p:commandLink>
@@ -55,7 +53,7 @@
           </p:commandLink>
         </li>
         <li class="sidebar-list-element">
-          <p:commandLink styleClass="link" oncomplete="PF('logoutDialog').show()">
+          <p:commandLink styleClass="link" oncomplete="PF('logoutDialog').show()" >
             <i class="pi pi-sign-out"></i>
             <span>Salir</span>
           </p:commandLink>
@@ -74,6 +72,16 @@
               <p:resetInput target=":dialogs:manage-task-content" />
             </p:commandButton>
           </p:toolbarGroup>
+          <p:toolbarGroup>
+            <!-- Botón Nuevo Periodo Academico-->
+            <p:commandButton value="Crear Nuevo Periodo" icon="pi pi-calendar-plus" style="margin: 10px;"
+              rendered="#{loginController.isSupervisor(loginController.userName)}"
+              actionListener="#{semesterController.openNewYear}" update=":dialogs:manage-task-content"
+              disabled="#{semesterController.isThereASemester()}" oncomplete="PF('semesterDialog').show()"
+              styleClass="rounded-button ui-button-help">
+              <p:resetInput target=":dialogs:manage-task-content" />
+            </p:commandButton>
+          </p:toolbarGroup>
         </p:toolbar>
         <div class="task-tabview">
           <p:tabView multiViewState="true" id="tabViewMVS" styleClass="rounded-tabview">
@@ -83,7 +91,8 @@
                 <f:selectItem itemLabel="En Proceso" itemValue="En Proceso" />
                 <f:selectItem itemLabel="En Revisión" itemValue="En Revisión" />
                 <f:selectItem itemLabel="Finalizada" itemValue="Finalizada" />
-                <p:ajax listener="#{taskController.onDatabaseLoaded(loginController.userName)}" update="dt-task dt-task-lab" />
+                <p:ajax listener="#{taskController.onDatabaseLoaded(loginController.userName)}"
+                  update="dt-task dt-task-lab" />
               </p:selectOneButton>
               <p:carousel id="dt-task" var="task" value="#{taskController.tasks}" numVisible="2" numScroll="1"
                 styleClass="dt-task">
@@ -91,12 +100,12 @@
                   <f:setPropertyActionListener target="#{taskController.currentTask}" value="#{task}" />
                   <article class="task-item">
                     <div class="mb-3 task-image task-image-#{task.typeTask}"></div>
-                    <span class="task-type task-type-#{task.typeTask}" >#{task.typeTask}</span>
+                    <span class="task-type task-type-#{task.typeTask}">#{task.typeTask}</span>
                     <div class="task-details">
                       <h4 class="mb-1">#{task.title}</h4>
                       <p>#{task.description}</p>
                     </div>
-                    <p class="task-status" >#{task.status}</p>
+                    <p class="task-status">#{task.status}</p>
                   </article>
                 </p:commandLink>
                 <p:commandButton value="#{taskController.getMessageToTaskButton(task)}" icon="pi pi-send"
@@ -113,7 +122,8 @@
                 <f:selectItem itemLabel="En Proceso" itemValue="En Proceso" />
                 <f:selectItem itemLabel="En Revisión" itemValue="En Revisión" />
                 <f:selectItem itemLabel="Finalizada" itemValue="Finalizada" />
-                <p:ajax listener="#{taskController.onDatabaseLoaded(loginController.userName)}" update="dt-task dt-task-lab" />
+                <p:ajax listener="#{taskController.onDatabaseLoaded(loginController.userName)}"
+                  update="dt-task dt-task-lab" />
               </p:selectOneButton>
               <p:carousel id="dt-task-lab" var="task" value="#{taskController.tasksLab}" numVisible="2" numScroll="1"
                 styleClass="dt-task">
@@ -122,12 +132,12 @@
                   <f:setPropertyActionListener target="#{taskController.currentTask}" value="#{task}" />
                   <article class="task-item">
                     <div class="mb-3 task-image task-image-#{task.typeTask}"></div>
-                    <span class="task-type task-type-#{task.typeTask}" >#{task.typeTask}</span>
+                    <span class="task-type task-type-#{task.typeTask}">#{task.typeTask}</span>
                     <div class="task-details">
                       <h4 class="mb-1">#{task.title}</h4>
                       <p>#{task.description}</p>
                     </div>
-                    <p class="task-status" >#{task.status}</p>
+                    <p class="task-status">#{task.status}</p>
                   </article>
                 </p:commandLink>
                 <p:commandButton value="#{taskController.getMessageToTaskButton(task)}" icon="pi pi-send"
@@ -205,8 +215,8 @@
     </p:dialog>
     <!-- Dialogo para completar tarea -->
     <p:confirmDialog id="completeTaskDialog" widgetVar="completeTaskDialog" showEffect="fade" width="300"
-      message="¿#{taskController.getMessageToTaskButton(taskController.currentTask)} la tarea?" header="Confirmar Avance"
-      severity="warn">
+      message="¿#{taskController.getMessageToTaskButton(taskController.currentTask)} la tarea?"
+      header="Confirmar Avance" severity="warn">
       <p:commandButton value="Si" icon="pi pi-check" actionListener="#{taskController.completedMessage}" process="@this"
         oncomplete="PF('completeTaskDialog').hide()" />
       <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
@@ -220,6 +230,33 @@
       <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
         onclick="PF('logoutDialog').hide()" />
     </p:confirmDialog>
+    <!-- Dialogo para Añadir Periodo Academico-->
+    <p:dialog header="Crear nuevo semestre Academico" showEffect="fade" modal="true" widgetVar="semesterDialog"
+      responsive="true" resizable="false" draggable="false">
+      <p:outputPanel id="semester-dialog" class="ui-fluid dialog-manage-task">
+        <p style="color: red;">Una vez cree el semeste no podrá crear otro hasta que el previo finalice,</p>
+        <p style="color: red;">verifique las fechas antes de confirmar la creación</p>
+        <div class="field">
+          <p:outputLabel for="semesterName">Nombre del Semestre o Periodo</p:outputLabel>
+          <p:inputText id="semesterName" value="#{semesterController.semesterName}" required="true" />
+        </div>
+        <div class="field">
+          <p:outputLabel for="startDate">Fecha de Inicio</p:outputLabel>
+          <p:calendar id="startDate" required="true" value="#{semesterController.startDate}" />
+        </div>
+        <div class="field">
+          <p:outputLabel for="endDate">Fecha de Finalización</p:outputLabel>
+          <p:calendar id="endDate" required="true" value="#{semesterController.endDate}" />
+        </div>
+      </p:outputPanel>
+      <f:facet name="footer">
+        <p:commandButton value="Guardar" icon="pi pi-save" actionListener="#{semesterController.saveSemester}"
+          update="semester-dialog :form" process="semester-dialog @this" oncomplete="PF('semesterDialog').hide()" />
+        <p:commandButton value="Cancelar" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+          onclick="PF('semesterDialog').hide()" />
+      </f:facet>
+      <p:messages for="somekey" />
+    </p:dialog>
   </h:form>
 </h:body>
 

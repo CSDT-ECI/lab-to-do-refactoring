@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.eci.labinfo.labtodo.data.UserRepository;
 import edu.eci.labinfo.labtodo.model.User;
+import edu.eci.labinfo.labtodo.model.LabToDoExeption;
+import java.time.*;
 
 @Service
 public class UserService {
@@ -21,9 +23,17 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User addUser(User user) {
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
+    public User addUser(User user) throws LabToDoExeption {
+        if (!userRepository.existsByUserName(user.getUserName())) {
+            String encodedPassword = passwordEncoder.encode(user.getPassword());
+            user.setPassword(encodedPassword);
+            user.setCreationDate(LocalDateTime.now());
+            user.setUpdateDate(LocalDateTime.now());
+            user.setLastLoginDate(LocalDateTime.now());
+        } else {
+            throw new LabToDoExeption(LabToDoExeption.USER_NAME_EXISTS);
+        }
+
         return userRepository.save(user);
     }
 
@@ -48,6 +58,7 @@ public class UserService {
     @Transactional(propagation = Propagation.REQUIRED)
     public User updateUser(User user) {
         if (userRepository.existsById(user.getUserId())) {
+
             return userRepository.save(user);
         }
         return null;
@@ -62,4 +73,3 @@ public class UserService {
     }
 
 }
-

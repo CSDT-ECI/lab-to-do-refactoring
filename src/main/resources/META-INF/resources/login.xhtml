@@ -45,10 +45,39 @@
                             oncomplete="PF('createAccountDialog').show()">
                             <p:resetInput target=":dialogs:create-account-content" />
                         </p:commandButton>
+                        <p:commandButton value="Olvide la contraseña" icon="pi pi-user-plus"
+                            class="ui-button-secondary"
+                            update=":dialogs_change_password:change-password-content" 
+                            oncomplete="PF('changePassword').show()">
+                            <p:resetInput target=":dialogs_change_password:change-password-content" />
+                        </p:commandButton>
+                        
                     </div>
                 </h:form>
             </div>
         </div>
+        <h:form id="dialogs_change_password">
+            <p:dialog header="Cambiar contraseña" showEffect="fade" modal="true" widgetVar="changePassword"
+                responsive="true" draggable="false" resizable="false">
+                <p:outputPanel id="change-password-content" class="ui-fluid">
+                    <div class="field">
+                        <p:outputLabel for="user-name">Nombre de usuario</p:outputLabel>
+                        <p:inputText id="user-name" required="true" placeholder="nombre.apellido" 
+                        value="#{loginController.userName}" />
+                    </div>
+                </p:outputPanel>
+
+                <f:facet name="footer">
+                    <p:commandButton value="Aceptar" icon="pi pi-check"
+                        class="ui-button-primary"
+                        actionListener="#{loginController.requiredNewPassword()}"
+                        process="change-password-content @this" />
+                    <p:commandButton value="Cancel" icon="pi pi-times"
+                        onclick="PF('changePassword').hide()"
+                        class="ui-button-secondary" type="button" />
+                </f:facet>
+            </p:dialog>
+        </h:form>
 
         <h:form id="dialogs">
             <p:dialog header="Crear cuenta" showEffect="fade" modal="true" widgetVar="createAccountDialog"

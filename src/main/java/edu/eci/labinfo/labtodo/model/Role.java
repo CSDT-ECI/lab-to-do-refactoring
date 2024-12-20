@@ -7,7 +7,8 @@ package edu.eci.labinfo.labtodo.model;
 public enum Role {
 
     MONITOR("Monitor"),
-    ADMINISTRADOR("Administrador");
+    ADMINISTRADOR("Administrador"),
+    SUPERVISOR("Supervisor");
 
     private String value;
 

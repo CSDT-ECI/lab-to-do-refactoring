@@ -119,6 +119,7 @@
             <f:selectItem itemLabel="Rol" itemValue="" noSelectionOption="true"/>
             <f:selectItem itemLabel="Administrador" itemValue="Administrador"/>
             <f:selectItem itemLabel="Monitor" itemValue="Monitor"/>
+            <f:selectItem itemLabel="Supervisor" itemValue="Supervisor"/>
           </p:selectOneMenu>
         </p:outputPanel>
         <p:commandButton value="Si" icon="pi pi-check" process="update-role-content @this" oncomplete="PF('editDialog').hide()"
@@ -140,8 +141,10 @@
         <p:outputPanel id="update-account-content">
           <p:selectOneMenu id="accountType" value="#{adminController.newAccountType}" label="Text 2" style="width: 12rem; margin-bottom: 15px;">
             <f:selectItem itemLabel="Estado" itemValue="" noSelectionOption="true"/>
+            <f:selectItem itemLabel="Aceptado cambio de contraseña" itemValue="Aceptado cambio de contraseña"/>
             <f:selectItem itemLabel="Activo" itemValue="Activo"/>
             <f:selectItem itemLabel="Inactivo" itemValue="Inactivo"/>
+            
           </p:selectOneMenu>
         </p:outputPanel>
         <p:commandButton value="Si" icon="pi pi-check" process="update-account-content @this" oncomplete="PF('verifyDialog').hide()"

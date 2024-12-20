@@ -51,6 +51,13 @@
             <artifactId>mysql-connector-j</artifactId>
             <version>8.2.0</version>
         </dependency>
+        <!-- MARIA DB -->
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <version>2.7.9</version> 
+        </dependency>
+
         <!-- JSF & PRIMEFACES WITH JOINFACES -->
         <dependency>
             <groupId>org.joinfaces</groupId>

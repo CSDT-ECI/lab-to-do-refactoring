@@ -10,7 +10,9 @@ import jakarta.faces.context.FacesContext;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.time.*;
 
 @Component
 @SessionScoped
@@ -40,13 +42,15 @@ public class AdminController {
      */
     public Boolean modifyStateTaks() {
         if (this.newState == null || this.newState.isEmpty()) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, LabToDoExeption.NO_STATE_SELECTED, "Error"));
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, LabToDoExeption.NO_STATE_SELECTED, "Error"));
             primeFacesWrapper.current().ajax().update(":form:messages");
             return false;
         }
         try {
             for (Task task : selectedTasks) {
-                if (this.newState.equals(Status.FINISH.getValue()) && task.getTypeTask().equals(TypeTask.LABORATORIO.getValue())) {
+                if (this.newState.equals(Status.FINISH.getValue())
+                        && task.getTypeTask().equals(TypeTask.LABORATORIO.getValue())) {
                     task.setUsers(taskService.getUsersWhoCommentedTask(task.getTaskId()));
                 }
                 task.setStatus(this.newState);
@@ -57,7 +61,8 @@ public class AdminController {
         } finally {
             int size = this.selectedTasks.size();
             String summary = size > 1 ? size + " tareas actualizadas con éxito" : size + " tarea actualizada con éxito";
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, summary, "Éxito"));
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, summary, "Éxito"));
             primeFacesWrapper.current().ajax().update(":form:dt-task", ":form:messages");
             selectedTasks.clear();
         }
@@ -71,49 +76,74 @@ public class AdminController {
      */
     public Boolean modifyUserRole() {
         if (this.newRole == null || this.newRole.isEmpty()) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, LabToDoExeption.NO_ROLE_SELECTED, "Error"));
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, LabToDoExeption.NO_ROLE_SELECTED, "Error"));
             primeFacesWrapper.current().ajax().update("form:messages");
             return false;
         }
         try {
             for (User user : selectedUsers) {
                 user.setRole(Role.findByValue(newRole).getValue());
+                user.setUpdateDate(LocalDateTime.now());
                 userService.updateUser(user);
+
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             int size = this.selectedUsers.size();
-            String summary = size > 1 ? size + " usuarios actualizados con éxito" : size + " usuario actualizado con éxito";
+            String summary = size > 1 ? size + " usuarios actualizados con éxito"
+                    : size + " usuario actualizado con éxito";
             selectedUsers.clear();
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, summary, "Éxito"));
-            primeFacesWrapper.current().ajax().update("form:users-list", "form:messages", ":role-label", "form:delete-users-button", "form:account-users-button", "form:edit-users-button");
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, summary, "Éxito"));
+            primeFacesWrapper.current().ajax().update("form:users-list", "form:messages", ":role-label",
+                    "form:delete-users-button", "form:account-users-button", "form:edit-users-button");
         }
         return true;
     }
 
     public Boolean modifyUserAccountType() {
+        int count_user_modify = 0;
         if (this.newAccountType == null || this.newAccountType.isEmpty()) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, LabToDoExeption.NO_ACCOUNT_TYPE_SELECTED, "Error"));
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, LabToDoExeption.NO_ACCOUNT_TYPE_SELECTED, "Error"));
             primeFacesWrapper.current().ajax().update("form:messages");
             return false;
         }
         try {
             for (User user : selectedUsers) {
+                if (!user.getAccountType().equals(AccountType.SOLICITUD_CAMBIO_CONTRASEÑA.getValue())) {
+                    String nameUser = user.getFullName();
+                    FacesContext.getCurrentInstance().addMessage(null,
+                            new FacesMessage(FacesMessage.SEVERITY_INFO, LabToDoExeption.USER_NOT_NEW_PASSWORD, nameUser));
+                    primeFacesWrapper.current().ajax().update("form:messages");
+                    continue; // Salta al siguiente usuario en el ciclo
+                }
                 user.setAccountType(AccountType.findByValue(newAccountType).getValue());
+                user.setUpdateDate(LocalDateTime.now());
                 userService.updateUser(user);
+                count_user_modify += 1;
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             int size = this.selectedUsers.size();
-            String summary = size > 1 ? size + " usuarios actualizados con éxito" : size + " usuario actualizado con éxito";
-            selectedUsers.clear();
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, summary, "Éxito"));
-            primeFacesWrapper.current().ajax().update("form:users-list", "form:messages", "form:account-users-button", "form:delete-users-button", "form:edit-users-button");
+            if (count_user_modify > 0){
+                String summary = count_user_modify > 1 ? size + " usuarios actualizados con éxito"
+                    : size + " usuario actualizado con éxito";
+                selectedUsers.clear();
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_INFO, summary, "Éxito"));
+                primeFacesWrapper.current().ajax().update("form:users-list", "form:messages", "form:account-users-button",
+                        "form:delete-users-button", "form:edit-users-button");
+
+            }
+            
         }
         return true;
     }
+
 
     /**
      * Borra los usuarios seleccionados.
@@ -121,6 +151,8 @@ public class AdminController {
      * @return true si se eliminaron los usuarios, false de lo contrario.
      */
     public Boolean deleteUsers() {
+        List<User> no_delete = new ArrayList<>();
+
         try {
             for (User user : selectedUsers) {
                 userService.deleteUser(user.getUserName());
@@ -128,11 +160,14 @@ public class AdminController {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            int size = this.selectedUsers.size();
+            int size = this.selectedUsers.size() - no_delete.size();
             String summary = size > 1 ? size + " usuarios eliminados con éxito" : size + " usuario eliminado con éxito";
+
             selectedUsers.clear();
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, summary, "Éxito"));
-            primeFacesWrapper.current().ajax().update("form:users-list", "form:messages", "form:account-users-button", "form:delete-users-button", "form:edit-users-button");
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, summary, "Éxito"));
+            primeFacesWrapper.current().ajax().update("form:users-list", "form:messages", "form:account-users-button",
+                    "form:delete-users-button", "form:edit-users-button");
         }
         return true;
     }
@@ -210,4 +245,3 @@ public class AdminController {
     }
 
 }
-
