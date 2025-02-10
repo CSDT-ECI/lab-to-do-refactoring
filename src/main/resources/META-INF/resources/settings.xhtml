@@ -141,10 +141,9 @@
         <p:outputPanel id="update-account-content">
           <p:selectOneMenu id="accountType" value="#{adminController.newAccountType}" label="Text 2" style="width: 12rem; margin-bottom: 15px;">
             <f:selectItem itemLabel="Estado" itemValue="" noSelectionOption="true"/>
-            <f:selectItem itemLabel="Aceptado cambio de contraseña" itemValue="Aceptado cambio de contraseña"/>
+            <f:selectItem itemLabel="Aceptado cambio de contraseña" itemValue="Aceptar cambio de contraseña"/>
             <f:selectItem itemLabel="Activo" itemValue="Activo"/>
             <f:selectItem itemLabel="Inactivo" itemValue="Inactivo"/>
-            
           </p:selectOneMenu>
         </p:outputPanel>
         <p:commandButton value="Si" icon="pi pi-check" process="update-account-content @this" oncomplete="PF('verifyDialog').hide()"

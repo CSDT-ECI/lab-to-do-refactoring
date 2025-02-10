@@ -15,7 +15,9 @@ public class LabToDoExeption extends Exception {
     public static final String USER_INCORRECT = "Su cuenta es incorrecta.";
     public static final String WAIT_RESPONSE = "Todavía no es aceptada la solicitud de cambio de contraseña.";
     public static final String USER_NOT_NEW_PASSWORD = "El usuario no ha pedido cambio de contraseña.";
+    public static final String USER_NOT_ACTIVE = "Su cuenta no esta activa, no se pudo realizar la solicitud.";
     public static final String PROCCESS_CHANGE_APPLICATION = "Tiene una solicitud de cambio de contraseña ya activa, esper la confirmación.";
+    public static final String DELETE_USER = "El usuario que esta tratando de eliminar tiene tareas asignadas";
     public LabToDoExeption(String message) {
         super(message);
     }

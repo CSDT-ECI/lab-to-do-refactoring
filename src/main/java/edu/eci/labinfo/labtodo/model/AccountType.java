@@ -4,7 +4,7 @@ public enum AccountType {
 
     SIN_VERIFICAR("Sin verificar"),
     ACTIVO("Activo"),
-    ACEPTADO("Aceptado cambio de contraseña"),
+    ACEPTADO("Aceptar cambio de contraseña"),
     INACTIVO("Inactivo"),
     SOLICITUD_CAMBIO_CONTRASEÑA("Cambio de contraseña");
 

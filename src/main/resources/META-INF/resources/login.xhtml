@@ -27,13 +27,14 @@
                 </div>
                 <h:form id="login-form" class="flex flex-column" styleClass="login-section">
                     <h2 class="mb-1">Iniciar Sesión</h2>
-                    <p:growl id="messages" show-detail="true" />
+                    <p:growl id="messages" show-detail="true"/>
                     <div class="field">
                         <p:inputText class="w-full" placeholder="Nombre de Usuario" value="#{loginController.userName}" />
                     </div>
                     <div class="field">
                         <p:password class="w-full" placeholder="Contraseña" value="#{loginController.password}" />
                     </div>
+
                     <div class="flex justify-content-between">
                         <p:commandButton value="Ingresar" icon="pi pi-user"
                             class="ui-button-secondary"

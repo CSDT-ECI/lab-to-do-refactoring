@@ -9,6 +9,7 @@ import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import lombok.Data;
 import org.springframework.stereotype.Component;
+import java.sql.SQLIntegrityConstraintViolationException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,7 +87,6 @@ public class AdminController {
                 user.setRole(Role.findByValue(newRole).getValue());
                 user.setUpdateDate(LocalDateTime.now());
                 userService.updateUser(user);
-
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -104,73 +104,107 @@ public class AdminController {
     }
 
     public Boolean modifyUserAccountType() {
-        int count_user_modify = 0;
+        int countUserModify = 0;
+    
         if (this.newAccountType == null || this.newAccountType.isEmpty()) {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, LabToDoExeption.NO_ACCOUNT_TYPE_SELECTED, "Error"));
             primeFacesWrapper.current().ajax().update("form:messages");
             return false;
         }
+    
         try {
             for (User user : selectedUsers) {
-                if (!user.getAccountType().equals(AccountType.SOLICITUD_CAMBIO_CONTRASEÑA.getValue())) {
-                    String nameUser = user.getFullName();
+                String currentType = user.getAccountType();
+                String newType = AccountType.findByValue(newAccountType).getValue();
+
+                if (newType.equals(AccountType.ACEPTADO.getValue()) && !currentType.equals(AccountType.SOLICITUD_CAMBIO_CONTRASEÑA.getValue())) {
                     FacesContext.getCurrentInstance().addMessage(null,
-                            new FacesMessage(FacesMessage.SEVERITY_INFO, LabToDoExeption.USER_NOT_NEW_PASSWORD, nameUser));
+                            new FacesMessage(FacesMessage.SEVERITY_ERROR, "No se puede aceptar el cambio de contraseña del ", 
+                            "usuario " + user.getFullName() + " no tiene estado 'Solicitud Cambio Contraseña'"));
                     primeFacesWrapper.current().ajax().update("form:messages");
-                    continue; // Salta al siguiente usuario en el ciclo
+                    continue;
                 }
-                user.setAccountType(AccountType.findByValue(newAccountType).getValue());
+
+                user.setAccountType(newType);                
                 user.setUpdateDate(LocalDateTime.now());
                 userService.updateUser(user);
-                count_user_modify += 1;
+                countUserModify++;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("No se pudo eliminar");
         } finally {
-            int size = this.selectedUsers.size();
-            if (count_user_modify > 0){
-                String summary = count_user_modify > 1 ? size + " usuarios actualizados con éxito"
-                    : size + " usuario actualizado con éxito";
+            if (countUserModify > 0) {
+                String summary = countUserModify > 1 
+                    ? countUserModify + " usuarios actualizados con éxito"
+                    : countUserModify + " usuario actualizado con éxito";
+    
                 selectedUsers.clear();
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_INFO, summary, "Éxito"));
                 primeFacesWrapper.current().ajax().update("form:users-list", "form:messages", "form:account-users-button",
                         "form:delete-users-button", "form:edit-users-button");
-
             }
-            
         }
         return true;
     }
-
+    
 
     /**
      * Borra los usuarios seleccionados.
      *
      * @return true si se eliminaron los usuarios, false de lo contrario.
      */
+
     public Boolean deleteUsers() {
+        int countUserModify = 0;
         List<User> no_delete = new ArrayList<>();
 
         try {
             for (User user : selectedUsers) {
-                userService.deleteUser(user.getUserName());
+                try {
+                    userService.deleteUser(user.getUserName());
+                    countUserModify++;
+                } catch (Exception e) {
+                    // Capturar error de clave foránea
+                    no_delete.add(user);
+                    FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, 
+                            "No se pudo eliminar el usuario: " + user.getUserName() + ". Hay tareas asignadas para este usuario", ""));
+                }
             }
         } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            int size = this.selectedUsers.size() - no_delete.size();
-            String summary = size > 1 ? size + " usuarios eliminados con éxito" : size + " usuario eliminado con éxito";
-
-            selectedUsers.clear();
             FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, LabToDoExeption.DELETE_USER , ""));
+            primeFacesWrapper.current().ajax().update("form:messages");
+        } finally {
+            if (countUserModify > 0) {
+                String summary = countUserModify > 1 
+                    ? countUserModify + " usuarios actualizados con éxito"
+                    : countUserModify + " usuario actualizado con éxito";
+
+                selectedUsers.clear();
+                FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO, summary, "Éxito"));
+            }
+
+            // Si hay usuarios que no se pudieron eliminar, los mostramos
+            if (!no_delete.isEmpty()) {
+                String errorSummary = "No se pudieron eliminar los siguientes usuarios: ";
+                for (User user : no_delete) {
+                    errorSummary += user.getUserName() + " ";
+                }
+                FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, errorSummary, ""));
+            }
+
             primeFacesWrapper.current().ajax().update("form:users-list", "form:messages", "form:account-users-button",
                     "form:delete-users-button", "form:edit-users-button");
         }
+
         return true;
     }
+
 
     /**
      * Metodo que retorna el mensaje que se muestra en el boton de actualizar
