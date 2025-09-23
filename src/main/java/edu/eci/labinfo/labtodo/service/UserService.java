@@ -55,6 +55,10 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public List<User> getUsersByRole(String role) {
+        return userRepository.findByRole(role);
+    }
+
     @Transactional(propagation = Propagation.REQUIRED)
     public User updateUser(User user) {
         if (userRepository.existsById(user.getUserId())) {

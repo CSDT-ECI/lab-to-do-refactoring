@@ -76,10 +76,20 @@ public class TaskController {
     public void saveTask() {   
         String message = "";
         List<User> selectedUsersToTask = new ArrayList<>();
-        for (String fullName : selectedUsers) {
-            User user = userService.getUserByFullName(fullName);
-            selectedUsersToTask.add(user);
-        }    
+        
+        // Validar que solo administradores puedan crear tareas de tipo "Administradores"
+        if ("Administradores".equals(this.currentTask.getTypeTask())) {
+            selectedUsersToTask = userService.getUsersByRole(Role.ADMINISTRADOR.getValue());
+        } else {
+            // Para otros tipos de tarea
+            for (String fullName : selectedUsers) {
+                User user = userService.getUserByFullName(fullName);
+                if (user != null) {
+                    selectedUsersToTask.add(user);
+                }
+            }
+        }
+        
         if (this.currentTask.getTaskId() == null) {
             if (selectedUsers != null) {
                 selectedUsers.clear();

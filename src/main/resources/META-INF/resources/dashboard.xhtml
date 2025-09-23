@@ -174,6 +174,8 @@
               <f:selectItem itemLabel="Selecciona el tipo de tarea" itemValue="" noSelectionOption="true" />
               <f:selectItem itemLabel="Monitor" itemValue="Monitor" />
               <f:selectItem itemLabel="Laboratorio" itemValue="Laboratorio" />
+              <f:selectItem itemLabel="Administradores" itemValue="Administradores" 
+                            rendered="#{loginController.isAdmin(loginController.userName)}" />
               <p:ajax update="user-task-selection" />
             </p:selectOneMenu>
           </div>
@@ -199,6 +201,12 @@
                   value="#{taskController.selectedUsers}" style="margin-top: 10px;">
                   <f:selectItems value="#{loginController.userNames}" />
                 </p:selectCheckboxMenu>
+              </p:outputPanel>
+              <p:outputPanel rendered="#{taskController.currentTask.typeTask == 'Administradores'}">
+                <p:outputLabel value="Asignación automática" style="font-weight: bold; color: #2196F3;" />
+                <p:message for="adminMessage" showDetail="false" showSummary="true" />
+                <p:outputText id="adminMessage" value="Esta tarea se asignará automáticamente a todos los usuarios con rol de Administrador." 
+                              style="display: block; margin-top: 10px; padding: 10px; background-color: #E3F2FD; border-left: 4px solid #2196F3; color: #1976D2;" />
               </p:outputPanel>
             </p:outputPanel>
           </div>
