@@ -42,15 +42,15 @@
                         <p:commandButton value="Crear Cuenta" icon="pi pi-user-plus"
                             class="ui-button-secondary"
                             actionListener="#{loginController.createUserAccount}"
-                            update=":dialogs:create-account-content" 
+                            update="dialogs:create-account-content" 
                             oncomplete="PF('createAccountDialog').show()">
-                            <p:resetInput target=":dialogs:create-account-content" />
+                            <p:resetInput target="dialogs:create-account-content" />
                         </p:commandButton>
                         <p:commandButton value="Olvide la contraseña" icon="pi pi-user-plus"
                             class="ui-button-secondary"
-                            update=":dialogs_change_password:change-password-content" 
+                            update="dialogs_change_password:change-password-content" 
                             oncomplete="PF('changePassword').show()">
-                            <p:resetInput target=":dialogs_change_password:change-password-content" />
+                            <p:resetInput target="dialogs_change_password:change-password-content" />
                         </p:commandButton>
                         
                     </div>
