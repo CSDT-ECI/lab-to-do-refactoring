@@ -8,7 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.eci.labinfo.labtodo.data.TaskRepository;
 import edu.eci.labinfo.labtodo.model.Semester;
+import edu.eci.labinfo.labtodo.model.Status;
 import edu.eci.labinfo.labtodo.model.Task;
+import edu.eci.labinfo.labtodo.model.TypeTask;
 import edu.eci.labinfo.labtodo.model.User;
 
 @Service
@@ -70,6 +72,13 @@ public class TaskService {
 
     public List<User> getUsersWhoCommentedTask(Long taskId) {
         return taskRepository.findUsersWhoCommented(taskId);
+    }
+
+    public List<Task> getNonFinishedAdminTasks() {
+        return taskRepository.findByTypeTaskAndStatusNot(
+            TypeTask.ADMINISTRADOR.getValue(), 
+            Status.FINISH.getValue()
+        );
     }
 
     @Transactional(propagation = Propagation.REQUIRED)

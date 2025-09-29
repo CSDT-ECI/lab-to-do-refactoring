@@ -79,7 +79,8 @@ public class TaskController {
         
         // Validar que solo administradores puedan crear tareas de tipo "Administradores"
         if ("Administradores".equals(this.currentTask.getTypeTask())) {
-            selectedUsersToTask = userService.getUsersByRole(Role.ADMINISTRADOR.getValue());
+            // Obtener solo administradores activos (excluyendo "inactivo" y "sin verificar")
+            selectedUsersToTask = userService.getActiveUsersByRole(Role.ADMINISTRADOR.getValue());
         } else {
             // Para otros tipos de tarea
             for (String fullName : selectedUsers) {

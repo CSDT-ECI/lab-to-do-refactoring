@@ -110,7 +110,6 @@ public class LoginController {
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO, "contraseña cambiada con exito",""));
             PrimeFaces.current().ajax().update(LOGIN_FORM_MESSAGES);
-            
         }
 
         // Si al usuario no se le ha aceptado el cambio de contraseña
