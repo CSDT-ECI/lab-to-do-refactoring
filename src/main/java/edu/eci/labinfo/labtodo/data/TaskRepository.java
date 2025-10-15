@@ -30,4 +30,6 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     @Query("SELECT DISTINCT c.creatorUser FROM Task t JOIN t.comments c WHERE t.taskId = :taskId")
     List<User> findUsersWhoCommented(Long taskId);
 
+    List<Task> findByTypeTaskAndStatusNot(String typeTask, String excludedStatus);
+
 }

@@ -7,7 +7,8 @@ package edu.eci.labinfo.labtodo.model;
 public enum TypeTask {
 
     MONITOR("Monitor"),
-    LABORATORIO("Laboratorio");
+    LABORATORIO("Laboratorio"),
+    ADMINISTRADOR("Administradores");
 
     private String value;
 

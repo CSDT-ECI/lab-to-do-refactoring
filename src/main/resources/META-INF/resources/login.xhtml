@@ -15,6 +15,12 @@
     <link rel="stylesheet" type="text/css" href="css/normalize.css" />
     <link rel="stylesheet" type="text/css" href="css/login.css" />
     <link rel="stylesheet" href="https://unpkg.com/primeflex@latest/primeflex.css" />
+    <style>
+        .pw-req-list { list-style: none; padding: 0; margin: 0 0 0.5rem 0; }
+        .pw-req-list .req { color: #b94a48; margin: 2px 0; }
+        .pw-req-list .req.valid { color: #3c763d; text-decoration: line-through; }
+        .pw-feedback { font-size: 0.9rem; color: #666; }
+    </style>
 </h:head>
 <h:body>
     <main>
@@ -42,15 +48,15 @@
                         <p:commandButton value="Crear Cuenta" icon="pi pi-user-plus"
                             class="ui-button-secondary"
                             actionListener="#{loginController.createUserAccount}"
-                            update=":dialogs:create-account-content" 
+                            update="dialogs:create-account-content" 
                             oncomplete="PF('createAccountDialog').show()">
-                            <p:resetInput target=":dialogs:create-account-content" />
+                            <p:resetInput target="dialogs:create-account-content" />
                         </p:commandButton>
                         <p:commandButton value="Olvide la contraseña" icon="pi pi-user-plus"
                             class="ui-button-secondary"
-                            update=":dialogs_change_password:change-password-content" 
+                            update="dialogs_change_password:change-password-content" 
                             oncomplete="PF('changePassword').show()">
-                            <p:resetInput target=":dialogs_change_password:change-password-content" />
+                            <p:resetInput target="dialogs_change_password:change-password-content" />
                         </p:commandButton>
                         
                     </div>
@@ -80,6 +86,46 @@
             </p:dialog>
         </h:form>
 
+        <!-- Dialog para ingresar la nueva contraseña cuando la solicitud fue ACEPTADO -->
+        <h:form id="dialogs_change_password_new">
+            <p:dialog header="Ingresar nueva contraseña" showEffect="fade" modal="true" widgetVar="changePasswordNew"
+                responsive="true" draggable="false" resizable="false">
+                <p:outputPanel id="change-password-new" class="ui-fluid">
+                    <div class="field">
+                        <p:outputLabel for="new-password">Nueva contraseña</p:outputLabel>
+                        <p:password id="new-password" required="true" placeholder="Nueva contraseña" 
+                            value="#{loginController.newPassword}" feedback="false" />
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="confirm-password">Confirmar contraseña</p:outputLabel>
+                        <p:password id="confirm-password" required="true" placeholder="Confirmar contraseña" 
+                            value="#{loginController.confirmPassword}" feedback="false" />
+                    </div>
+                    <div class="field">
+                        <ul id="pw-requirements-list" class="pw-req-list">
+                            <li id="req-length" class="req invalid">• Mínimo 8 caracteres</li>
+                            <li id="req-upper" class="req invalid">• Al menos una letra mayúscula</li>
+                            <li id="req-lower" class="req invalid">• Al menos una letra minúscula</li>
+                            <li id="req-digit" class="req invalid">• Al menos un número</li>
+                            <li id="req-special" class="req invalid">• Al menos un carácter especial (ej: ! @ # &amp; - _)</li>
+                            <li id="req-match" class="req invalid">• Las contraseñas deben coincidir</li>
+                        </ul>
+                    </div>
+                </p:outputPanel>
+
+                <f:facet name="footer">
+                    <p:commandButton value="Cambiar" icon="pi pi-check"
+                        class="ui-button-primary"
+                        actionListener="#{loginController.submitNewPassword()}"
+                        process="change-password-new @this"
+                        onclick="return validatePasswordAndConfirm('dialogs_change_password_new:change-password-new:new-password','dialogs_change_password_new:change-password-new:confirm-password');" />
+                    <p:commandButton value="Cancel" icon="pi pi-times"
+                        onclick="PF('changePasswordNew').hide()"
+                        class="ui-button-secondary" type="button" />
+                </f:facet>
+            </p:dialog>
+        </h:form>
+
         <h:form id="dialogs">
             <p:dialog header="Crear cuenta" showEffect="fade" modal="true" widgetVar="createAccountDialog"
                 responsive="true" draggable="false" resizable="false">
@@ -96,8 +142,17 @@
                     </div>
                     <div class="field">
                         <p:outputLabel for="password">Contraseña</p:outputLabel>
-                        <p:inputText id="password" type="password" required="true" placeholder="Contraseña" 
-                        value="#{loginController.createdUserAccount.password}" />
+                        <p:password id="password" required="true" placeholder="Contraseña" 
+                            value="#{loginController.createdUserAccount.password}" feedback="false" />
+                    </div>
+                    <div class="field">
+                        <ul id="create-pw-requirements-list" class="pw-req-list">
+                            <li id="create-req-length" class="req invalid">• Mínimo 8 caracteres</li>
+                            <li id="create-req-upper" class="req invalid">• Al menos una letra mayúscula</li>
+                            <li id="create-req-lower" class="req invalid">• Al menos una letra minúscula</li>
+                            <li id="create-req-digit" class="req invalid">• Al menos un número</li>
+                            <li id="create-req-special" class="req invalid">• Al menos un carácter especial (ej: ! @ # &amp; - _)</li>
+                        </ul>
                     </div>
                 </p:outputPanel>
 
@@ -113,5 +168,6 @@
             </p:dialog>
         </h:form>
     </main>
+        <script src="js/login-validation.js" type="text/javascript"></script>
 </h:body>
 </html>

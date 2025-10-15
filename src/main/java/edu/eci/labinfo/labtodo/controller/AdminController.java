@@ -9,7 +9,6 @@ import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import lombok.Data;
 import org.springframework.stereotype.Component;
-import java.sql.SQLIntegrityConstraintViolationException;
 
 import java.util.ArrayList;
 import java.util.List;

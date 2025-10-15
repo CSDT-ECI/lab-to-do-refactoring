@@ -1,4 +1,4 @@
-HELP.md
+add HELP.md
 target/
 pom.xml.tag
 pom.xml.releaseBackup
@@ -47,3 +47,14 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Docker y Variables de Entorno ###
+.env
+.env.local
+.env.production
+.env.staging
+
+### Archivos de configuración sensibles ###
+*.key
+*.pem
+config/secrets.yml

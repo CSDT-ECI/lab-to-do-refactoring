@@ -18,6 +18,9 @@ import edu.eci.labinfo.labtodo.service.PrimeFacesWrapper;
 import edu.eci.labinfo.labtodo.service.SemesterService;
 import edu.eci.labinfo.labtodo.service.TaskService;
 import edu.eci.labinfo.labtodo.service.UserService;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.stream.Collectors;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import lombok.Data;
@@ -41,13 +44,15 @@ public class TaskController {
     private final CommentService commentService;
     private final SemesterService semesterService;
     private final PrimeFacesWrapper primeFacesWrapper;
+    private final LoginController loginController;
 
-    public TaskController(TaskService taskService, UserService userService, CommentService commentService, SemesterService semesterService, PrimeFacesWrapper primeFacesWrapper){
+    public TaskController(TaskService taskService, UserService userService, CommentService commentService, SemesterService semesterService, PrimeFacesWrapper primeFacesWrapper, LoginController loginController){
         this.taskService = taskService;
         this.userService = userService;
         this.commentService = commentService;
         this.semesterService = semesterService;
         this.primeFacesWrapper = primeFacesWrapper;
+        this.loginController = loginController;
     }
 
     /**
@@ -76,10 +81,31 @@ public class TaskController {
     public void saveTask() {   
         String message = "";
         List<User> selectedUsersToTask = new ArrayList<>();
-        for (String fullName : selectedUsers) {
-            User user = userService.getUserByFullName(fullName);
-            selectedUsersToTask.add(user);
-        }    
+        // Server-side: only allow administrators to create/update tasks of type "Administradores"
+        if (this.currentTask != null && "Administradores".equals(this.currentTask.getTypeTask())) {
+            String currentUserName = loginController.getUserName();
+            if (currentUserName == null || !loginController.isAdmin(currentUserName)) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Solo administradores pueden crear o asignar tareas de tipo Administradores", null));
+                primeFacesWrapper.current().ajax().update("form:growl");
+                return;
+            }
+        }
+        
+        // Validar que solo administradores puedan crear tareas de tipo "Administradores"
+        if ("Administradores".equals(this.currentTask.getTypeTask())) {
+            // Obtener solo administradores activos (excluyendo "inactivo" y "sin verificar")
+            selectedUsersToTask = userService.getActiveUsersByRole(Role.ADMINISTRADOR.getValue());
+        } else {
+            // Para otros tipos de tarea
+            for (String fullName : selectedUsers) {
+                User user = userService.getUserByFullName(fullName);
+                if (user != null) {
+                    selectedUsersToTask.add(user);
+                }
+            }
+        }
+        
         if (this.currentTask.getTaskId() == null) {
             if (selectedUsers != null) {
                 selectedUsers.clear();
@@ -192,6 +218,18 @@ public class TaskController {
     public void loadUsers(){
         selectedUsers.clear();
         currentTask.getUsers().forEach(user -> selectedUsers.add(user.getFullName()));
+    }
+
+    /**
+     * Provide the available task types for the create/edit dialog. Admins receive
+     * an extra "Administradores" option.
+     */
+    public List<String> getAvailableTaskTypes() {
+        List<String> base = Arrays.asList(TypeTask.MONITOR.getValue(), TypeTask.LABORATORIO.getValue());
+        if (loginController != null && loginController.isAdmin(loginController.getUserName())) {
+            return Arrays.asList(TypeTask.MONITOR.getValue(), TypeTask.LABORATORIO.getValue(), "Administradores");
+        }
+        return base;
     }
 
     /**
