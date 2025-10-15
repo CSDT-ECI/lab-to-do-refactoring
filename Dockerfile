@@ -31,9 +31,9 @@ USER labtodo
 # Exponer el puerto de la aplicación
 EXPOSE 8080
 
-# Health check
+# Health check (use the container's internal app port 8080)
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8081/actuator/health || exit 1
+    CMD curl -f http://localhost:8080/actuator/health || exit 1
 
 # Comando para ejecutar la aplicación
 ENTRYPOINT ["java", "-jar", "app.jar"]
