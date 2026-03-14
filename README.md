@@ -2859,6 +2859,26 @@ The repository now includes concrete testing scaffolding for AAA, FIRST, and `sh
 - `./mvnw test` for unit tests and fast smoke tests.
 - `./mvnw verify` for unit, integration, and acceptance tests.
 
+### **Code Coverage (JaCoCo)**
+
+Generate tests + coverage report:
+
+```bash
+./mvnw clean test verify
+```
+
+Where to see the results:
+
+- HTML report (recommended): `target/site/jacoco/index.html`
+- CSV report: `target/site/jacoco/jacoco.csv`
+- XML report: `target/site/jacoco/jacoco.xml`
+
+Quick line-coverage value in terminal:
+
+```bash
+awk -F, 'NR>1{m+=$8; c+=$9} END{printf "LINE_COVERAGE=%.2f%%\n", (c*100)/(m+c)}' target/site/jacoco/jacoco.csv
+```
+
 ### **Test Pyramid**
 
 ```
