@@ -34,6 +34,7 @@
 - [Installation & Setup](#-installation--setup)
 - [Original Project Structure](#-project-structure)
 - [Testing Strategy](#-testing-strategy)
+- [Unit Test Implementation](#-unit-test-implementation)
 - [Authors](#-authors)
 - [License](#-license)
 - [Additional Resources](#-additional-resources)
@@ -2984,6 +2985,118 @@ class TaskRestControllerIntegrationTest {
 | Mappers | 85% |
 
 **Tools**: JUnit 5, Mockito, AssertJ, Spring Boot Test, H2 (in-memory DB for tests)
+
+---
+
+## ✅ **Unit Test Implementation**
+
+### 🚫 **Initial state: no tests implemented**
+
+At the start of this lab, the project had **no unit tests implemented whatsoever**. The `src/test/` directory existed with structural scaffolding — base classes, templates, and configuration — but every test class was empty: not a single `@Test` method had been written. Effective code coverage was **0%**.
+
+This represented a direct risk to the project's maintainability: any refactoring could silently introduce regressions with no automated safety net to catch them.
+
+### 🛠️ **Decision: implement unit tests from scratch**
+
+The decision was made to implement unit tests by building on the existing scaffolding and honouring the conventions already established in the base classes (`BaseUnitTest`, `BaseIntegrationTest`):
+
+- **AAA pattern** (_Arrange / Act / Assert_) in every test method.
+- **Naming convention** `shouldDoSomething` / `shouldNotDoSomethingWhenCondition`.
+- **FIRST principles**: tests are Fast, Independent, Repeatable, Self-validating, and Timely.
+- **`TestDataBuilders`**: centralised static factory for constructing domain objects without coupling tests to each other.
+
+### 📁 **Implemented test structure**
+
+```
+src/test/java/edu/eci/labinfo/labtodo/
+├── support/
+│   ├── BaseUnitTest.java           — base for unit tests (Mockito only, no Spring context)
+│   ├── BaseIntegrationTest.java    — base for integration tests (@SpringBootTest + H2 + @Transactional)
+│   └── TestDataBuilders.java       — reusable domain object factory
+├── unit/
+│   ├── model/                      — domain entity tests
+│   │   ├── CommentTest.java
+│   │   ├── EnumsAndExceptionTest.java
+│   │   ├── SemesterTest.java
+│   │   ├── TaskTest.java
+│   │   └── UserTest.java
+│   ├── service/                    — service tests with mocked repositories
+│   │   ├── CommentServiceTest.java
+│   │   ├── SemesterServiceTest.java
+│   │   ├── TaskServiceTest.java
+│   │   └── UserServiceTest.java
+│   └── controller/                 — JSF controller tests with mocked services
+│       ├── AdminControllerTest.java
+│       ├── LoginControllerTest.java
+│       ├── SemesterControllerTest.java
+│       └── TaskControllerTest.java
+└── integration/
+    └── data/                       — scaffolding ready for JPA repository tests
+        ├── CommentRepositoryIT.java
+        ├── SemesterRepositoryIT.java
+        ├── TaskRepositoryIT.java
+        └── UserRepositoryIT.java
+```
+
+### 🧩 **Scenarios covered per layer**
+
+#### Model layer — `unit/model/` (28 tests)
+
+The intrinsic behaviour of each domain entity was validated independently of any framework.
+
+| Class                   | Scenarios covered                                                                                                                                          |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `CommentTest`           | Construction with and without an associated task; date formatting; `equals`, `hashCode`, and `toString` via Lombok                                         |
+| `TaskTest`              | Default status on construction (`Por Hacer`); adding users and comments; concatenated user text; `equals`, `hashCode`, and `toString`                      |
+| `UserTest`              | Adding tasks to a user; all-args constructor; `equals`, `hashCode`, and `toString`                                                                         |
+| `SemesterTest`          | Storing dates and name; full constructor; `equals`, `hashCode`, and `toString`                                                                             |
+| `EnumsAndExceptionTest` | Case-insensitive value lookup for `Status`, `TypeTask`, `TopicTask`, `Role`, and `AccountType`; `Status.next()` transition; `LabToDoExeption` construction |
+
+#### Service layer — `unit/service/` (54 tests)
+
+Each service was tested in isolation by mocking its repository with Mockito. Both happy paths and error cases were covered.
+
+| Class                 | Scenarios covered                                                                                                                                                                                                                                       |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `TaskServiceTest`     | Full CRUD; queries by user, status, type, semester, and filter combinations; retrieval of users who commented; `null` return when updating a non-existent task                                                                                          |
+| `UserServiceTest`     | Registration with password encoding; rejection on duplicate username (`LabToDoExeption`); lookup by username and full name; automatic assignment of admin tasks when role changes to Administrator; skip if user already assigned; deletion by username |
+| `SemesterServiceTest` | Full CRUD; lookup by name; active semester by current date (`LocalDate.now()`); `null` return when no result exists                                                                                                                                     |
+| `CommentServiceTest`  | Full CRUD; listing by task; `null` return when updating a non-existent comment; `NoSuchElementException` thrown when looking up a non-existent ID                                                                                                       |
+
+#### JSF controller layer — `unit/controller/` (93 tests)
+
+JSF controllers present the highest testing complexity due to their dependency on `FacesContext` and `PrimeFaces` — static platform APIs. This challenge was solved by combining Mockito's `MockedStatic` with the `PrimeFacesWrapper` already introduced during the refactoring.
+
+| Class                    | Scenarios covered                                                                                                                                                                                                                                                                                                 |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `TaskControllerTest`     | Available task types by role; button message by task status; conditional button rendering by role and status; task loading by active or selected semester; task save and update; state advancement (`completedMessage`); comment saving; unknown username handling; null task and semester edge cases             |
+| `LoginControllerTest`    | Full login flow: non-existent user, unverified account, wrong password, blocking account states, and successful access; account creation and saving with strong/weak password validation; password change (request, match, format validation); logout and redirect; `getRedirectPath` for admin and monitor roles |
+| `AdminControllerTest`    | Task state changes for selected tasks (empty, monitor type, lab type on finish); user role changes; account type changes with transition validation; user deletion with error resilience; button messages based on selection count; state accessors and mutators                                                  |
+| `SemesterControllerTest` | Opening a new period; active semester verification; listing as `SelectItem`; save with date validation (start > end blocked); create vs. update based on ID presence; accessors and mutators                                                                                                                      |
+
+### 📊 **Coverage summary**
+
+| Layer                     | Tests implemented | What is covered                                      |
+| ------------------------- | ----------------- | ---------------------------------------------------- |
+| Model (entities)          | 28                | Construction, immutability, Lombok contracts         |
+| Services                  | 54                | Happy paths + error cases + repository delegation    |
+| JSF Controllers           | 93                | UI flows, validations, redirects, account states     |
+| Integration (scaffolding) | 4 classes ready   | Infrastructure configured with H2 + `@Transactional` |
+| **Total `@Test` methods** | **175**           |                                                      |
+
+> The integration classes (`*RepositoryIT`) have the full infrastructure in place and are ready to receive `@Test` methods in future iterations, once the corresponding SQL test-data scripts are defined.
+
+### 🔑 **Techniques applied to increase coverage**
+
+1. **`MockedStatic`** for `FacesContext` and `PrimeFaces`: allowed testing JSF controller logic without spinning up an application server or a real Faces context.
+
+2. **`PrimeFacesWrapper`** (introduced during the refactoring): replacing the direct `PrimeFaces.current()` call with an injectable wrapper made controllers fully testable with an ordinary `@Mock`.
+
+3. **`TestDataBuilders`**: centralises test object construction, keeps the _Arrange_ block expressive, and eliminates setup duplication across test classes.
+
+4. **`BaseUnitTest` and `BaseIntegrationTest`**: abstract classes that encapsulate JUnit/Mockito and Spring context configuration respectively, ensuring consistency and reducing boilerplate in every test class.
+
+5. **Explicit negative-path tests**: for every service operation or controller action, at least one `shouldNot...` scenario was written to verify behaviour on invalid inputs, non-existent entities, or disallowed state transitions.
 
 ---
 
