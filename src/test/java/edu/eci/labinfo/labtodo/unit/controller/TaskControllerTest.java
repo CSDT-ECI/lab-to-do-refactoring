@@ -220,8 +220,10 @@ class TaskControllerTest extends BaseUnitTest {
         subject.setStatus(Status.PENDING.getValue());
         when(userService.getUserByUserName("monitor")).thenReturn(user);
         when(semesterService.getCurrentSemester()).thenReturn(semester);
-        when(taskService.getTaskByUserAndStatusAndSemester(user, Status.PENDING.getValue(), semester)).thenReturn(userTasks);
-        when(taskService.getTasksByTypeAndStatusAndSemester(TypeTask.LABORATORIO.getValue(), Status.PENDING.getValue(), semester))
+        when(taskService.getTaskByUserAndStatusAndSemester(user, Status.PENDING.getValue(), semester))
+                .thenReturn(userTasks);
+        when(taskService.getTasksByTypeAndStatusAndSemester(TypeTask.LABORATORIO.getValue(), Status.PENDING.getValue(),
+                semester))
                 .thenReturn(labTasks);
 
         // Act
@@ -608,6 +610,19 @@ class TaskControllerTest extends BaseUnitTest {
         assertThat(hash).isNotZero();
         assertThat(text).contains("TaskController");
         assertThat(subject).isEqualTo(subject);
+    }
+
+    @Test
+    void shouldNotBeEqualToDifferentControllerState() {
+        // Arrange
+        subject.setSelectedUsers(new ArrayList<>(List.of("X")));
+
+        TaskController other = new TaskController(taskService, userService, commentService, semesterService,
+                primeFacesWrapper, loginController);
+
+        // Act & Assert
+        assertThat(subject).isNotEqualTo(other);
+        assertThat(subject.hashCode()).isNotEqualTo(other.hashCode());
     }
 
 }

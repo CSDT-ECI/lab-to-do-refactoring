@@ -275,6 +275,18 @@ class AdminControllerTest extends BaseUnitTest {
     }
 
     @Test
+    void shouldImplementEqualsAndHashCodeBasedOnState() {
+        // Arrange
+        AdminController left = new AdminController(taskService, userService, primeFacesWrapper);
+        AdminController right = new AdminController(taskService, userService, primeFacesWrapper);
+
+        // Act & Assert
+        assertThat(left).isEqualTo(right);
+        assertThat(left.hashCode()).isEqualTo(right.hashCode());
+        assertThat(left).isNotEqualTo(new Object());
+    }
+
+    @Test
     void shouldModifyUsersAccountTypeWhenTransitionIsValid() {
         // Arrange
         User user = TestDataBuilders.buildMonitorUser();
@@ -419,4 +431,75 @@ class AdminControllerTest extends BaseUnitTest {
         assertThat(subject).isEqualTo(subject);
     }
 
+    @Test
+    void shouldReturnDefaultRoleButtonMessageWhenNoUsersSelected() {
+        // Arrange
+        subject.setSelectedUsers(null);
+
+        // Act
+        String result = subject.getRoleButtonMessage();
+
+        // Assert
+        assertThat(result).isEqualTo("Cambiar rol de");
+    }
+
+    @Test
+    void shouldReturnAccountButtonMessageWhenNoUsersSelected() {
+        // Arrange
+        subject.setSelectedUsers(null);
+
+        // Act
+        String result = subject.getaccountButtonMessage();
+
+        // Assert
+        assertThat(result).isEqualTo("Estado de cuenta de ");
+    }
+
+    @Test
+    void shouldReturnDeleteButtonMessageWhenOneUserSelected() {
+        // Arrange
+        subject.setSelectedUsers(List.of(TestDataBuilders.buildMonitorUser()));
+
+        // Act
+        String result = subject.getDeleteButtonMessage();
+
+        // Assert
+        assertThat(result).isEqualTo("Eliminar  1 usuario seleccionado");
+    }
+
+    @Test
+    void shouldReturnDeleteButtonMessageWhenMultipleUsersSelected() {
+        // Arrange
+        subject.setSelectedUsers(List.of(TestDataBuilders.buildMonitorUser(), TestDataBuilders.buildAdminUser()));
+
+        // Act
+        String result = subject.getDeleteButtonMessage();
+
+        // Assert
+        assertThat(result).isEqualTo("Eliminar  2 usuarios seleccionados");
+    }
+
+    @Test
+    void shouldReturnFalseWhenSelectedUsersIsNull() {
+        // Arrange
+        subject.setSelectedUsers(null);
+
+        // Act
+        boolean result = subject.hasSelectedUsers();
+
+        // Assert
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    void shouldNotBeEqualToDifferentControllerState() {
+        // Arrange
+        subject.setSelectedUsers(List.of(TestDataBuilders.buildAdminUser()));
+
+        AdminController other = new AdminController(taskService, userService, primeFacesWrapper);
+
+        // Act & Assert
+        assertThat(subject).isNotEqualTo(other);
+        assertThat(subject.hashCode()).isNotEqualTo(other.hashCode());
+    }
 }

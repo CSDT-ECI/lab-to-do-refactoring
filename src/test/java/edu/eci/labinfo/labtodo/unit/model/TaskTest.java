@@ -129,4 +129,44 @@ class TaskTest extends BaseUnitTest {
 		// Assert
 		assertThat(result).contains("Task");
 	}
+
+	@Test
+	void shouldSetBasicFieldsWithSetters() {
+		// Arrange
+		Task task = new Task();
+
+		// Act
+		task.setTitle("Title");
+		task.setDescription("Desc");
+		task.setTopicTask(TopicTask.MANTENIMIENTO.getValue());
+		task.setTypeTask(TypeTask.MONITOR.getValue());
+
+		// Assert
+		assertThat(task.getTitle()).isEqualTo("Title");
+		assertThat(task.getDescription()).isEqualTo("Desc");
+		assertThat(task.getTopicTask()).isEqualTo(TopicTask.MANTENIMIENTO.getValue());
+		assertThat(task.getTypeTask()).isEqualTo(TypeTask.MONITOR.getValue());
+	}
+
+	@Test
+	void shouldNotBeEqualWhenIdsDiffer() {
+		// Arrange
+		Task left = new Task();
+		left.setTaskId(1L);
+		Task right = new Task();
+		right.setTaskId(2L);
+
+		// Act & Assert
+		assertThat(left).isNotEqualTo(right);
+		assertThat(left.hashCode()).isNotEqualTo(right.hashCode());
+	}
+
+	@Test
+	void shouldNotBeEqualToDifferentType() {
+		// Arrange
+		Task task = new Task();
+
+		// Act & Assert
+		assertThat(task.equals("not-a-task")).isFalse();
+	}
 }
