@@ -3063,7 +3063,7 @@ Each service was tested in isolation by mocking its repository with Mockito. Bot
 | `SemesterServiceTest` | Full CRUD; lookup by name; active semester by current date (`LocalDate.now()`); `null` return when no result exists                                                                                                                                     |
 | `CommentServiceTest`  | Full CRUD; listing by task; `null` return when updating a non-existent comment; `NoSuchElementException` thrown when looking up a non-existent ID                                                                                                       |
 
-#### JSF controller layer — `unit/controller/` (93 tests)
+#### JSF controller layer — `unit/controller/` (105 tests)
 
 JSF controllers present the highest testing complexity due to their dependency on `FacesContext` and `PrimeFaces` — static platform APIs. This challenge was solved by combining Mockito's `MockedStatic` with the `PrimeFacesWrapper` already introduced during the refactoring.
 
@@ -3080,9 +3080,9 @@ JSF controllers present the highest testing complexity due to their dependency o
 | ------------------------- | ----------------- | ---------------------------------------------------- |
 | Model (entities)          | 28                | Construction, immutability, Lombok contracts         |
 | Services                  | 54                | Happy paths + error cases + repository delegation    |
-| JSF Controllers           | 93                | UI flows, validations, redirects, account states     |
+| JSF Controllers           | 105               | UI flows, validations, redirects, account states     |
 | Integration (scaffolding) | 4 classes ready   | Infrastructure configured with H2 + `@Transactional` |
-| **Total `@Test` methods** | **175**           |                                                      |
+| **Total `@Test` methods** | **187**           |   
 
 > The integration classes (`*RepositoryIT`) have the full infrastructure in place and are ready to receive `@Test` methods in future iterations, once the corresponding SQL test-data scripts are defined.
 
