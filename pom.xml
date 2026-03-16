@@ -31,6 +31,11 @@
         <jacoco.version>0.8.11</jacoco.version>
         <sonar-maven-plugin.version>3.11.0.3922</sonar-maven-plugin.version>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.organization>csdt-eci</sonar.organization>
+        <sonar.projectKey>CSDT-ECI_lab-to-do-refactoring</sonar.projectKey>
+        <sonar.coverage.jacoco.xmlReportPaths>
+            ${project.reporting.outputDirectory}/jacoco/jacoco.xml
+        </sonar.coverage.jacoco.xmlReportPaths>
         <jacoco.line.minimum>0.85</jacoco.line.minimum>
     </properties>
 
