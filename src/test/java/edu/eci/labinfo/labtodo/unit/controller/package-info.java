@@ -1,2 +1,2 @@
-/** Unit tests for JSF controller classes (AdminController, LoginController, SemesterController, TaskController). */
+/** Unit tests for JSF controller classes **/
 package edu.eci.labinfo.labtodo.unit.controller;
