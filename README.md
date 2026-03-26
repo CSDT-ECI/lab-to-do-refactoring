@@ -39,6 +39,8 @@
 - [License](#-license)
 - [Additional Resources](#-additional-resources)
 
+- [CI / CI-CD](#-ci--ci-cd)
+
 ---
 
 ## 🌟 **Overview**
@@ -1640,6 +1642,31 @@ private void notifyUserOfSuccess(TaskDTO saved) {
     uiNotificationService.showSuccess(message);
 }
 ```
+
+---
+
+## 🛠️ CI / CI-CD
+
+El repositorio incluye un pipeline de CI/CD definido en `.github/workflows/ci-cd.yml` que realiza:
+
+- Compilación (fase `compile`) y cache de dependencias Maven.
+- Tests unitarios y generación de cobertura con JaCoCo; se publica un resumen en el Step Summary.
+- Análisis en SonarCloud con espera del Quality Gate (`sonar.qualitygate.wait=true`).
+- Escaneo de dependencias con OWASP Dependency-Check (genera `owasp-report`).
+- Job de empaquetado y subida del JAR (`labtodo-jar`).
+
+Para más detalles y reproducción local, ver: [assets/docs/ci-cd.md](assets/docs/ci-cd.md)
+
+Secrets necesarios en el repo (Settings → Secrets): `SONAR_TOKEN`, `SONAR_PROJECT_KEY`, `SONAR_ORGANIZATION`, `GITHUB_TOKEN` (automático).
+
+Triggers:
+
+- Push a `main`, `develop` y a ramas `feature/**`.
+- Pull requests a `main`/`develop`.
+- `workflow_dispatch` para ejecución manual.
+
+Ejecutar manualmente desde la UI: Actions → seleccionar `CI/CD Pipeline — LabToDo` → Run workflow → elegir rama y `Run workflow`.
+
 
 ---
 
