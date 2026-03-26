@@ -7,6 +7,7 @@ on:
     branches: [ main, develop ]
   workflow_dispatch: {}
 
+
 # Cancela runs anteriores del mismo PR para ahorrar minutos
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -15,7 +16,6 @@ concurrency:
 env:
   JAVA_VERSION: '17'
   JAVA_DISTRIBUTION: 'temurin'
-
 
 # ─────────────────────────────────────────────
 # JOB 1 · BUILD
@@ -201,72 +201,7 @@ jobs:
           echo "| High | $HIGH |" >> $GITHUB_STEP_SUMMARY
 
 # ─────────────────────────────────────────────
-# JOB 5 · AI PR REVIEW (step adicional ★)
-# Usa la API de Claude para analizar el diff y
-# dejar un comentario automático en el PR
-# ─────────────────────────────────────────────
-  ai-review:
-    name: 🤖 AI PR Review (Claude)
-    runs-on: ubuntu-latest
-    needs: [ test, sonar, security ]
-    # Solo corre en Pull Requests, no en push directo
-    if: github.event_name == 'pull_request'
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Get PR diff
-        id: diff
-        run: |
-          # Obtiene el diff del PR (máx. 8 000 chars para no exceder contexto)
-          DIFF=$(git diff origin/${{ github.base_ref }}...HEAD -- '*.java' | head -c 8000)
-          echo "diff<<EOF" >> $GITHUB_OUTPUT
-          echo "$DIFF"    >> $GITHUB_OUTPUT
-          echo "EOF"      >> $GITHUB_OUTPUT
-
-      - name: Ask Claude to review the diff
-        id: claude
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: |
-          RESPONSE=$(curl -s https://api.anthropic.com/v1/messages \
-            -H "x-api-key: $ANTHROPIC_API_KEY" \
-            -H "anthropic-version: 2023-06-01" \
-            -H "content-type: application/json" \
-            -d '{
-              "model": "claude-opus-4-5",
-              "max_tokens": 1024,
-              "messages": [{
-                "role": "user",
-                "content": "Eres un code reviewer experto en Java y Spring Boot. Analiza el siguiente diff de un PR y proporciona:\n1. Resumen de cambios (2-3 oraciones)\n2. Posibles bugs o problemas de calidad\n3. Sugerencias de mejora\n4. Puntuación general (1-10)\n\nResponde en español y de forma concisa.\n\nDiff:\n${{ steps.diff.outputs.diff }}"
-              }]
-            }')
-          # Extrae solo el texto de la respuesta
-          REVIEW=$(echo "$RESPONSE" | python3 -c "
-          import sys, json
-          data = json.load(sys.stdin)
-          print(data['content'][0]['text'])
-          ")
-          echo "review<<EOF" >> $GITHUB_OUTPUT
-          echo "$REVIEW"    >> $GITHUB_OUTPUT
-          echo "EOF"        >> $GITHUB_OUTPUT
-
-      - name: Post review comment on PR
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const review = `## 🤖 AI Code Review (Claude)\n\n${{ steps.claude.outputs.review }}\n\n---\n*Generado automáticamente — no reemplaza revisión humana.*`;
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: review
-            });
-
-# ─────────────────────────────────────────────
-# JOB 6 · DEPLOY
+# JOB 5 · DEPLOY
 # ─────────────────────────────────────────────
   deploy:
     name: 🚀 Deploy
@@ -316,58 +251,3 @@ jobs:
           echo "| SHA | \`${{ github.sha }}\` |" >> $GITHUB_STEP_SUMMARY
           echo "| Branch | \`${{ github.ref_name }}\` |" >> $GITHUB_STEP_SUMMARY
           echo "| Timestamp | $(date -u '+%Y-%m-%dT%H:%M:%SZ') |" >> $GITHUB_STEP_SUMMARY
-
-# ─────────────────────────────────────────────
-# JOB 7 · NOTIFICACIÓN SLACK (ChatOps)
-# Corre siempre al final, éxito o fallo
-# ─────────────────────────────────────────────
-  notify:
-    name: 📣 Notify Slack
-    runs-on: ubuntu-latest
-    needs: [ deploy, ai-review ]
-    if: always()
-
-    steps:
-      - name: Determine pipeline status
-        id: status
-        run: |
-          if [[ "${{ needs.deploy.result }}" == "success" ]]; then
-            echo "emoji=✅" >> $GITHUB_OUTPUT
-            echo "color=#36a64f" >> $GITHUB_OUTPUT
-            echo "text=Pipeline completado con éxito" >> $GITHUB_OUTPUT
-          else
-            echo "emoji=❌" >> $GITHUB_OUTPUT
-            echo "color=#cc0000" >> $GITHUB_OUTPUT
-            echo "text=Pipeline falló — revisar logs" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Send Slack notification
-        uses: slackapi/slack-github-action@v1.26.0
-        with:
-          payload: |
-            {
-              "attachments": [{
-                "color": "${{ steps.status.outputs.color }}",
-                "blocks": [
-                  {
-                    "type": "section",
-                    "text": {
-                      "type": "mrkdwn",
-                      "text": "${{ steps.status.outputs.emoji }} *LabToDo CI/CD* — ${{ steps.status.outputs.text }}"
-                    }
-                  },
-                  {
-                    "type": "section",
-                    "fields": [
-                      { "type": "mrkdwn", "text": "*Branch:*\n`${{ github.ref_name }}`" },
-                      { "type": "mrkdwn", "text": "*Commit:*\n`${{ github.sha }}`" },
-                      { "type": "mrkdwn", "text": "*Actor:*\n${{ github.actor }}" },
-                      { "type": "mrkdwn", "text": "*Run:*\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Ver logs>" }
-                    ]
-                  }
-                ]
-              }]
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
