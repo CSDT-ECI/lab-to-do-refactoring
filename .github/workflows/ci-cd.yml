@@ -2,9 +2,10 @@ name: CI/CD Pipeline — LabToDo
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, develop, 'feature/**' ]
   pull_request:
     branches: [ main, develop ]
+  workflow_dispatch: {}
 
 # Cancela runs anteriores del mismo PR para ahorrar minutos
 concurrency:
