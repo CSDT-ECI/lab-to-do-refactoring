@@ -42,7 +42,6 @@ jobs:
           cache: maven
 
       - name: Compile (skip tests)
-        # CORRECCIÓN: faltaba la fase 'compile' en el pipeline original
         run: ./mvnw compile -B -DskipTests
 
       - name: Cache compiled classes for downstream jobs
@@ -204,7 +203,7 @@ jobs:
           echo "| High | $HIGH |" >> $GITHUB_STEP_SUMMARY
 
   # ─────────────────────────────────────────────
-  # JOB 5 · SAST: Semgrep (informativo)
+  # JOB 5 · SAST: Semgrep (análisis detallado)
   # ─────────────────────────────────────────────
   semgrep:
     name: 🧭 SAST Scan (Semgrep)
@@ -214,11 +213,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run Semgrep (informative)
+      - name: Run Semgrep analysis
         uses: returntocorp/semgrep-action@v1
         continue-on-error: true
         with:
-          config: p/java
+          config: >-
+            p/security-audit
+            p/owasp-top-ten
+            p/java
           generateSarif: true
 
       - name: Set up Python for Semgrep fallback
@@ -232,7 +234,7 @@ jobs:
         continue-on-error: true
         run: |
           python -m pip install --upgrade pip semgrep
-          semgrep --config p/java --sarif --output semgrep.sarif .
+          semgrep --config p/security-audit --config p/owasp-top-ten --config p/java --sarif --output semgrep.sarif .
 
       - name: Upload Semgrep SARIF to Code Scanning
         if: always() && hashFiles('semgrep.sarif') != ''
@@ -248,11 +250,76 @@ jobs:
           path: semgrep.sarif
           retention-days: 7
 
-      - name: Semgrep summary
-        if: always()
+      - name: Parse and summarize Semgrep results
+        if: always() && hashFiles('semgrep.sarif') != ''
         run: |
-          echo "## 🧭 Semgrep (SAST)" >> $GITHUB_STEP_SUMMARY
-          echo "- Resultado informativo; ver Code Scanning o el artifact semgrep-sarif." >> $GITHUB_STEP_SUMMARY
+          python3 << 'EOF'
+          import json
+          import os
+
+          try:
+              with open('semgrep.sarif', 'r') as f:
+                  data = json.load(f)
+              
+              results = data.get('runs', [{}])[0].get('results', [])
+              total = len(results)
+              
+              # Contar por severidad (level)
+              error_count = len([r for r in results if r.get('level') == 'error'])
+              warning_count = len([r for r in results if r.get('level') == 'warning'])
+              note_count = len([r for r in results if r.get('level') == 'note'])
+              
+              # Agrupar por rule y severidad
+              issues_by_rule = {}
+              for r in results:
+                  rule_id = r.get('ruleId', 'unknown')
+                  level = r.get('level', 'note')
+                  if rule_id not in issues_by_rule:
+                      issues_by_rule[rule_id] = {'error': 0, 'warning': 0, 'note': 0}
+                  issues_by_rule[rule_id][level] += 1
+              
+              # Escribir al GitHub Step Summary
+              summary_file = os.environ.get('GITHUB_STEP_SUMMARY', '')
+              with open(summary_file, 'a') as f:
+                  f.write('\n## 🧭 SAST Analysis (Semgrep)\n\n')
+                  f.write('### Summary Statistics\n')
+                  f.write('| Severity | Count |\n')
+                  f.write('|----------|-------|\n')
+                  f.write(f'| **Total** | **{total}** |\n')
+                  f.write(f'| 🔴 Error | {error_count} |\n')
+                  f.write(f'| 🟡 Warning | {warning_count} |\n')
+                  f.write(f'| ℹ️ Note | {note_count} |\n')
+                  
+                  if total == 0:
+                      f.write('\n✅ **No security issues detected!**\n')
+                  else:
+                      f.write('\n### Issues by Rule\n')
+                      # Ordenar por cantidad total de issues
+                      sorted_rules = sorted(
+                          issues_by_rule.items(),
+                          key=lambda x: sum(x[1].values()),
+                          reverse=True
+                      )
+                      
+                      for rule_id, counts in sorted_rules:
+                          rule_short = rule_id.split('.')[-1] if '.' in rule_id else rule_id
+                          total_rule = sum(counts.values())
+                          f.write(f'\n**`{rule_short}`** - {total_rule} issue(s)\n')
+                          if counts['error'] > 0:
+                              f.write(f'  - 🔴 Error: {counts["error"]}\n')
+                          if counts['warning'] > 0:
+                              f.write(f'  - 🟡 Warning: {counts["warning"]}\n')
+                          if counts['note'] > 0:
+                              f.write(f'  - ℹ️ Note: {counts["note"]}\n')
+                  
+                  f.write('\n---\n')
+                  f.write('📄 **Full SARIF Report**: Download from Artifacts → `semgrep-sarif`\n')
+
+          except Exception as e:
+              print(f"Warning: Could not parse SARIF: {e}")
+              # No fallar si no se puede parsear, solo informar
+              exit(0)
+          EOF
 
   # ─────────────────────────────────────────────
   # JOB 6 · DEPLOY
