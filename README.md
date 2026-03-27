@@ -66,33 +66,33 @@ The **LabToDo** application was developed by computer science lab monitors to ma
 
 ### ✨ **Core Features**
 
-- 🔐 **User authentication** with role-based access control (*Administrator*, *Monitor*, *Student*)
-- 📝 **Task management** with status tracking (*Pending*, *In Progress*, *Review*, *Finished*)
+- 🔐 **User authentication** with role-based access control (_Administrator_, _Monitor_, _Student_)
+- 📝 **Task management** with status tracking (_Pending_, _In Progress_, _Review_, _Finished_)
 - 💬 **Comment system** for task collaboration
 - 📅 **Semester/period management** with date ranges
 - 👥 **Multi-user task assignment** and tracking
-- 📊 **Task categorization** by type (*Laboratory*, *User*, *Administrator*)
+- 📊 **Task categorization** by type (_Laboratory_, _User_, _Administrator_)
 
 ### 🛠️ **Original Technology Stack**
 
-| Layer | Technology | Version |
-|-------|-----------|---------|
-| **Backend Framework** | Spring Boot | 3.2.0 |
-| **View Layer** | JavaServer Faces (JSF) | 3.0 |
-| **UI Components** | PrimeFaces | 13.0.3 |
-| **JSF-Spring Integration** | JoinFaces | 5.2.0 |
-| **Persistence** | Spring Data JPA + Hibernate | 3.2.0 |
-| **Database** | MySQL | 8.2.0 |
-| **Security** | Spring Security Crypto | 6.2.0 |
-| **Build Tool** | Apache Maven | 3.9.5 |
-| **Java Version** | OpenJDK | 17.0.9 |
+| Layer                      | Technology                  | Version |
+| -------------------------- | --------------------------- | ------- |
+| **Backend Framework**      | Spring Boot                 | 3.2.0   |
+| **View Layer**             | JavaServer Faces (JSF)      | 3.0     |
+| **UI Components**          | PrimeFaces                  | 13.0.3  |
+| **JSF-Spring Integration** | JoinFaces                   | 5.2.0   |
+| **Persistence**            | Spring Data JPA + Hibernate | 3.2.0   |
+| **Database**               | MySQL                       | 8.2.0   |
+| **Security**               | Spring Security Crypto      | 6.2.0   |
+| **Build Tool**             | Apache Maven                | 3.9.5   |
+| **Java Version**           | OpenJDK                     | 17.0.9  |
 
 ### 🏗️ **Original Architecture Issues**
 
 The original project suffered from several architectural anti-patterns:
 
-1. **Embedded Frontend**: *JSF/PrimeFaces views embedded in `/resources/META-INF/resources/`*
-2. **Tight Coupling**: Controllers directly dependent on *PrimeFaces* API
+1. **Embedded Frontend**: _JSF/PrimeFaces views embedded in `/resources/META-INF/resources/`_
+2. **Tight Coupling**: Controllers directly dependent on _PrimeFaces_ API
 3. **Lack of Separation**: Business logic mixed with presentation concerns
 4. **Monolithic Structure**: No clear module boundaries or layering
 
@@ -102,14 +102,14 @@ The original project suffered from several architectural anti-patterns:
 
 ### 📊 **Quantitative Targets**
 
-| Metric | Before | Target | Status |
-|--------|--------|--------|--------|
-| **Cyclomatic Complexity** (avg) | 12.4 | < 5 | 🔄 In Progress |
-| **Code Duplication** | 23% | < 5% | 🔄 In Progress |
-| **Test Coverage** | 0% | > 80% | 📅 Planned |
-| **SOLID Violations** | 47 | 0 | 🔄 In Progress |
-| **Code Smells** | 89 | < 10 | 🔄 In Progress |
-| **Magic Numbers/Strings** | 156 | 0 | 🔄 In Progress |
+| Metric                          | Before | Target | Status         |
+| ------------------------------- | ------ | ------ | -------------- |
+| **Cyclomatic Complexity** (avg) | 12.4   | < 5    | 🔄 In Progress |
+| **Code Duplication**            | 23%    | < 5%   | 🔄 In Progress |
+| **Test Coverage**               | 0%     | > 80%  | 📅 Planned     |
+| **SOLID Violations**            | 47     | 0      | 🔄 In Progress |
+| **Code Smells**                 | 89     | < 10   | 🔄 In Progress |
+| **Magic Numbers/Strings**       | 156    | 0      | 🔄 In Progress |
 
 ### 🎨 **Qualitative Improvements**
 
@@ -136,13 +136,13 @@ Based on comprehensive code review, the project accumulated significant technica
    - **Issue**: Direct `.get()` calls without `isPresent()` validation
    - **Risk**: `NoSuchElementException` crashes in production
    - **Occurrences**: 8+ locations
-   
+
    ```java
    // ❌ BEFORE (line 30, TaskService.java)
    public Task getTask(Long taskId) {
        return taskRepository.findById(taskId).get(); // Potential crash!
    }
-   
+
    // ✅ AFTER
    public Task getTask(Long taskId) {
        return taskRepository.findById(taskId)
@@ -154,7 +154,7 @@ Based on comprehensive code review, the project accumulated significant technica
    - **Location**: `AdminController.java` (lines 58-62)
    - **Issue**: Empty catch blocks that hide failures
    - **Impact**: Debugging nightmares, data corruption risks
-   
+
    ```java
    // ❌ BEFORE
    try {
@@ -175,6 +175,7 @@ Based on comprehensive code review, the project accumulated significant technica
    - **Impact**: Impossible to test, modify, or maintain
 
 4. **Magic Strings Proliferation**
+
    ```java
    // Found 156+ instances across the codebase
    "Administradores", "inactivo", "sin verificar", "Laboratorio"
@@ -197,8 +198,8 @@ Based on comprehensive code review, the project accumulated significant technica
 6. **String Concatenation in Loops**
    - **Performance**: O(n²) complexity due to string immutability
    - **Locations**: `Task.getAllUsers()`, comment rendering
-   
 7. **Inconsistent Dependency Injection**
+
    ```java
    // CommentService.java - non-final field
    private CommentRepository commentRepository; // Should be final
@@ -214,13 +215,13 @@ Based on comprehensive code review, the project accumulated significant technica
 
 #### 🔧 **Technical Debt Categories**
 
-| Category | Count | Examples |
-|----------|-------|----------|
-| **Code Smells** | 89 | Long methods, data clumps, feature envy |
-| **SOLID Violations** | 47 | SRP, DIP, ISP violations |
-| **DRY Violations** | 34 | Duplicate validation logic, state checks |
-| **Naming Issues** | 23 | Misleading names, inconsistent conventions |
-| **Missing Validations** | 18 | No `@NotNull`, `@Size` on entities |
+| Category                | Count | Examples                                   |
+| ----------------------- | ----- | ------------------------------------------ |
+| **Code Smells**         | 89    | Long methods, data clumps, feature envy    |
+| **SOLID Violations**    | 47    | SRP, DIP, ISP violations                   |
+| **DRY Violations**      | 34    | Duplicate validation logic, state checks   |
+| **Naming Issues**       | 23    | Misleading names, inconsistent conventions |
+| **Missing Validations** | 18    | No `@NotNull`, `@Size` on entities         |
 
 ---
 
@@ -231,18 +232,20 @@ Based on comprehensive code review, the project accumulated significant technica
 1. **Embedded Frontend Location**
    - **Path**: `/src/main/resources/META-INF/resources/`
    - **Issue**: Frontend code buried in backend resource directory
-   - **Impact**: 
+   - **Impact**:
      - No modern frontend tooling (Webpack, Vite)
      - Difficult CI/CD setup
      - Cannot use modern frameworks (React, Vue, Angular)
      - Testing frontend in isolation impossible
 
 2. **Tight Coupling to PrimeFaces**
+
    ```java
    // Controllers directly call PrimeFaces API
    primeFacesWrapper.current().ajax().update("form:messages");
    primeFacesWrapper.current().executeScript("PF('dialog').hide()");
    ```
+
    - **Issue**: Business logic dependent on UI framework
    - **Impact**: Cannot swap UI library without rewriting controllers
 
@@ -258,13 +261,13 @@ Based on comprehensive code review, the project accumulated significant technica
 
 #### 📊 **Frontend Metrics**
 
-| Metric | Value | Target |
-|--------|-------|--------|
-| **XHTML Files** | 5 | Convert to REST API |
-| **CSS Files** | 6 | Consolidate to 1-2 |
-| **Inline Styles** | 47 | 0 |
-| **JavaScript Files** | 1 | Migrate to TypeScript |
-| **Accessibility Score** | Unknown | > 90/100 |
+| Metric                  | Value   | Target                |
+| ----------------------- | ------- | --------------------- |
+| **XHTML Files**         | 5       | Convert to REST API   |
+| **CSS Files**           | 6       | Consolidate to 1-2    |
+| **Inline Styles**       | 47      | 0                     |
+| **JavaScript Files**    | 1       | Migrate to TypeScript |
+| **Accessibility Score** | Unknown | > 90/100              |
 
 ---
 
@@ -277,6 +280,7 @@ Based on comprehensive code review, the project accumulated significant technica
 **Complexity**: Cyclomatic complexity of **17**
 
 **Issues**:
+
 - Mixes validation, authorization, data transformation, and persistence
 - Contains nested conditionals 4 levels deep
 - Handles 5 different responsibilities
@@ -288,7 +292,7 @@ Based on comprehensive code review, the project accumulated significant technica
 public void saveTask() {
     String message = "";
     List<User> selectedUsersToTask = new ArrayList<>();
-    
+
     // 15 lines of authorization logic
     if (this.currentTask != null && "Administradores".equals(this.currentTask.getTypeTask())) {
         String currentUserName = loginController.getUserName();
@@ -299,7 +303,7 @@ public void saveTask() {
             return;
         }
     }
-    
+
     // 20 lines of user selection logic
     if ("Administradores".equals(this.currentTask.getTypeTask())) {
         selectedUsersToTask = userService.getActiveUsersByRole(Role.ADMINISTRADOR.getValue());
@@ -311,14 +315,14 @@ public void saveTask() {
             }
         }
     }
-    
+
     // 30 lines of save/update logic
     if (this.currentTask.getTaskId() == null) {
         // Create logic
     } else {
         // Update logic
     }
-    
+
     // 17 lines of UI feedback
     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(...));
     primeFacesWrapper.current().ajax().update("form:growl");
@@ -334,18 +338,21 @@ public void saveTask() {
 **Location**: `TaskController.java`
 
 **Metrics**:
+
 - **527 lines of code**
 - **15 public methods**
 - **7 service dependencies**
 - **Responsibility scope**: UI logic + business logic + data transformation + authorization
 
 **Violations**:
+
 - **Single Responsibility Principle**
 - **Interface Segregation Principle**
 
 **Refactoring Strategy**: **Extract Class** + **Facade Pattern**
 
 **Proposed Structure**:
+
 ```
 TaskController (UI only, 100 lines)
 ├── TaskOperationService (Business logic)
@@ -385,13 +392,13 @@ public enum Status {
     IN_PROGRESS("En progreso"),
     REVIEW("En revisión"),
     FINISHED("Terminado");
-    
+
     private final String displayValue;
-    
+
     Status(String displayValue) {
         this.displayValue = displayValue;
     }
-    
+
     public Status next() {
         return values()[(ordinal() + 1) % values().length];
     }
@@ -409,6 +416,7 @@ task.setStatus(Status.PENDING);
 **Issue**: Changing task state requires modifying **6 different files**
 
 **Files affected**:
+
 - `TaskController.completedMessage()` (lines 189-201)
 - `AdminController.modifyStateTaks()` (lines 43-69)
 - `Status.java` (enum values)
@@ -421,9 +429,9 @@ task.setStatus(Status.PENDING);
 ```java
 // ✅ PROPOSED - Centralized state transitions
 public class TaskStateTransitionService {
-    
+
     private final Map<Status, TaskTransitionStrategy> strategies;
-    
+
     public Task transitionTo(Task task, Status newStatus) {
         TaskTransitionStrategy strategy = strategies.get(newStatus);
         return strategy.execute(task);
@@ -476,11 +484,11 @@ public class TaskQueryCriteria {
     private Status status;
     private Semester semester;
     private User user;
-    
+
     public static TaskQueryCriteria.Builder builder() {
         return new Builder();
     }
-    
+
     // Builder pattern implementation
 }
 
@@ -501,11 +509,13 @@ List<Task> tasks = taskRepository.findByCriteria(
 **Location**: `UserService.java`
 
 **Issue**: Class changes for **3 different reasons**:
+
 1. Authentication logic changes
 2. User management CRUD changes
 3. Role/permission logic changes
 
 **Metrics**:
+
 - **218 lines**
 - **12 public methods**
 - **3 distinct responsibilities**
@@ -568,7 +578,7 @@ public class PrimeFacesWrapper {
     public PrimeFaces current() {
         return PrimeFaces.current();
     }
-    
+
     public PrimeRequestContext gRequestContext() {
         return PrimeRequestContext.getCurrentInstance();
     }
@@ -662,11 +672,11 @@ private void notifySuccess(Task task) { /* 5 lines */ }
 
 **Metrics Improvement**:
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| **Lines per method** | 82 | 8-15 | ↓ 81% |
-| **Cyclomatic Complexity** | 17 | 2-4 | ↓ 82% |
-| **Cognitive Complexity** | 34 | 5-8 | ↓ 76% |
+| Metric                    | Before | After | Improvement |
+| ------------------------- | ------ | ----- | ----------- |
+| **Lines per method**      | 82     | 8-15  | ↓ 81%       |
+| **Cyclomatic Complexity** | 17     | 2-4   | ↓ 82%       |
+| **Cognitive Complexity**  | 34     | 5-8   | ↓ 76%       |
 
 ---
 
@@ -675,6 +685,7 @@ private void notifySuccess(Task task) { /* 5 lines */ }
 **Applied to**: Task type assignment logic
 
 **Before**:
+
 ```java
 if ("Administradores".equals(this.currentTask.getTypeTask())) {
     selectedUsersToTask = userService.getActiveUsersByRole(Role.ADMINISTRADOR.getValue());
@@ -691,6 +702,7 @@ if ("Administradores".equals(this.currentTask.getTypeTask())) {
 ```
 
 **After** (Strategy Pattern):
+
 ```java
 public interface UserAssignmentStrategy {
     List<User> assignUsers(Task task, List<String> selectedUserNames);
@@ -724,7 +736,7 @@ public class StandardTaskAssignmentStrategy implements UserAssignmentStrategy {
 // Context
 public class TaskAssignmentContext {
     private final Map<TypeTask, UserAssignmentStrategy> strategies;
-    
+
     public List<User> assignUsers(Task task, List<String> selectedNames) {
         UserAssignmentStrategy strategy = strategies.get(task.getTypeTask());
         return strategy.assignUsers(task, selectedNames);
@@ -733,6 +745,7 @@ public class TaskAssignmentContext {
 ```
 
 **Benefits**:
+
 - ✅ **Open/Closed Principle**: Add new task types without modifying existing code
 - ✅ **Single Responsibility**: Each strategy handles one task type
 - ✅ **Testability**: Test each strategy independently
@@ -744,15 +757,17 @@ public class TaskAssignmentContext {
 **Applied to**: Repository query methods
 
 **Before**:
+
 ```java
 List<Task> findByTypeTaskAndStatusAndSemesterPeriodId(
     String typeTask, String status, Long periodId);
-    
+
 List<Task> findByUsersUserIdAndStatusAndSemesterPeriodId(
     Long userId, String status, Long periodId);
 ```
 
 **After**:
+
 ```java
 @Value
 @Builder
@@ -763,11 +778,11 @@ public class TaskSearchCriteria {
     User user;
     LocalDate startDate;
     LocalDate endDate;
-    
+
     public Specification<Task> toSpecification() {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
-            
+
             if (taskType != null) {
                 predicates.add(cb.equal(root.get("typeTask"), taskType));
             }
@@ -775,7 +790,7 @@ public class TaskSearchCriteria {
                 predicates.add(cb.equal(root.get("status"), status));
             }
             // ... more criteria
-            
+
             return cb.and(predicates.toArray(new Predicate[0]));
         };
     }
@@ -796,6 +811,7 @@ List<Task> tasks = taskRepository.findAll(
 ```
 
 **Benefits**:
+
 - ✅ Reduced method proliferation (12 methods → 1 flexible method)
 - ✅ Type-safe query building
 - ✅ Dynamic query composition
@@ -810,27 +826,27 @@ List<Task> tasks = taskRepository.findAll(
 
 ```java
 public final class TaskConstants {
-    
+
     private TaskConstants() {
         throw new UnsupportedOperationException("Utility class");
     }
-    
+
     // Task Types
     public static final String TASK_TYPE_LABORATORY = "Laboratorio";
     public static final String TASK_TYPE_USER = "Usuario";
     public static final String TASK_TYPE_ADMIN = "Administradores";
-    
+
     // Status Values
     public static final String STATUS_PENDING = "Pendiente";
     public static final String STATUS_IN_PROGRESS = "En progreso";
     public static final String STATUS_REVIEW = "En revisión";
     public static final String STATUS_FINISHED = "Terminado";
-    
+
     // Account Types
     public static final String ACCOUNT_ACTIVE = "activo";
     public static final String ACCOUNT_INACTIVE = "inactivo";
     public static final String ACCOUNT_UNVERIFIED = "sin verificar";
-    
+
     // Roles
     public static final String ROLE_ADMIN = "Administrador";
     public static final String ROLE_MONITOR = "Monitor";
@@ -873,6 +889,7 @@ public Task updateTask(Task task) {
 ```
 
 **Exception Hierarchy**:
+
 ```
 LabToDoException (base)
 ├── TaskNotFoundException
@@ -946,15 +963,16 @@ After:
 ```
 
 **Dependency Injection**:
+
 ```java
 @Component
 @Scope("session")
 public class TaskViewController {
-    
+
     private final TaskOperationFacade taskFacade;
     private final TaskDTOMapper mapper;
     private final UINotificationService notificationService;
-    
+
     @Autowired
     public TaskViewController(
             TaskOperationFacade taskFacade,
@@ -964,7 +982,7 @@ public class TaskViewController {
         this.mapper = mapper;
         this.notificationService = notificationService;
     }
-    
+
     public void saveTask() {
         TaskDTO dto = mapper.toDTO(currentTask);
         TaskDTO saved = taskFacade.save(dto);
@@ -981,6 +999,7 @@ public class TaskViewController {
 **Applied to**: Semester queries that return `null`
 
 **Before**:
+
 ```java
 public Semester getCurrentSemester() {
     Optional<Semester> semester = semesterRepository.findByStartDateAndEndDate(LocalDate.now());
@@ -998,24 +1017,25 @@ if (current != null) {
 ```
 
 **After**:
+
 ```java
 public class NullSemester extends Semester {
-    
+
     private static final NullSemester INSTANCE = new NullSemester();
-    
+
     private NullSemester() {
         super(0L, "No Active Semester", LocalDate.MIN, LocalDate.MAX, Collections.emptyList());
     }
-    
+
     public static NullSemester getInstance() {
         return INSTANCE;
     }
-    
+
     @Override
     public boolean isActive() {
         return false;
     }
-    
+
     @Override
     public boolean isNull() {
         return true;
@@ -1044,6 +1064,7 @@ if (!current.isNull()) {
 #### **Violation Example**: `TaskController`
 
 **Before**: One class with 5 responsibilities
+
 1. HTTP request handling (Controller responsibility)
 2. Business logic (Service responsibility)
 3. Data transformation (Mapper responsibility)
@@ -1057,9 +1078,9 @@ if (!current.isNull()) {
 @RestController
 @RequestMapping("/api/tasks")
 public class TaskRestController {
-    
+
     private final TaskApplicationService taskService;
-    
+
     @PostMapping
     public ResponseEntity<TaskDTO> createTask(@Valid @RequestBody TaskDTO dto) {
         TaskDTO created = taskService.createTask(dto);
@@ -1070,11 +1091,11 @@ public class TaskRestController {
 // 2. Application Service - Business logic orchestration
 @Service
 public class TaskApplicationService {
-    
+
     private final TaskDomainService domainService;
     private final TaskAuthorizationService authService;
     private final TaskMapper mapper;
-    
+
     @Transactional
     public TaskDTO createTask(TaskDTO dto) {
         authService.validateCreatePermission(dto);
@@ -1087,10 +1108,10 @@ public class TaskApplicationService {
 // 3. Domain Service - Core business rules
 @Service
 public class TaskDomainService {
-    
+
     private final TaskRepository repository;
     private final DomainEventPublisher eventPublisher;
-    
+
     public Task createTask(Task task) {
         Task saved = repository.save(task);
         eventPublisher.publish(new TaskCreatedEvent(saved));
@@ -1101,7 +1122,7 @@ public class TaskDomainService {
 // 4. Authorization Service - Security
 @Service
 public class TaskAuthorizationService {
-    
+
     public void validateCreatePermission(TaskDTO dto) {
         if (TypeTask.ADMINISTRATOR.equals(dto.getType()) && !isAdmin()) {
             throw new UnauthorizedException("Only admins can create admin tasks");
@@ -1153,17 +1174,17 @@ public interface TaskStateTransition {
 
 @Component
 public class TransitionToFinishedStrategy implements TaskStateTransition {
-    
+
     @Override
     public Status getTargetState() {
         return Status.FINISHED;
     }
-    
+
     @Override
     public boolean canTransition(Task task, Status currentState) {
         return currentState == Status.REVIEW;
     }
-    
+
     @Override
     public Task execute(Task task) {
         if (TypeTask.LABORATORIO.equals(task.getTypeTask())) {
@@ -1176,9 +1197,9 @@ public class TransitionToFinishedStrategy implements TaskStateTransition {
 
 @Service
 public class TaskStateTransitionService {
-    
+
     private final Map<Status, TaskStateTransition> transitions;
-    
+
     @Autowired
     public TaskStateTransitionService(List<TaskStateTransition> transitionList) {
         this.transitions = transitionList.stream()
@@ -1187,14 +1208,14 @@ public class TaskStateTransitionService {
                 Function.identity()
             ));
     }
-    
+
     public Task transitionTo(Task task, Status newStatus) {
         TaskStateTransition transition = transitions.get(newStatus);
-        
+
         if (!transition.canTransition(task, task.getStatus())) {
             throw new InvalidStateTransitionException(task.getStatus(), newStatus);
         }
-        
+
         return transition.execute(task);
     }
 }
@@ -1217,12 +1238,12 @@ public class TransitionToArchivedStrategy implements TaskStateTransition {
 ```java
 // ❌ LSP Violation
 public class NullSemester extends Semester {
-    
+
     @Override
     public List<Task> getTasks() {
         return null; // Parent expects non-null!
     }
-    
+
     @Override
     public LocalDate getStartDate() {
         throw new UnsupportedOperationException(); // Parent expects valid date!
@@ -1235,28 +1256,28 @@ public class NullSemester extends Semester {
 ```java
 // ✅ LSP Compliant
 public class NullSemester extends Semester {
-    
+
     private static final NullSemester INSTANCE = new NullSemester();
-    
+
     private NullSemester() {
         super(0L, "No Active Semester", LocalDate.MIN, LocalDate.MAX, Collections.emptyList());
     }
-    
+
     @Override
     public List<Task> getTasks() {
         return Collections.emptyList(); // Returns empty, not null
     }
-    
+
     @Override
     public LocalDate getStartDate() {
         return LocalDate.MIN; // Returns valid date, not exception
     }
-    
+
     @Override
     public boolean isActive() {
         return false; // Additional discriminator method
     }
-    
+
     // Clients can use NullSemester anywhere Semester is expected
 }
 
@@ -1264,7 +1285,7 @@ public class NullSemester extends Semester {
 public void processSemester(Semester semester) {
     List<Task> tasks = semester.getTasks(); // Always safe
     LocalDate start = semester.getStartDate(); // Always safe
-    
+
     if (semester.isActive()) {
         // Process active semester
     }
@@ -1272,6 +1293,7 @@ public void processSemester(Semester semester) {
 ```
 
 **Key Points**:
+
 - Subclass doesn't throw unexpected exceptions
 - Returns types match parent's contract (empty list vs null)
 - Behavior is substitutable
@@ -1287,21 +1309,21 @@ public void processSemester(Semester semester) {
 ```java
 // ❌ ISP Violation - Clients forced to depend on methods they don't use
 public interface TaskRepository extends JpaRepository<Task, Long> {
-    
+
     // User task queries (used only by UserTaskService)
     List<Task> findByUsersUserId(Long userId);
     List<Task> findByUsersUserIdAndStatusAndSemesterPeriodId(Long userId, String status, Long periodId);
-    
+
     // Admin queries (used only by AdminService)
     List<Task> findByTypeTaskAndStatusNot(String typeTask, String excludedStatus);
-    
+
     // Lab task queries (used only by LabTaskService)
     List<Task> findByTypeTaskAndStatusAndSemesterPeriodId(String typeTask, String status, Long periodId);
-    
+
     // Statistics queries (used only by ReportService)
     @Query("SELECT DISTINCT c.creatorUser FROM Task t JOIN t.comments c WHERE t.taskId = :taskId")
     List<User> findUsersWhoCommented(Long taskId);
-    
+
     // ... 15 more specialized methods
 }
 
@@ -1309,7 +1331,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 @Service
 public class UserTaskService {
     private final TaskRepository repository; // Forced to depend on entire interface
-    
+
     public List<Task> getUserTasks(Long userId) {
         return repository.findByUsersUserId(userId); // Only uses 2 of 20 methods
     }
@@ -1352,21 +1374,21 @@ public interface TaskStatisticsQueries {
 
 // Concrete implementation (internal)
 @Repository
-class TaskRepositoryImpl implements 
+class TaskRepositoryImpl implements
     TaskRepository,
     UserTaskQueries,
     AdminTaskQueries,
     LabTaskQueries,
     TaskStatisticsQueries {
-    
+
     @PersistenceContext
     private EntityManager em;
-    
+
     @Override
     public List<Task> findTasksByUser(Long userId) {
         // Implementation
     }
-    
+
     // ... other implementations
 }
 
@@ -1375,7 +1397,7 @@ class TaskRepositoryImpl implements
 @Service
 public class UserTaskService {
     private final UserTaskQueries queries; // Only user-related methods!
-    
+
     public List<Task> getUserTasks(Long userId) {
         return queries.findTasksByUser(userId);
     }
@@ -1384,7 +1406,7 @@ public class UserTaskService {
 @Service
 public class AdminService {
     private final AdminTaskQueries queries; // Only admin-related methods!
-    
+
     public List<Task> getPendingApprovals() {
         return queries.findTasksRequiringApproval();
     }
@@ -1392,6 +1414,7 @@ public class AdminService {
 ```
 
 **Benefits**:
+
 - ✅ Services depend only on methods they use
 - ✅ Changes to admin queries don't affect user services
 - ✅ Easier to test (mock smaller interfaces)
@@ -1409,13 +1432,13 @@ public class AdminService {
 // ❌ DIP Violation - Controller depends on concrete PrimeFaces API
 @Component
 public class TaskController {
-    
+
     private final PrimeFacesWrapper primeFaces; // Concrete dependency!
-    
+
     public void saveTask() {
         // Business logic
         Task saved = taskService.save(currentTask);
-        
+
         // Directly coupled to PrimeFaces
         primeFaces.current().ajax().update("form:growl", "form:dt-task");
         primeFaces.current().executeScript("PF('dialog').hide()");
@@ -1441,13 +1464,13 @@ public interface UINotificationService {
 // High-level controller depends on abstraction
 @Component
 public class TaskController {
-    
+
     private final UINotificationService notificationService; // Abstraction!
     private final TaskApplicationService taskService;
-    
+
     public void saveTask() {
         Task saved = taskService.save(currentTask);
-        
+
         // Depends on abstraction, not concrete implementation
         notificationService.notifySuccess("Task saved successfully");
         notificationService.refreshComponents("taskList", "taskDialog");
@@ -1457,27 +1480,27 @@ public class TaskController {
 // Low-level implementation (in infrastructure layer)
 @Service
 public class PrimeFacesNotificationService implements UINotificationService {
-    
+
     private final PrimeFacesWrapper primeFaces;
-    
+
     @Override
     public void notifySuccess(String message) {
         FacesContext.getCurrentInstance().addMessage(null,
             new FacesMessage(FacesMessage.SEVERITY_INFO, message, null));
         primeFaces.current().ajax().update("form:messages");
     }
-    
+
     @Override
     public void refreshComponents(String... componentIds) {
         String components = String.join(",", componentIds);
         primeFaces.current().ajax().update(components);
     }
-    
+
     @Override
     public void executeClientScript(String script) {
         primeFaces.current().executeScript(script);
     }
-    
+
     @Override
     public void notifyError(String message) {
         FacesContext.getCurrentInstance().addMessage(null,
@@ -1489,12 +1512,12 @@ public class PrimeFacesNotificationService implements UINotificationService {
 // Can easily swap implementations for testing or different UI frameworks
 public class TestUINotificationService implements UINotificationService {
     private final List<String> messages = new ArrayList<>();
-    
+
     @Override
     public void notifySuccess(String message) {
         messages.add("SUCCESS: " + message);
     }
-    
+
     // ... test implementations
 }
 ```
@@ -1510,6 +1533,7 @@ Low-Level Modules (Infrastructure)
 ```
 
 **Benefits**:
+
 - ✅ Can switch UI frameworks without changing controllers
 - ✅ Easy to test (mock the interface)
 - ✅ Business logic independent of UI technology
@@ -1523,13 +1547,13 @@ Low-Level Modules (Infrastructure)
 
 #### **Before → After Examples**
 
-| Category | Before ❌ | After ✅ | Reason |
-|----------|----------|---------|--------|
-| **Method** | `getComentsByTask()` | `findCommentsByTask()` | Typo + follows query convention |
-| **Method** | `deleteTask(Long semesterId)` | `deleteSemester(Long semesterId)` | Misleading name |
-| **Variable** | `selectedUsers` | `selectedUserFullNames` | Clarifies it stores names, not objects |
-| **Method** | `onDatabaseLoaded()` | `loadUserTasksForCurrentSemester()` | Describes what, not when |
-| **Variable** | `newState` | `targetStatus` | More specific term |
+| Category     | Before ❌                     | After ✅                            | Reason                                 |
+| ------------ | ----------------------------- | ----------------------------------- | -------------------------------------- |
+| **Method**   | `getComentsByTask()`          | `findCommentsByTask()`              | Typo + follows query convention        |
+| **Method**   | `deleteTask(Long semesterId)` | `deleteSemester(Long semesterId)`   | Misleading name                        |
+| **Variable** | `selectedUsers`               | `selectedUserFullNames`             | Clarifies it stores names, not objects |
+| **Method**   | `onDatabaseLoaded()`          | `loadUserTasksForCurrentSemester()` | Describes what, not when               |
+| **Variable** | `newState`                    | `targetStatus`                      | More specific term                     |
 
 #### **Revealing Intent**
 
@@ -1572,12 +1596,12 @@ public List<String> findActiveUserFullNames() {
 
 #### **Metrics Targets**
 
-| Metric | Target | Rationale |
-|--------|--------|-----------|
-| **Lines per function** | ≤ 20 | Fits on one screen |
-| **Cyclomatic Complexity** | ≤ 5 | Easy to understand |
-| **Parameters** | ≤ 3 | Cognitive load management |
-| **Levels of abstraction** | 1 per function | Consistent abstraction |
+| Metric                    | Target         | Rationale                 |
+| ------------------------- | -------------- | ------------------------- |
+| **Lines per function**    | ≤ 20           | Fits on one screen        |
+| **Cyclomatic Complexity** | ≤ 5            | Easy to understand        |
+| **Parameters**            | ≤ 3            | Cognitive load management |
+| **Levels of abstraction** | 1 per function | Consistent abstraction    |
 
 #### **Extract Till You Drop**
 
@@ -1586,22 +1610,22 @@ public List<String> findActiveUserFullNames() {
 public void saveTask() {
     String message = "";
     List<User> selectedUsersToTask = new ArrayList<>();
-    
+
     // Authorization (15 lines)
     if (this.currentTask != null && "Administradores".equals(...)) {
         // ...
     }
-    
+
     // User selection (20 lines)
     if ("Administradores".equals(...)) {
         // ...
     }
-    
+
     // Persistence (30 lines)
     if (this.currentTask.getTaskId() == null) {
         // ...
     }
-    
+
     // UI update (17 lines)
     FacesContext.getCurrentInstance()...
 }
@@ -1636,8 +1660,8 @@ private List<UserDTO> resolveAssignedUsers() {
 }
 
 private void notifyUserOfSuccess(TaskDTO saved) {
-    String message = saved.getId() == null 
-        ? "Task created successfully" 
+    String message = saved.getId() == null
+        ? "Task created successfully"
         : "Task updated successfully";
     uiNotificationService.showSuccess(message);
 }
@@ -1653,6 +1677,7 @@ El repositorio incluye un pipeline de CI/CD definido en `.github/workflows/ci-cd
 - Tests unitarios y generación de cobertura con JaCoCo; se publica un resumen en el Step Summary.
 - Análisis en SonarCloud con espera del Quality Gate (`sonar.qualitygate.wait=true`).
 - Escaneo de dependencias con OWASP Dependency-Check (genera `owasp-report`).
+- Análisis SAST con Semgrep (informativo) y reporte SARIF.
 - Job de empaquetado y subida del JAR (`labtodo-jar`).
 
 Para más detalles y reproducción local, ver: [assets/docs/ci-cd.md](assets/docs/ci-cd.md)
@@ -1666,7 +1691,6 @@ Triggers:
 - `workflow_dispatch` para ejecución manual.
 
 Ejecutar manualmente desde la UI: Actions → seleccionar `CI/CD Pipeline — LabToDo` → Run workflow → elegir rama y `Run workflow`.
-
 
 ---
 
@@ -1714,7 +1738,7 @@ public Task transitionToFinished(Task task) {
         List<User> contributors = findCommentContributors(task);
         task.setParticipants(contributors);
     }
-    
+
     task.setStatus(Status.FINISHED);
     return task;
 }
@@ -1724,7 +1748,7 @@ public List<User> findActiveUsers() {
     // NOTE: This query intentionally excludes guest accounts
     // even if they have 'active' status, per business requirement BR-2024-15
     return userRepository.findByAccountTypeAndRoleNot(
-        AccountType.ACTIVE, 
+        AccountType.ACTIVE,
         Role.GUEST
     );
 }
@@ -1823,14 +1847,14 @@ if (task.getTypeTask().equals("Laboratorio")) {
 
 @Service
 public class TaskCompletionService {
-    
+
     public Task complete(Task task) {
         validateCanComplete(task);
         enrichWithContributors(task);
         task.setStatus(Status.FINISHED);
         return taskRepository.save(task);
     }
-    
+
     private void enrichWithContributors(Task task) {
         if (TypeTask.LABORATORIO.equals(task.getTypeTask())) {
             List<User> contributors = findUsersWhoCommented(task.getId());
@@ -1870,7 +1894,7 @@ public List<String> getUserNames() {
 private boolean isActiveAccount(User user) {
     String accountType = user.getAccountType();
     if (accountType == null) return true;
-    
+
     return !AccountType.INACTIVO.getValue().equalsIgnoreCase(accountType)
         && !AccountType.SIN_VERIFICAR.getValue().equalsIgnoreCase(accountType);
 }
@@ -1909,9 +1933,9 @@ public List<String> findActiveUserFullNames() {
 // Context
 @Service
 public class TaskUserAssignmentContext {
-    
+
     private final Map<TypeTask, UserAssignmentStrategy> strategies;
-    
+
     @Autowired
     public TaskUserAssignmentContext(List<UserAssignmentStrategy> strategyList) {
         this.strategies = strategyList.stream()
@@ -1920,7 +1944,7 @@ public class TaskUserAssignmentContext {
                 Function.identity()
             ));
     }
-    
+
     public List<User> assignUsers(Task task, List<String> selectedNames) {
         UserAssignmentStrategy strategy = strategies.get(task.getTypeTask());
         return strategy.assignUsers(task, selectedNames);
@@ -1936,17 +1960,17 @@ public interface UserAssignmentStrategy {
 // Concrete strategies
 @Component
 public class AdminTaskAssignmentStrategy implements UserAssignmentStrategy {
-    
+
     @Override
     public TypeTask getSupportedType() {
         return TypeTask.ADMINISTRATOR;
     }
-    
+
     @Override
     public List<User> assignUsers(Task task, List<String> selectedNames) {
         // Auto-assign all active administrators
         return userRepository.findByRoleAndAccountType(
-            Role.ADMINISTRATOR, 
+            Role.ADMINISTRATOR,
             AccountType.ACTIVE
         );
     }
@@ -1954,12 +1978,12 @@ public class AdminTaskAssignmentStrategy implements UserAssignmentStrategy {
 
 @Component
 public class LabTaskAssignmentStrategy implements UserAssignmentStrategy {
-    
+
     @Override
     public TypeTask getSupportedType() {
         return TypeTask.LABORATORY;
     }
-    
+
     @Override
     public List<User> assignUsers(Task task, List<String> selectedNames) {
         // Assign users who commented (for completion tracking)
@@ -1982,9 +2006,9 @@ public class LabTaskAssignmentStrategy implements UserAssignmentStrategy {
 // Factory
 @Component
 public class TaskFactory {
-    
+
     private final Map<TypeTask, TaskInitializer> initializers;
-    
+
     public Task createTask(TypeTask type, TaskCreationDTO dto) {
         Task task = new Task();
         task.setTypeTask(type);
@@ -1992,11 +2016,11 @@ public class TaskFactory {
         task.setDescription(dto.getDescription());
         task.setStatus(Status.PENDING);
         task.setCreationDate(LocalDate.now());
-        
+
         // Type-specific initialization
         TaskInitializer initializer = initializers.get(type);
         initializer.initialize(task, dto);
-        
+
         return task;
     }
 }
@@ -2009,7 +2033,7 @@ public interface TaskInitializer {
 // Implementations
 @Component
 public class AdminTaskInitializer implements TaskInitializer {
-    
+
     @Override
     public void initialize(Task task, TaskCreationDTO dto) {
         task.setTopicTask(TopicTask.ADMINISTRATIVE);
@@ -2020,7 +2044,7 @@ public class AdminTaskInitializer implements TaskInitializer {
 
 @Component
 public class LabTaskInitializer implements TaskInitializer {
-    
+
     @Override
     public void initialize(Task task, TaskCreationDTO dto) {
         task.setTopicTask(dto.getTopic());
@@ -2039,22 +2063,22 @@ public class LabTaskInitializer implements TaskInitializer {
 ```java
 // Specification for dynamic queries
 public class TaskSpecifications {
-    
+
     public static Specification<Task> hasType(TypeTask type) {
-        return (root, query, cb) -> 
+        return (root, query, cb) ->
             type == null ? cb.conjunction() : cb.equal(root.get("typeTask"), type);
     }
-    
+
     public static Specification<Task> hasStatus(Status status) {
-        return (root, query, cb) -> 
+        return (root, query, cb) ->
             status == null ? cb.conjunction() : cb.equal(root.get("status"), status);
     }
-    
+
     public static Specification<Task> belongsToSemester(Semester semester) {
-        return (root, query, cb) -> 
+        return (root, query, cb) ->
             semester == null ? cb.conjunction() : cb.equal(root.get("semester"), semester);
     }
-    
+
     public static Specification<Task> assignedToUser(Long userId) {
         return (root, query, cb) -> {
             if (userId == null) return cb.conjunction();
@@ -2062,7 +2086,7 @@ public class TaskSpecifications {
             return cb.equal(users.get("userId"), userId);
         };
     }
-    
+
     public static Specification<Task> createdBetween(LocalDate start, LocalDate end) {
         return (root, query, cb) -> {
             if (start == null || end == null) return cb.conjunction();
@@ -2092,16 +2116,16 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long taskId;
-    
+
     @ManyToMany
     private List<User> users;
-    
+
     @OneToMany
     private List<Comment> comments;
-    
+
     @ManyToOne
     private Semester semester;
-    
+
     // Internal domain logic
 }
 
@@ -2114,21 +2138,21 @@ public class TaskDTO {
     private String description;
     private TypeTask type;
     private Status status;
-    
+
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate creationDate;
-    
+
     private List<UserSummaryDTO> assignedUsers;
     private SemesterDTO semester;
     private int commentCount;
-    
+
     // Flat structure optimized for API consumers
 }
 
 // Mapper
 @Component
 public class TaskMapper {
-    
+
     public TaskDTO toDTO(Task entity) {
         return TaskDTO.builder()
             .id(entity.getTaskId())
@@ -2142,7 +2166,7 @@ public class TaskMapper {
             .commentCount(entity.getComments().size())
             .build();
     }
-    
+
     public Task toEntity(TaskDTO dto) {
         Task entity = new Task();
         entity.setTaskId(dto.getId());
@@ -2166,12 +2190,12 @@ public class TaskMapper {
 // Event
 public class TaskCompletedEvent extends ApplicationEvent {
     private final Task task;
-    
+
     public TaskCompletedEvent(Object source, Task task) {
         super(source);
         this.task = task;
     }
-    
+
     public Task getTask() {
         return task;
     }
@@ -2180,17 +2204,17 @@ public class TaskCompletedEvent extends ApplicationEvent {
 // Publisher
 @Service
 public class TaskCompletionService {
-    
+
     private final ApplicationEventPublisher eventPublisher;
-    
+
     @Transactional
     public Task completeTask(Task task) {
         task.setStatus(Status.FINISHED);
         Task saved = taskRepository.save(task);
-        
+
         // Notify observers
         eventPublisher.publishEvent(new TaskCompletedEvent(this, saved));
-        
+
         return saved;
     }
 }
@@ -2199,14 +2223,14 @@ public class TaskCompletionService {
 
 @Component
 public class TaskCompletionNotificationListener {
-    
+
     @EventListener
     @Async
     public void handleTaskCompleted(TaskCompletedEvent event) {
         Task task = event.getTask();
-        
+
         // Send email notifications to assigned users
-        task.getUsers().forEach(user -> 
+        task.getUsers().forEach(user ->
             emailService.sendTaskCompletionNotification(user, task)
         );
     }
@@ -2214,7 +2238,7 @@ public class TaskCompletionNotificationListener {
 
 @Component
 public class TaskCompletionStatisticsListener {
-    
+
     @EventListener
     public void handleTaskCompleted(TaskCompletedEvent event) {
         // Update statistics
@@ -2226,7 +2250,7 @@ public class TaskCompletionStatisticsListener {
 
 @Component
 public class TaskCompletionAuditListener {
-    
+
     @EventListener
     public void handleTaskCompleted(TaskCompletedEvent event) {
         // Audit trail
@@ -2281,6 +2305,7 @@ public class TaskCompletionAuditListener {
 ```
 
 **Problems**:
+
 - ❌ Tight coupling between layers
 - ❌ Business logic in controllers
 - ❌ No clear separation of concerns
@@ -2338,6 +2363,7 @@ public class TaskCompletionAuditListener {
 ```
 
 **Benefits**:
+
 - ✅ Clear separation of concerns
 - ✅ Business logic isolated and testable
 - ✅ Easy to swap infrastructure (DB, UI)
@@ -2445,12 +2471,12 @@ src/main/java/edu/eci/labinfo/labtodo/
 
 ### **Complexity Reduction**
 
-| Class | Method | Before | After | Reduction |
-|-------|--------|--------|-------|-----------|
-| `TaskController` | `saveTask()` | CC: 17 | CC: 3 | ↓ 82% |
-| `AdminController` | `modifyStateTaks()` | CC: 12 | CC: 4 | ↓ 67% |
-| `LoginController` | `saveUserAccount()` | CC: 15 | CC: 5 | ↓ 67% |
-| `UserService` | `getUsersByRoleExcludingInactive()` | CC: 8 | CC: 2 | ↓ 75% |
+| Class             | Method                              | Before | After | Reduction |
+| ----------------- | ----------------------------------- | ------ | ----- | --------- |
+| `TaskController`  | `saveTask()`                        | CC: 17 | CC: 3 | ↓ 82%     |
+| `AdminController` | `modifyStateTaks()`                 | CC: 12 | CC: 4 | ↓ 67%     |
+| `LoginController` | `saveUserAccount()`                 | CC: 15 | CC: 5 | ↓ 67%     |
+| `UserService`     | `getUsersByRoleExcludingInactive()` | CC: 8  | CC: 2 | ↓ 75%     |
 
 **Average Cyclomatic Complexity**: $12.4 \rightarrow 3.2$ (↓ 74%)
 
@@ -2463,6 +2489,7 @@ src/main/java/edu/eci/labinfo/labtodo/
 **After**: < 5% duplication
 
 **Examples of eliminated duplication**:
+
 - State transition logic (3 copies → 1 service)
 - User filtering by account type (5 copies → 1 repository method)
 - Task assignment logic (4 copies → Strategy pattern)
@@ -2471,13 +2498,13 @@ src/main/java/edu/eci/labinfo/labtodo/
 
 ### **Test Coverage** (Planned)
 
-| Layer | Target Coverage |
-|-------|----------------|
-| **Domain Services** | 95% |
-| **Application Services** | 90% |
-| **Controllers** | 80% |
-| **Repositories** | 70% |
-| **Overall** | 85% |
+| Layer                    | Target Coverage |
+| ------------------------ | --------------- |
+| **Domain Services**      | 95%             |
+| **Application Services** | 90%             |
+| **Controllers**          | 80%             |
+| **Repositories**         | 70%             |
+| **Overall**              | 85%             |
 
 ---
 
@@ -2487,13 +2514,13 @@ src/main/java/edu/eci/labinfo/labtodo/
 
 **After**: 0 violations (target)
 
-| Principle | Violations Before | Violations After | Status |
-|-----------|------------------|------------------|--------|
-| **SRP** | 18 | 0 | ✅ Fixed |
-| **OCP** | 12 | 0 | ✅ Fixed |
-| **LSP** | 3 | 0 | ✅ Fixed |
-| **ISP** | 8 | 0 | ✅ Fixed |
-| **DIP** | 6 | 0 | ✅ Fixed |
+| Principle | Violations Before | Violations After | Status   |
+| --------- | ----------------- | ---------------- | -------- |
+| **SRP**   | 18                | 0                | ✅ Fixed |
+| **OCP**   | 12                | 0                | ✅ Fixed |
+| **LSP**   | 3                 | 0                | ✅ Fixed |
+| **ISP**   | 8                 | 0                | ✅ Fixed |
+| **DIP**   | 6                 | 0                | ✅ Fixed |
 
 ---
 
@@ -2532,6 +2559,7 @@ public Boolean modifyStateTaks() {
 ```
 
 **Issues**:
+
 - ❌ Duplicated in 3 places
 - ❌ Business logic in controllers
 - ❌ Magic strings
@@ -2546,24 +2574,24 @@ public Boolean modifyStateTaks() {
 // Domain Service
 @Service
 public class TaskStateTransitionService {
-    
+
     private final Map<Status, TaskTransitionStrategy> strategies;
     private final TaskRepository taskRepository;
     private final ApplicationEventPublisher eventPublisher;
-    
+
     @Transactional
     public Task transitionTo(Task task, Status targetStatus) {
         validateTransition(task.getStatus(), targetStatus);
-        
+
         TaskTransitionStrategy strategy = strategies.get(targetStatus);
         Task transitioned = strategy.execute(task);
-        
+
         Task saved = taskRepository.save(transitioned);
         eventPublisher.publishEvent(new TaskStateChangedEvent(this, saved));
-        
+
         return saved;
     }
-    
+
     private void validateTransition(Status current, Status target) {
         if (!current.canTransitionTo(target)) {
             throw new InvalidStateTransitionException(current, target);
@@ -2574,24 +2602,24 @@ public class TaskStateTransitionService {
 // Strategy for FINISHED state
 @Component
 public class FinishTaskStrategy implements TaskTransitionStrategy {
-    
+
     @Override
     public Status getTargetStatus() {
         return Status.FINISHED;
     }
-    
+
     @Override
     public Task execute(Task task) {
         if (TypeTask.LABORATORIO.equals(task.getTypeTask())) {
             enrichWithCommentContributors(task);
         }
-        
+
         task.setStatus(Status.FINISHED);
         task.setCompletionDate(LocalDate.now());
-        
+
         return task;
     }
-    
+
     private void enrichWithCommentContributors(Task task) {
         List<User> contributors = commentRepository
             .findUsersWhoCommented(task.getId());
@@ -2602,13 +2630,13 @@ public class FinishTaskStrategy implements TaskTransitionStrategy {
 // Controller (simplified to 3 lines)
 @RestController
 public class TaskRestController {
-    
+
     private final TaskStateTransitionService stateService;
-    
+
     @PutMapping("/tasks/{id}/complete")
     public ResponseEntity<TaskDTO> completeTask(@PathVariable Long id) {
         Task completed = stateService.transitionTo(
-            taskRepository.getById(id), 
+            taskRepository.getById(id),
             Status.FINISHED
         );
         return ResponseEntity.ok(taskMapper.toDTO(completed));
@@ -2617,6 +2645,7 @@ public class TaskRestController {
 ```
 
 **Benefits**:
+
 - ✅ Single source of truth (DRY)
 - ✅ Type-safe enums instead of strings
 - ✅ Validated state machine
@@ -2659,6 +2688,7 @@ public List<User> getUsersByRoleExcludingInactive(String role) {
 ```
 
 **Issues**:
+
 - ❌ Loads ALL users from DB, filters in memory (inefficient)
 - ❌ Complex nested filter logic
 - ❌ Duplicated in 5 places
@@ -2672,18 +2702,18 @@ public List<User> getUsersByRoleExcludingInactive(String role) {
 ```java
 // Repository with proper query
 public interface UserRepository extends JpaRepository<User, Long> {
-    
+
     @Query("""
-        SELECT u FROM User u 
+        SELECT u FROM User u
         WHERE u.accountType NOT IN :excludedTypes
         """)
     List<User> findByAccountTypeNotIn(
         @Param("excludedTypes") List<AccountType> excludedTypes
     );
-    
+
     @Query("""
-        SELECT u FROM User u 
-        WHERE u.role = :role 
+        SELECT u FROM User u
+        WHERE u.role = :role
           AND u.accountType NOT IN :excludedTypes
         """)
     List<User> findByRoleAndAccountTypeNotIn(
@@ -2695,24 +2725,24 @@ public interface UserRepository extends JpaRepository<User, Long> {
 // Service with clear intent
 @Service
 public class UserQueryService {
-    
+
     private final UserRepository userRepository;
-    
+
     private static final List<AccountType> EXCLUDED_TYPES = List.of(
         AccountType.INACTIVE,
         AccountType.UNVERIFIED
     );
-    
+
     public List<User> findActiveUsers() {
         return userRepository.findByAccountTypeNotIn(EXCLUDED_TYPES);
     }
-    
+
     public List<String> findActiveUserFullNames() {
         return findActiveUsers().stream()
             .map(User::getFullName)
             .collect(Collectors.toList());
     }
-    
+
     public List<User> findActiveUsersByRole(Role role) {
         return userRepository.findByRoleAndAccountTypeNotIn(role, EXCLUDED_TYPES);
     }
@@ -2729,6 +2759,7 @@ public List<UserDTO> getActiveUsers() {
 ```
 
 **Benefits**:
+
 - ✅ Database does the filtering (efficient)
 - ✅ Type-safe enums
 - ✅ Reusable across the application
@@ -2741,15 +2772,15 @@ public List<UserDTO> getActiveUsers() {
 
 ### **Metrics Summary**
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| **Lines of Code** | 527 (TaskController) | 100 | ↓ 81% |
-| **Cyclomatic Complexity** | 17 (max) | 4 (max) | ↓ 76% |
-| **Code Duplication** | 23% | < 5% | ↓ 78% |
-| **SOLID Violations** | 47 | 0 | ↓ 100% |
-| **Code Smells** | 89 | < 10 | ↓ 89% |
-| **Magic Strings** | 156 | 0 | ↓ 100% |
-| **Test Coverage** | 0% | 85% (target) | ↑ ∞ |
+| Metric                    | Before               | After        | Improvement |
+| ------------------------- | -------------------- | ------------ | ----------- |
+| **Lines of Code**         | 527 (TaskController) | 100          | ↓ 81%       |
+| **Cyclomatic Complexity** | 17 (max)             | 4 (max)      | ↓ 76%       |
+| **Code Duplication**      | 23%                  | < 5%         | ↓ 78%       |
+| **SOLID Violations**      | 47                   | 0            | ↓ 100%      |
+| **Code Smells**           | 89                   | < 10         | ↓ 89%       |
+| **Magic Strings**         | 156                  | 0            | ↓ 100%      |
+| **Test Coverage**         | 0%                   | 85% (target) | ↑ ∞         |
 
 ---
 
@@ -2925,40 +2956,40 @@ awk -F, 'NR>1{m+=$8; c+=$9} END{printf "LINE_COVERAGE=%.2f%%\n", (c*100)/(m+c)}'
 ```java
 @ExtendWith(MockitoExtension.class)
 class TaskStateTransitionServiceTest {
-    
+
     @Mock
     private TaskRepository taskRepository;
-    
+
     @Mock
     private ApplicationEventPublisher eventPublisher;
-    
+
     @InjectMocks
     private TaskStateTransitionService service;
-    
+
     @Test
     void shouldTransitionLabTaskToFinishedAndEnrichWithContributors() {
         // Given
         Task labTask = createLabTask(Status.REVIEW);
         List<User> contributors = createMockContributors();
-        
+
         when(commentRepository.findUsersWhoCommented(labTask.getId()))
             .thenReturn(contributors);
         when(taskRepository.save(any())).thenAnswer(i -> i.getArgument(0));
-        
+
         // When
         Task result = service.transitionTo(labTask, Status.FINISHED);
-        
+
         // Then
         assertThat(result.getStatus()).isEqualTo(Status.FINISHED);
         assertThat(result.getParticipants()).hasSize(contributors.size());
         verify(eventPublisher).publishEvent(any(TaskStateChangedEvent.class));
     }
-    
+
     @Test
     void shouldThrowExceptionWhenInvalidTransition() {
         // Given
         Task task = createTask(Status.PENDING);
-        
+
         // When & Then
         assertThatThrownBy(() -> service.transitionTo(task, Status.FINISHED))
             .isInstanceOf(InvalidStateTransitionException.class)
@@ -2976,13 +3007,13 @@ class TaskStateTransitionServiceTest {
 @AutoConfigureMockMvc
 @Sql("/test-data.sql")
 class TaskRestControllerIntegrationTest {
-    
+
     @Autowired
     private MockMvc mockMvc;
-    
+
     @Autowired
     private ObjectMapper objectMapper;
-    
+
     @Test
     void shouldCreateTaskAndReturnCreated() throws Exception {
         CreateTaskRequest request = CreateTaskRequest.builder()
@@ -2990,7 +3021,7 @@ class TaskRestControllerIntegrationTest {
             .description("Test description")
             .type(TypeTask.LABORATORY)
             .build();
-        
+
         mockMvc.perform(post("/api/tasks")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
@@ -3003,13 +3034,13 @@ class TaskRestControllerIntegrationTest {
 
 ### **Test Coverage Goals**
 
-| Component | Coverage Target |
-|-----------|----------------|
-| Domain Services | 95% |
-| Application Services | 90% |
-| REST Controllers | 80% |
-| Repositories | 70% |
-| Mappers | 85% |
+| Component            | Coverage Target |
+| -------------------- | --------------- |
+| Domain Services      | 95%             |
+| Application Services | 90%             |
+| REST Controllers     | 80%             |
+| Repositories         | 70%             |
+| Mappers              | 85%             |
 
 **Tools**: JUnit 5, Mockito, AssertJ, Spring Boot Test, H2 (in-memory DB for tests)
 
@@ -3109,7 +3140,7 @@ JSF controllers present the highest testing complexity due to their dependency o
 | Services                  | 54                | Happy paths + error cases + repository delegation    |
 | JSF Controllers           | 105               | UI flows, validations, redirects, account states     |
 | Integration (scaffolding) | 4 classes ready   | Infrastructure configured with H2 + `@Transactional` |
-| **Total `@Test` methods** | **187**           |   
+| **Total `@Test` methods** | **187**           |
 
 > The integration classes (`*RepositoryIT`) have the full infrastructure in place and are ready to receive `@Test` methods in future iterations, once the corresponding SQL test-data scripts are defined.
 
@@ -3170,7 +3201,7 @@ The original **LabToDo** project was developed by:
 - **David Valencia** - [DavidVal6](https://github.com/DavidVal6)
 - **Angie Mojica** - [An6ie02](https://github.com/An6ie02)
 
-*Computer Science Lab Monitors, Universidad Escuela Colombiana de Ingeniería Julio Garavito (2023-2)*
+_Computer Science Lab Monitors, Universidad Escuela Colombiana de Ingeniería Julio Garavito (2023-2)_
 
 ---
 
@@ -3185,10 +3216,12 @@ See the [LICENSE](LICENSE) file for details.
 ### **License Summary**
 
 **You are free to**:
+
 - ✅ **Share** — copy and redistribute the material in any medium or format
 - ✅ **Adapt** — remix, transform, and build upon the material for any purpose, even commercially
 
 **Under the following terms**:
+
 - 📝 **Attribution** — You must give appropriate credit, provide a link to the license, and indicate if changes were made
 - 🔄 **ShareAlike** — If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original
 
