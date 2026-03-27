@@ -222,13 +222,13 @@ jobs:
           generateSarif: true
 
       - name: Upload Semgrep SARIF to Code Scanning
-        if: always()
-        uses: github/codeql-action/upload-sarif@v3
+        if: always() && hashFiles('semgrep.sarif') != ''
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: semgrep.sarif
 
       - name: Upload Semgrep SARIF artifact
-        if: always()
+        if: always() && hashFiles('semgrep.sarif') != ''
         uses: actions/upload-artifact@v4
         with:
           name: semgrep-sarif
