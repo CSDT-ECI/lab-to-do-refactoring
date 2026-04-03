@@ -28,7 +28,9 @@ Copien el código en un archivo index.html y ábranlo en el navegador. Seguramen
 
 Resultado obtenido:
 
-<video controls width="640" src="videos/promptPerezoso.mp4"></video>
+[Ver video: Prompt Perezoso](videos/promptPerezoso.mp4)
+
+![Preview Prompt Perezoso](videos/promptPerezoso.gif)
 
 ### Paso 3: El "Giro" Inesperado (El Efecto Mariposa) 🦋💥
 
@@ -38,7 +40,9 @@ Ahora vamos a pedirle un cambio que parece simple, pero que forzará a la IA a t
 
 Resultado obtenido:
 
-<video controls width="640" src="videos/efectomariposa.mp4"></video>
+[Ver video: Efecto Mariposa](videos/efectoMariposa.mp4)
+
+![Preview Efecto Mariposa](videos/efectoMariposa.gif)
 
 No se visualiza la gráfica.
 No hay colores que dependan del resultado, y como se puede ver en el video, al descargar el PDF, este sí se genera bien pero su contenido no es visible correctamente.
@@ -51,7 +55,9 @@ Si aún no se ha roto, este último prompt ambiguo causará el desastre. Pidan e
 
 Resultado obtenido:
 
-<video controls width="640" src="videos/colapso.mp4"></video>
+[Ver video: Colapso](videos/colapso.mp4)
+
+![Preview Colapso](videos/colapso.gif)
 
 Se eliminó correctamente el gráfico. Lo demás se mantuvo, pero al generar el PDF se mantiene el mismo problema con el contenido del documento, no es visible correctamente su contenido.
 
@@ -86,7 +92,7 @@ const downloadPdf = () => {
 };
 ```
 
-Noten que `html2canvas` captura el DOM tal como está, incluyendo el fondo oscuro del CSS. No se aplicó ninguna transformación de estilos antes de exportar, por eso el texto blanco queda invisible sobre el fondo blanco del PDF generado.
+Nótese que `html2canvas` captura el DOM tal como está, incluyendo el fondo oscuro del CSS. No se aplicó ninguna transformación de estilos antes de exportar, por eso el texto blanco queda invisible sobre el fondo blanco del PDF generado.
 
 ---
 
