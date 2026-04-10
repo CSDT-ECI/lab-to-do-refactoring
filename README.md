@@ -2973,7 +2973,7 @@ class TaskRestControllerIntegrationTest {
         <sub><b>Andrés Serrato</b></sub>
       </a>
       <br />
-      <sub>Software Engineering Student</sub>
+      <sub>Full Stack Developer</sub>
     </td>
     <td align="center">
       <a href="https://github.com/JAPV-X2612">
@@ -2991,7 +2991,7 @@ class TaskRestControllerIntegrationTest {
         <sub><b>Sergio Bejarano</b></sub>
       </a>
       <br />
-      <sub>Backend Developer</sub>
+      <sub>Full Stack Developer</sub>
     </td>
   </tr>
 </table>
