@@ -1,71 +1,135 @@
-# El Efecto Mariposa del Código
+# 🦋 The Butterfly Effect of Code — AIDLC Practical Lab
 
-Bienvenidos al laboratorio. Aquí aprenderán por qué "Vibe Coding" (programar solo con corazonadas y prompts vagos) es peligroso, y cómo aplicar el Spec-Driven Development los salvará de la deuda técnica extrema.
+<div align="center">
 
-## 🎯 Su Misión (El Reto)
+![HTML5](https://img.shields.io/badge/HTML5-Semantic-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-Vanilla-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![AIDLC](https://img.shields.io/badge/AIDLC-Lab-8A2BE2?style=for-the-badge)
+![License](https://img.shields.io/badge/License-Apache_2.0-blue?style=for-the-badge)
 
-Van a construir un componente web puramente Frontend (HTML, CSS y JavaScript) que no requiere Bases de Datos ni backend. El componente es una "Calculadora Ágil de Huella de Carbono".
-
-Solo necesitan tener abierto un bloc de notas, Visual Studio Code o el navegador, y su asistente de IA favorito (ChatGPT, Copilot, Cursor o Gemini).
-
----
-
-## Fase 1: Vibe Coding
-
-### La Trampa del "Vibe Coding"
-
-El Vibe Coding ocurre cuando le hablan a la IA como si fuera magia, sin darle especificaciones de arquitectura. Vamos a intentarlo para ver cómo falla.
-
-### Paso 1: El Prompt Perezoso
-
-Copien este texto exacto en su IA y generen la página:
-
-"Hazme una página web bonita para una calculadora de huella de carbono. Que calcule cosas y se vea moderna."
-
-### Paso 2: Prueben el Código
-
-Copien el código en un archivo index.html y ábranlo en el navegador. Seguramente se verá bien a la primera. "Parece mágico", ¿verdad?
-
-Resultado obtenido:
-
-[Ver video: Prompt Perezoso](videos/promptPerezoso.mp4)
-
-![Preview Prompt Perezoso](videos/promptPerezoso.gif)
-
-### Paso 3: El "Giro" Inesperado (El Efecto Mariposa) 🦋💥
-
-Ahora vamos a pedirle un cambio que parece simple, pero que forzará a la IA a tomar decisiones de arquitectura drásticas. Pídanle esto en el mismo chat:
-
-"Ahora haz que los cálculos se guarden en una tabla abajo, añade una gráfica interactiva súper profesional y haz que los colores dependan del resultado. Ah, y que se pueda descargar como PDF profesional."
-
-Resultado obtenido:
-
-[Ver video: Efecto Mariposa](videos/efectoMariposa.mp4)
-
-![Preview Efecto Mariposa](videos/efectoMariposa.gif)
-
-No se visualiza la gráfica.
-No hay colores que dependan del resultado, y como se puede ver en el video, al descargar el PDF, este sí se genera bien pero su contenido no es visible correctamente.
-
-### Paso 4: El Colapso (Frankenstein Code) 🧟
-
-Si aún no se ha roto, este último prompt ambiguo causará el desastre. Pidan esto:
-
-"No me gusta el gráfico, quítalo y haz que sea minimalista en una sola tarjeta, pero mantén la descarga de PDF. Además, ahora los cálculos deben ser mensuales estimamos por 12 meses, no por año. Arréglalo rápido."
-
-Resultado obtenido:
-
-[Ver video: Colapso](videos/colapso.mp4)
-
-![Preview Colapso](videos/colapso.gif)
-
-Se eliminó correctamente el gráfico. Lo demás se mantuvo, pero al generar el PDF se mantiene el mismo problema con el contenido del documento, no es visible correctamente su contenido.
+</div>
 
 ---
 
-## 🤔 Análisis de Desastre
+## 📋 **Table of Contents**
 
-**Inyección de Librerías:** Sí ocurrió. La IA inyectó `html2pdf.js` desde un CDN externo sin que formara parte del diseño original:
+- [Overview](#-overview)
+- [Learning Objectives](#-learning-objectives)
+- [Phase 1 — Vibe Coding](#-phase-1--vibe-coding)
+    - [Step 1: The Lazy Prompt](#step-1-the-lazy-prompt)
+    - [Step 2: The Butterfly Effect](#step-2-the-butterfly-effect-️)
+    - [Step 3: The Collapse](#step-3-the-collapse-frankenstein-code-)
+    - [Disaster Analysis](#-disaster-analysis)
+- [Phase 2 — Spec-Driven Development](#-phase-2--spec-driven-development)
+    - [Step 1: The Mega-Prompt](#step-1-the-mega-prompt-context--constraints)
+    - [Step 2: Control vs. Chaos](#step-2-control-vs-chaos)
+    - [Reflection](#-reflection)
+- [Phase 3 — Quality Gate](#-phase-3--quality-gate-ai-red-teaming)
+    - [AI Red Teaming](#ai-red-teaming)
+    - [Results](#-results)
+- [Vibe Coding vs. SDD — Full Comparison](#-vibe-coding-vs-sdd--full-comparison)
+- [Project Structure](#-project-structure)
+- [Authors](#-authors)
+- [License](#-license)
+- [Additional Resources](#-additional-resources)
+
+---
+
+## 🌟 **Overview**
+
+This repository contains the practical laboratory for the **AI Driven Development Life Cycle (AIDLC)** course module at _Universidad Escuela Colombiana de Ingeniería Julio Garavito_. The lab demonstrates — through deliberate failure — why *Vibe Coding* (generating software with vague, unstructured prompts) is dangerous in production environments, and how **Spec-Driven Development (SDD)** provides the engineering guardrails needed to keep AI-assisted development under control.
+
+The artifact under construction is an **Agile Carbon Footprint Calculator**: a purely frontend component built with **HTML**, **CSS**, and **JavaScript** — no frameworks, no databases, no backend.
+
+> _"The specification IS the new code. You design; the Copilot programs."_
+> — [AIDLC Lab, ECI-ARCN](https://eci-arcn.github.io/AIDLC/laboratorio.html)
+
+---
+
+## 🎯 **Learning Objectives**
+
+- Identify the **failure patterns** produced by unstructured AI prompting (*Vibe Coding*)
+- Recognize **anti-patterns** such as *Blind Trust*, *Frankenstein Code*, *Token Sprawl*, and *Context Leak*
+- Apply the **Spec-Driven Development** methodology using structured *Mega-Prompts*
+- Understand how **AI Red Teaming** functions as a quality gate within the AIDLC pipeline
+- Appreciate the tradeoffs between **rapid prototyping** and **production-grade engineering**
+
+---
+
+## 🌀 **Phase 1 — Vibe Coding**
+
+> _Vibe Coding_ occurs when a developer instructs an AI model as if it were magic — without architectural specifications, constraints, or acceptance criteria. The result may look functional at first glance, but structural fragility accumulates with every prompt.
+
+### Step 1: The Lazy Prompt
+
+Copy the following text verbatim into your preferred AI assistant (ChatGPT, Copilot, Cursor, or Gemini) and generate the page:
+
+```
+"Hazme una página web bonita para una calculadora de huella de carbono.
+Que calcule cosas y se vea moderna."
+```
+
+Paste the generated code into an `index.html` file and open it in your browser. It will likely look polished at first sight — "it feels like magic," right?
+
+**Preview:**
+
+<img src="assets/gifs/03-lazy-prompt.gif" alt="Lazy Prompt Preview" width="80%">
+
+> 🎬 [Watch full video: Lazy Prompt](assets/videos/03-lazy-prompt.mp4)
+
+---
+
+### Step 2: The Butterfly Effect 🦋💥
+
+Now request a change that appears simple but will force the AI to make drastic architectural decisions. Send this in the **same chat**:
+
+```
+"Ahora haz que los cálculos se guarden en una tabla abajo, añade una gráfica
+interactiva súper profesional y haz que los colores dependan del resultado.
+Ah, y que se pueda descargar como PDF profesional."
+```
+
+**Preview:**
+
+<img src="assets/gifs/02-butterfly-effect.gif" alt="Butterfly Effect Preview" width="80%">
+
+> 🎬 [Watch full video: Butterfly Effect](assets/videos/02-butterfly-effect.mp4)
+
+**Observed failures:**
+- The chart did not render correctly
+- Colors did not respond dynamically to the result
+- The PDF export generated a blank-content document due to a contrast conflict between the dark CSS background and the white PDF background injected by `html2canvas`
+
+---
+
+### Step 3: The Collapse (Frankenstein Code) 🧟
+
+If the code has not yet broken, this final ambiguous prompt will cause the collapse. Send this:
+
+```
+"No me gusta el gráfico, quítalo y haz que sea minimalista en una sola tarjeta,
+pero mantén la descarga de PDF. Además, ahora los cálculos deben ser mensuales
+estimamos por 12 meses, no por año. Arréglalo rápido."
+```
+
+**Preview:**
+
+<img src="assets/gifs/01-collapse.gif" alt="Collapse Preview" width="80%">
+
+> 🎬 [Watch full video: Collapse](assets/videos/01-collapse.mp4)
+
+**Observed failures:**
+- The chart was removed correctly, but the broken PDF export logic persisted untouched
+- The monthly calculation fix was applied to the main logic but **not propagated** to the PDF module — a classic case of **incomplete debt resolution**
+
+---
+
+### 🔬 Disaster Analysis
+
+#### 💉 Library Injection
+
+The AI silently injected `html2pdf.js` from an external CDN without it being part of the original design:
 
 ```html
 <script
@@ -74,12 +138,11 @@ Se eliminó correctamente el gráfico. Lo demás se mantuvo, pero al generar el 
 ></script>
 ```
 
-Esta librería funciona tomando una "foto" del DOM con `html2canvas`. En la exportación el PDF queda con fondo blanco, pero el texto se mantiene en blanco por los estilos originales, así que el contenido se pierde por falta de contraste. La función de descarga generada luce así:
+This library captures a DOM snapshot via `html2canvas`. The PDF is exported with a white background, but the text remains white due to the original dark CSS styles — rendering the content invisible. The generated export function looked like this:
 
 ```js
 const downloadPdf = () => {
   if (!window.html2pdf || !reportRoot) return;
-
   const options = {
     margin: 10,
     filename: "reporte-huella-carbono.pdf",
@@ -87,121 +150,101 @@ const downloadPdf = () => {
     html2canvas: { scale: 2, useCORS: true },
     jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
   };
-
   html2pdf().set(options).from(reportRoot).save();
 };
 ```
 
-Nótese que `html2canvas` captura el DOM tal como está, incluyendo el fondo oscuro del CSS. No se aplicó ninguna transformación de estilos antes de exportar, por eso el texto blanco queda invisible sobre el fondo blanco del PDF generado.
+No style transformation was applied before export. The AI captured the DOM as-is, inheriting the dark theme conflict.
 
 ---
 
-**Pérdida de Contexto:** Ocurrió de forma parcial. El gráfico sí se eliminó correctamente al pedirlo, pero la integración rota de `html2pdf` persistió sin corrección. La IA no revisó si la lógica de exportación seguía funcionando tras la reestructuración; simplemente arrastró el código defectuoso como deuda técnica al siguiente prompt.
+#### 🧠 Context Loss
 
-Para el cálculo anual, la IA introdujo la constante `monthsEstimate` y la aplicó correctamente en las emisiones:
-
-```js
-const monthsEstimate = 12;
-
-const emissions = Object.fromEntries(
-  Object.entries(emissionsMonthly).map(([key, value]) => [
-    key,
-    value * monthsEstimate,
-  ]),
-);
-```
-
-Sin embargo esa corrección no se propagó al módulo de PDF, dejando el bug de contraste intacto en ambos contextos.
+The chart was correctly removed upon request, but the broken `html2pdf` integration persisted without correction. The AI carried the defective code forward as technical debt rather than auditing the export module after restructuring.
 
 ---
 
-**Alucinaciones de Arquitectura:** Sí ocurrió. El archivo `script.js` mezcla múltiples responsabilidades sin ninguna separación. Comparen estas cinco funciones que conviven en el mismo nivel global sin ningún módulo ni clase que las agrupe:
+#### 🏗️ Architecture Hallucination
+
+The final `script.js` mixed five distinct responsibilities at global scope with no modules or classes:
 
 ```js
-// Responsabilidad 1: Cálculo de emisiones
+// Responsibility 1: Emission calculation
 const calculate = () => { ... };
 
-// Responsabilidad 2: Manipulación del DOM
+// Responsibility 2: DOM manipulation
 const buildBreakdown = (entries) => { ... };
 const renderHistoryTable = (entries) => { ... };
 
-// Responsabilidad 3: Persistencia en localStorage
-const loadHistory = () => {
-  try {
-    const stored = JSON.parse(localStorage.getItem(storageKey));
-    return Array.isArray(stored) ? stored : [];
-  } catch (error) {
-    return [];
-  }
-};
-const saveHistory = (entries) => {
-  localStorage.setItem(storageKey, JSON.stringify(entries));
-};
+// Responsibility 3: localStorage persistence
+const loadHistory = () => { ... };
+const saveHistory = (entries) => { ... };
 
-// Responsabilidad 4: Exportación a PDF
+// Responsibility 4: PDF export
 const downloadPdf = () => { ... };
 
-// Responsabilidad 5: Estado visual y temas de color
-const updateTheme = (ratio) => {
-  document.body.classList.remove("state-low", "state-mid", "state-high");
-  if (ratio <= 80) document.body.classList.add("state-low");
-  else if (ratio <= 120) document.body.classList.add("state-mid");
-  else document.body.classList.add("state-high");
-};
+// Responsibility 5: Visual state and theming
+const updateTheme = (ratio) => { ... };
 const updateRing = (percent) => { ... };
 ```
 
-Cada nuevo prompt fue apilando capas sobre las mismas funciones globales, produciendo exactamente la "sopa" de código donde ya no es claro dónde termina una responsabilidad y empieza la siguiente.
+Each new prompt stacked layers on top of the same global functions, producing precisely the *code soup* where boundaries between responsibilities are indistinguishable.
 
-**Lección:** Sin un "Spec" previo, cada nuevo requerimiento es una tirada de dados que puede destruir la arquitectura.
+> **Lesson:** Without a prior Spec, every new requirement is a roll of the dice that may destroy your architecture.
 
 ---
 
-## Fase 2: Spec-Driven Development
+## ⚙️ **Phase 2 — Spec-Driven Development**
 
-### Escribiendo Especificaciones de Ingeniería
+> **Spec-Driven Development** is the engineering standard where development begins with structured *Mega-Prompts* that act as architectural contracts. Instead of *Vibe Coding*, the engineer explicitly defines **Context, Technological Constraints, and User Stories** before allowing the AI to generate any code. See: [Copilot Workspace](https://githubnext.com/projects/copilot-workspace), [Specmatic](https://specmatic.io/), [Cursor Rules](https://www.cursor.com/blog/cursor-rules).
 
-Abran un CHAT NUEVO. Esta vez no le pediremos "algo bonito". Le entregaremos Arquitectura, Restricciones e Historias de Usuario claras guiando las decisiones de diseño.
+### Step 1: The Mega-Prompt (Context + Constraints)
 
-### Paso 1: El Mega-Prompt (Contexto + Restricciones)
-
-Utilicen esta estructura estricta para el desarrollo inicial:
+Open a **new chat**. Use the following strict structure for the initial development:
 
 ```
 ROL: Eres un Ingeniero Frontend Senior.
-CONTEXTO TECNOLÓGICO: Aplicación de una sola página (SPA). NO uses React, NO uses Vue,
-NO uses CDN de librerías de estilos. Usa única y exclusivamente HTML semántico, CSS puro
-(Vanilla) dentro de un bloque <style> y JavaScript puro en un bloque <script>.
-RESTRICCIONES ARQUITECTÓNICAS: Todo el código debe venir en un solo archivo index.html
-fácil de copiar. Separa visualmente la lógica de JS del maquetado HTML.
-HISTORIA DE USUARIO 1: Como usuario, quiero ver 3 campos numéricos (Kilómetros en auto,
-Horas de vuelo, Gasto en electricidad). Quiero un botón que al pulsarlo tome esos 3 valores,
-los sume y multiplique por 0.5, y muestre el "Total de Huella de Carbono en KG" en pantalla
-usando JavaScript, validando que los datos no estén vacíos. No añadas nada más.
+
+CONTEXTO TECNOLÓGICO: Aplicación de una sola página (SPA). NO uses React,
+NO uses Vue, NO uses CDN de librerías de estilos. Usa única y exclusivamente
+HTML semántico, CSS puro (Vanilla) dentro de un bloque <style> y JavaScript
+puro en un bloque <script>.
+
+RESTRICCIONES ARQUITECTÓNICAS: Todo el código debe venir en un solo archivo
+index.html fácil de copiar. Separa visualmente la lógica de JS del maquetado HTML.
+
+HISTORIA DE USUARIO 1: Como usuario, quiero ver 3 campos numéricos (Kilómetros
+en auto, Horas de vuelo, Gasto en electricidad). Quiero un botón que al pulsarlo
+tome esos 3 valores, los sume y multiplique por 0.5, y muestre el "Total de Huella
+de Carbono en KG" en pantalla usando JavaScript, validando que los datos no estén
+vacíos. No añadas nada más.
 ```
-
-### Paso 2: Comparen Control vs Caos
-
-Copien el código en su `index.html`. Ejecútenlo. Pídanle a la IA que añada funcionalidad paso a paso leyendo la siguiente historia de usuario en el chat:
-
-```
-HISTORIA DE USUARIO 2: Ahora implementa un botón para "Cambiar a Modo Oscuro", que
-únicamente agregue la clase CSS ".dark-mode" al body. Usa colores oscuros estándar (#222 y #fff).
-```
-
-Resultado obtenido:
-
-![Resultado Historia de Usuario 2 - Modo oscuro](images/image2.png)
-
-![Resultado Historia de Usuario 1 - Modo claro con calculo](images/image1.png)
 
 ---
 
-### 🤔 Reflexión
+### Step 2: Control vs. Chaos
 
-**Crecimiento modular sin roturas:** Al comparar las dos capturas, se puede confirmar que la Historia de Usuario 2 se implementó de forma aditiva y no destructiva. El cálculo ya existente (100 km + 2 horas + 340 kWh = 221 kg) siguió funcionando idénticamente después de agregar el modo oscuro. La IA no tocó la lógica de cálculo para implementar el nuevo requerimiento, porque el Spec le indicó con precisión dónde intervenir: solo agregar una clase CSS al `body`.
+Paste the generated code into your `index.html` and run it. Then add functionality step by step by sending the following User Story in the same chat:
 
-El handler del modo oscuro es exactamente eso, nada más:
+```
+HISTORIA DE USUARIO 2: Ahora implementa un botón para "Cambiar a Modo Oscuro",
+que únicamente agregue la clase CSS ".dark-mode" al body.
+Usa colores oscuros estándar (#222 y #fff).
+```
+
+**Results:**
+
+<img src="assets/images/01-light-carbon-footprint-calculator.png" alt="Light Mode — User Story 1 Result" width="80%">
+
+<img src="assets/images/02-dark-carbon-footprint-calculator.png" alt="Dark Mode — User Story 2 Result" width="80%">
+
+---
+
+### 🤔 Reflection
+
+**Modular growth without regressions:** Comparing both screenshots confirms that User Story 2 was implemented additively and non-destructively. The pre-existing calculation logic (`100 km + 2 hours + 340 kWh = 221 kg`) continued working identically after adding dark mode. The AI did not touch the calculation logic because the Spec indicated with precision where to intervene: only add a CSS class to the `body`.
+
+The dark mode handler is exactly that — nothing more:
 
 ```js
 darkModeBtn.addEventListener("click", () => {
@@ -209,7 +252,7 @@ darkModeBtn.addEventListener("click", () => {
 });
 ```
 
-Y el CSS correspondiente respeta el contrato de la historia de usuario usando exactamente los colores especificados (`#222` y `#fff`), sin tocar ninguna otra regla existente:
+The corresponding CSS respects the User Story contract using exactly the specified colors (`#222` and `#fff`), without modifying any existing rule:
 
 ```css
 body.dark-mode {
@@ -231,86 +274,40 @@ body.dark-mode button {
 }
 ```
 
----
+**Why the Spec prevents Token Sprawl:** With *Vibe Coding*, the AI assumes design, technology, structure, and edge cases on its own, generating extra tokens to fill ambiguities. With the Mega-Prompt, those decisions were already made by the team before starting: no frameworks, no CDNs, one file, visual separation of HTML and JS. The AI did not need to invent anything — it only had to execute.
 
-**Por qué el Spec evita el Token Sprawl:** En el Vibe Coding, la IA asume el diseño, la tecnología, la estructura y los casos borde por su cuenta, generando tokens extras para rellenar ambigüedades. Con el Mega-Prompt, esas decisiones ya estaban tomadas por el equipo antes de empezar: sin frameworks, sin CDNs, un solo archivo, separación visual de HTML y JS.
-
-Comparen la estructura del HTML generado en cada enfoque:
-
-```html
-<!-- Con Vibe Coding: dependencias externas inyectadas sin pedirlas -->
-<link
-  href="https://fonts.googleapis.com/css2?family=Fraunces..."
-  rel="stylesheet"
-/>
-<script
-  src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/..."
-  defer
-></script>
-```
-
-```html
-<!-- Con Spec: HTML semántico, sin CDNs, estructura predecible -->
-<main>
-  <header>
-    <h1>Calculadora de Huella de Carbono</h1>
-    <p class="subtitle">
-      Ingresa los tres datos solicitados y calcula tu total.
-    </p>
-  </header>
-  <section aria-label="Formulario de calculo">
-    <form id="carbonForm">
-      <div class="field">
-        <label for="carKm">Kilometros en auto</label>
-        <input id="carKm" type="number" min="0" step="any" required />
-      </div>
-      ...
-      <button type="button" id="calculateBtn">Calcular</button>
-    </form>
-  </section>
-</main>
-<script src="script.js"></script>
-```
-
-La IA no tuvo que inventar nada, solo ejecutar. Eso reduce drásticamente el número de tokens consumidos en suposiciones y reescrituras.
-
-**Lección:** La Especificación ES el Nuevo Código. Tú diseñas, el Copiloto programa.
+> **Lesson:** The Specification IS the new code. You design; the Copilot programs.
 
 ---
 
-## Fase 3: Quality Gate (Orquestación)
+## 🛡️ **Phase 3 — Quality Gate: AI Red Teaming**
 
-### La IA también es Inspectora
+> The AIDLC cycle requires a **Verification** checkpoint before any production deployment. This phase uses the AI as its own inspector — a practice known as [AI Red Teaming](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/red-teaming).
 
-El ciclo AIDLC exige una Verificación antes del pase a producción (Deploy). Vamos a pedirle a la IA que se audite a sí misma.
+### AI Red Teaming
 
-### Paso Final: AI Red Teaming
-
-Envíenle el código completo que acaban de generar junto con esta orden:
+Send the complete code generated in Phase 2 along with the following instruction:
 
 ```
-Cambia de rol. Ahora eres un experto en Aseguramiento de Calidad (QA) y Experiencia de
-Usuario (UX). Analiza mi código anterior. Encuentra posibles bugs si el usuario ingresa
-letras en vez de números, o si hay problemas de accesibilidad (contraste). Dime qué
-corregirías y refactoriza solo la parte afectada.
+Cambia de rol. Ahora eres un experto en Aseguramiento de Calidad (QA) y
+Experiencia de Usuario (UX). Analiza mi código anterior. Encuentra posibles
+bugs si el usuario ingresa letras en vez de números, o si hay problemas de
+accesibilidad (contraste). Dime qué corregirías y refactoriza solo la parte afectada.
 ```
-
-Resultado:
-
-- Se validó el ingreso numérico para evitar `NaN` cuando el usuario escribe letras.
-- Se ajustó el mensaje de error en modo oscuro para garantizar contraste con `#222` y `#fff`.
 
 ---
 
-### 🤔 Reflexión
+### 📊 Results
 
-**Validación de entrada — ✅ Cumplido:** La IA refactorizó únicamente la lógica de lectura de inputs sin tocar el HTML ni los estilos. Antes del QA, cualquier texto no numérico producía un `NaN` silencioso que se mostraba en pantalla sin aviso. Después, se introdujeron dos funciones auxiliares con responsabilidad única:
+#### ✅ Input Validation — Fully Resolved
+
+Before the QA pass, any non-numeric text produced a silent `NaN` displayed on screen with no warning. After, two auxiliary functions with single responsibility were introduced:
 
 ```js
-// Antes del QA: sin validación, cualquier texto producía NaN silencioso
+// Before QA: no validation — any text produced a silent NaN
 const getValue = (id) => Number(document.getElementById(id).value || 0);
 
-// Después del QA: detecta vacío y verifica que el valor sea un número finito
+// After QA: detects empty input and verifies the value is a finite number
 const getNumber = (id) => {
   const value = document.getElementById(id).value;
   return value === "" ? null : Number(value);
@@ -328,17 +325,21 @@ const calculate = () => {
     return;
   }
 
-  if (!isValidNumber(carKm) || !isValidNumber(flightHours) || !isValidNumber(electricitySpend)) {
+  if (
+    !isValidNumber(carKm) ||
+    !isValidNumber(flightHours) ||
+    !isValidNumber(electricitySpend)
+  ) {
     errorMessage.textContent = "Usa solo números válidos en los tres campos.";
     return;
   }
-  ...
+  // ...
 };
 ```
 
----
+#### ⚠️ Dark Mode Contrast — Partially Resolved
 
-**Contraste en modo oscuro — ⚠️ Cumplido parcialmente:** El mensaje de error sí recibió su regla de contraste, y el elemento HTML recibió `role="alert"` para lectores de pantalla, una mejora de accesibilidad que no estaba en el Spec original:
+The error message received its contrast rule, and the HTML element received `role="alert"` for screen reader accessibility — an improvement not present in the original Spec:
 
 ```css
 body.dark-mode .error {
@@ -350,20 +351,163 @@ body.dark-mode .error {
 <p class="error" id="errorMessage" role="alert"></p>
 ```
 
-Sin embargo, el botón "Calcular" en modo oscuro mantiene `background: var(--accent)` (`#0f6c5c`) con texto `#fff`, un ratio de contraste de ~4.5:1 que queda justo en el límite WCAG AA. El QA no lo detectó ni lo corrigió porque el prompt solo pedía revisar contraste del mensaje de error, no de los botones:
+However, the "Calculate" button in dark mode retains `background: var(--accent)` (`#0f6c5c`) with white text — a contrast ratio of approximately 4.5:1, sitting right at the [WCAG AA](https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html) threshold. The QA did not detect or correct this because the prompt only requested review of the error message contrast, not buttons.
 
-```css
-/* Este caso quedó sin corregir — contraste borderline en modo oscuro */
-button {
-  background: var(--accent); /* #0f6c5c sobre #fff: ratio ~4.5:1 */
-  color: #fff;
-}
-```
-
-Esto demuestra que el AI Red Teaming cubre exactamente los casos descritos en el prompt, pero no realiza una auditoría exhaustiva por iniciativa propia. El alcance del QA es tan bueno como la especificación que lo define.
+> **Lesson:** AI Red Teaming covers exactly the cases described in the prompt — it does not perform an exhaustive audit by initiative. The scope of the QA is only as good as the specification that defines it.
 
 ---
 
-### 🏅 Conclusión del Cierre
+## 📊 **Vibe Coding vs. SDD — Full Comparison**
 
-La IA es sumamente eficiente y rápida, pero necesita un marco de reglas (Guardrails) claras. El Vibe Coding es útil para prototipar rápido sin dolor, pero en entornos de ingeniería reales, el Spec-Driven Development es el estándar para asegurar el control sobre la arquitectura técnica.
+### 🏗️ Approach & Architecture
+
+| Dimension | ❌ Vibe Coding | ✅ Spec-Driven Development |
+|---|---|---|
+| **Prompt style** | Vague, natural language ("make it look modern") | Structured: Role + Context + Constraints + User Stories |
+| **Architecture ownership** | Delegated entirely to the AI | Defined by the engineer; AI executes |
+| **Dependency management** | Libraries injected without consent (CDN sprawl) | Explicitly restricted; zero unauthorized imports |
+| **Code structure** | Global functions mixed across responsibilities | Responsibility boundaries defined before generation |
+| **Incremental changes** | Destructive — may overwrite existing logic | Additive — new features layer without breaking prior ones |
+| **Output predictability** | Low — varies per prompt | High — constrained by the Spec contract |
+
+### 🐛 Failure Modes
+
+| Anti-Pattern | Vibe Coding | SDD |
+|---|---|---|
+| **Blind Trust** | ✅ Occurs — AI decisions accepted without review | ❌ Prevented — Spec defines what is and is not acceptable |
+| **Frankenstein Code** | ✅ Occurs — incoherent architectural layers accumulate | ❌ Prevented — each User Story has a bounded scope |
+| **Token Sprawl** | ✅ Occurs — AI fills ambiguities with assumptions | ❌ Prevented — decisions already made in the Mega-Prompt |
+| **Context Leak** | ✅ Occurs — sensitive data may reach public APIs | ❌ Managed — constraints documented before prompting |
+| **Library Injection** | ✅ Occurs — external CDNs added without authorization | ❌ Prevented — architectural restrictions explicitly prohibit it |
+
+### ⚖️ Tradeoffs
+
+| Scenario | Recommended Approach |
+|---|---|
+| Quick throwaway prototype or proof-of-concept | Vibe Coding (acceptable) |
+| Production feature with defined acceptance criteria | **Spec-Driven Development** |
+| Team collaboration with multiple contributors | **Spec-Driven Development** |
+| Regulatory or security-sensitive context | **Spec-Driven Development** (mandatory) |
+| Learning or exploration with no delivery commitment | Vibe Coding (acceptable) |
+
+---
+
+## 📁 **Project Structure**
+
+```
+.
+├── index.html                          # Main SPA — calculator component
+├── script.js                           # Vanilla JS — calculation and UI logic
+├── styles.css                          # Vanilla CSS — light/dark theme
+├── README.md                           # This file
+└── assets/
+    ├── gifs/
+    │   ├── 01-collapse.gif             # Phase 1 Step 3 preview
+    │   ├── 02-butterfly-effect.gif     # Phase 1 Step 2 preview
+    │   └── 03-lazy-prompt.gif          # Phase 1 Step 1 preview
+    ├── images/
+    │   ├── 01-light-carbon-footprint-calculator.png   # Phase 2 light mode result
+    │   └── 02-dark-carbon-footprint-calculator.png    # Phase 2 dark mode result
+    └── videos/
+        ├── 01-collapse.mp4             # Phase 1 Step 3 full video
+        ├── 02-butterfly-effect.mp4     # Phase 1 Step 2 full video
+        └── 03-lazy-prompt.mp4          # Phase 1 Step 1 full video
+```
+
+---
+
+## 👥 **Authors**
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/andresserrato2004">
+        <img src="https://github.com/andresserrato2004.png" width="100px;" alt="Andrés Serrato"/>
+        <br />
+        <sub><b>Andrés Serrato</b></sub>
+      </a>
+      <br />
+      <sub>Full Stack Developer</sub>
+    </td>
+    <td align="center">
+      <a href="https://github.com/JAPV-X2612">
+        <img src="https://github.com/JAPV-X2612.png" width="100px;" alt="Jesús Alfonso Pinzón Vega"/>
+        <br />
+        <sub><b>Jesús Alfonso Pinzón Vega</b></sub>
+      </a>
+      <br />
+      <sub>Full Stack Developer</sub>
+    </td>
+    <td align="center">
+      <a href="https://github.com/SergioBejarano">
+        <img src="https://github.com/SergioBejarano.png" width="100px;" alt="Sergio Bejarano"/>
+        <br />
+        <sub><b>Sergio Bejarano</b></sub>
+      </a>
+      <br />
+      <sub>Full Stack Developer</sub>
+    </td>
+  </tr>
+</table>
+
+*Software Engineering Students — Universidad Escuela Colombiana de Ingeniería Julio Garavito*
+*Course: Contemporary Software Development Techniques (CSDT_M) — 2025*
+
+---
+
+## 📄 **License**
+
+This project is licensed under the **Apache License, Version 2.0**.
+
+See the [LICENSE](LICENSE) file for the full license text.
+
+**Summary:**
+- ✅ **Use** — for any purpose, including commercial
+- ✅ **Modify** — and distribute modified versions
+- ✅ **Distribute** — original or modified copies
+- 📝 **Attribution required** — retain original copyright and license notices
+- ❌ **No trademark rights** — the license does not grant rights to use contributor names or trademarks
+
+---
+
+## 🔗 **Additional Resources**
+
+### 🤖 AI-Driven Development & AIDLC
+
+- [AIDLC — AI Driven Development Life Cycle (ECI-ARCN)](https://eci-arcn.github.io/AIDLC/index.html)
+- [GitHub Next — Copilot Workspace (Spec to PR)](https://githubnext.com/projects/copilot-workspace)
+- [Cursor Rules — Project-level AI Specifications](https://www.cursor.com/blog/cursor-rules)
+- [Specmatic — Contract-driven API Testing](https://specmatic.io/)
+- [What is Vibe Coding? — Simon Willison](https://simonwillison.net/2025/Mar/19/vibe-coding/)
+
+### 🛡️ AI Safety & Red Teaming
+
+- [Microsoft — AI Red Teaming Concepts](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/red-teaming)
+- [OWASP LLM Top 10 — AI Application Security Risks](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
+- [NIST AI Risk Management Framework](https://www.nist.gov/system/files/documents/2023/01/26/AI_RMF_1_0.pdf)
+
+### ♿ Web Accessibility & WCAG
+
+- [W3C — WCAG 2.1 Contrast Minimum (AA)](https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html)
+- [WebAIM — Contrast Checker Tool](https://webaim.org/resources/contrastchecker/)
+- [MDN — ARIA `role="alert"` reference](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/alert_role)
+
+### 🌿 Carbon Footprint & Sustainability
+
+- [EPA — Greenhouse Gas Equivalencies Calculator](https://www.epa.gov/energy/greenhouse-gas-equivalencies-calculator)
+- [Our World in Data — CO₂ and Greenhouse Gas Emissions](https://ourworldindata.org/co2-and-greenhouse-gas-emissions)
+- [The Green Web Foundation — Digital Carbon Footprint](https://www.thegreenwebfoundation.org/)
+
+### 📐 Frontend Engineering Standards
+
+- [HTML Living Standard — WHATWG](https://html.spec.whatwg.org/)
+- [MDN Web Docs — Semantic HTML](https://developer.mozilla.org/en-US/docs/Glossary/Semantics#semantics_in_html)
+- [Google HTML/CSS Style Guide](https://google.github.io/styleguide/htmlcssguide.html)
+- [javascript.info — Modern JavaScript Tutorial](https://javascript.info/)
+
+---
+
+<div align="center">
+  <p>Made with 🌱 for Software Engineering Education</p>
+  <p><i>Universidad Escuela Colombiana de Ingeniería Julio Garavito</i></p>
+</div>
