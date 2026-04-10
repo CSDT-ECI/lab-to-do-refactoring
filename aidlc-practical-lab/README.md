@@ -402,16 +402,16 @@ However, the "Calculate" button in dark mode retains `background: var(--accent)`
 ├── README.md                           # This file
 └── assets/
     ├── gifs/
-    │   ├── 01-collapse.gif             # Phase 1 Step 3 preview
-    │   ├── 02-butterfly-effect.gif     # Phase 1 Step 2 preview
-    │   └── 03-lazy-prompt.gif          # Phase 1 Step 1 preview
+    │   ├── 01-lazy-prompt.gif          # Phase 1 Step 1 preview
+    │   ├── 02-collapse.gif             # Phase 1 Step 2 preview
+    │   └── 03-butterfly-effect.gif     # Phase 1 Step 3 preview
     ├── images/
     │   ├── 01-light-carbon-footprint-calculator.png   # Phase 2 light mode result
     │   └── 02-dark-carbon-footprint-calculator.png    # Phase 2 dark mode result
     └── videos/
-        ├── 01-collapse.mp4             # Phase 1 Step 3 full video
-        ├── 02-butterfly-effect.mp4     # Phase 1 Step 2 full video
-        └── 03-lazy-prompt.mp4          # Phase 1 Step 1 full video
+        ├── 01-lazy-prompt.mp4          # Phase 1 Step 1 full video
+        ├── 02-collapse.mp4             # Phase 1 Step 2 full video
+        └── 03-butterfly-effect.mp4     # Phase 1 Step 3 full video
 ```
 
 ---
