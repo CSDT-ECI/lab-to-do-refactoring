@@ -74,9 +74,9 @@ Paste the generated code into an `index.html` file and open it in your browser. 
 
 **Preview:**
 
-<img src="assets/gifs/03-lazy-prompt.gif" alt="Lazy Prompt Preview" width="80%">
+<img src="assets/gifs/01-lazy-prompt.gif" alt="Lazy Prompt Preview" width="80%">
 
-> 🎬 [Watch full video: Lazy Prompt](assets/videos/03-lazy-prompt.mp4)
+> 🎬 [Watch full video: Lazy Prompt](assets/videos/01-lazy-prompt.mp4)
 
 ---
 
@@ -92,9 +92,9 @@ Ah, y que se pueda descargar como PDF profesional."
 
 **Preview:**
 
-<img src="assets/gifs/02-butterfly-effect.gif" alt="Butterfly Effect Preview" width="80%">
+<img src="assets/gifs/03-butterfly-effect.gif" alt="Butterfly Effect Preview" width="80%">
 
-> 🎬 [Watch full video: Butterfly Effect](assets/videos/02-butterfly-effect.mp4)
+> 🎬 [Watch full video: Butterfly Effect](assets/videos/03-butterfly-effect.mp4)
 
 **Observed failures:**
 - The chart did not render correctly
@@ -115,9 +115,9 @@ estimamos por 12 meses, no por año. Arréglalo rápido."
 
 **Preview:**
 
-<img src="assets/gifs/01-collapse.gif" alt="Collapse Preview" width="80%">
+<img src="assets/gifs/02-collapse.gif" alt="Collapse Preview" width="80%">
 
-> 🎬 [Watch full video: Collapse](assets/videos/01-collapse.mp4)
+> 🎬 [Watch full video: Collapse](assets/videos/02-collapse.mp4)
 
 **Observed failures:**
 - The chart was removed correctly, but the broken PDF export logic persisted untouched
