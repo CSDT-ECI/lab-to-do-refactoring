@@ -1,10 +1,5 @@
 # Testing Debt Analysis
 
-> **Weekly Report — LabToDo Refactoring Project**
-> Related to: [CSDT_PrimeraEntrega2026.md](../CSDT_PrimeraEntrega2026.md)
-
----
-
 ## Table of Contents
 
 - [Overview](#overview)
