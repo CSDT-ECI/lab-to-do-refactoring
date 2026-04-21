@@ -1,0 +1,69 @@
+package edu.eci.labinfo.labtodo.unit;
+
+import edu.eci.labinfo.labtodo.support.BaseUnitTest;
+import edu.eci.labinfo.labtodo.support.TestDataBuilders;
+import edu.eci.labinfo.labtodo.model.Task;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.when;
+
+/**
+ * Unit test template — copy and rename this file.
+ *
+ * Naming convention:
+ *   File  : <ClassUnderTest>Test.java
+ *   Method: should<ExpectedBehavior>When<Scenario>
+ *           shouldNot<Behavior>When<Scenario>
+ *
+ * FIRST checklist (verify before committing):
+ *   [ ] Fast        — no Spring context, no I/O, no network calls
+ *   [ ] Independent — test data built inside the method or @BeforeEach
+ *   [ ] Repeatable  — no environment-specific logic
+ *   [ ] Self-validating — at least one AssertJ assertion per test
+ *   [ ] Timely      — created alongside the production change
+ */
+class ExampleServiceTest extends BaseUnitTest {
+
+    // Declare mocks that the subject under test depends on:
+    @Mock
+    private ExampleRepository repository;
+
+    // Inject mocks into the class under test:
+    @InjectMocks
+    private ExampleService subject;
+
+    // ------------------------------------------------------------------
+    // Happy path
+    // ------------------------------------------------------------------
+
+    @Test
+    void should<ExpectedBehavior>When<Scenario>() {
+        // Arrange
+        Task task = TestDataBuilders.buildPendingLabTask();
+        when(repository.findById(1L)).thenReturn(java.util.Optional.of(task));
+
+        // Act
+        Task result = subject.getTask(1L);
+
+        // Assert
+        assertThat(result.getTitle()).isEqualTo(task.getTitle());
+    }
+
+    // ------------------------------------------------------------------
+    // Negative / boundary cases
+    // ------------------------------------------------------------------
+
+    @Test
+    void shouldNot<Behavior>When<InvalidScenario>() {
+        // Arrange
+        when(repository.findById(99L)).thenReturn(java.util.Optional.empty());
+
+        // Act & Assert
+        assertThatThrownBy(() -> subject.getTask(99L))
+                .isInstanceOf(RuntimeException.class);
+    }
+}

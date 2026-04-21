@@ -1,0 +1,67 @@
+package edu.eci.labinfo.labtodo.acceptance;
+
+import edu.eci.labinfo.labtodo.support.TestDataBuilders;
+import edu.eci.labinfo.labtodo.model.Task;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.test.context.ActiveProfiles;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+/**
+ * Acceptance test template — copy and rename this file.
+ *
+ * Naming convention:
+ *   File  : <Feature>AcceptanceTest.java
+ *   Method: should<ExpectedOutcome>When<UserJourney>
+ *           shouldNot<Behavior>When<InvalidJourney>
+ *
+ * FIRST checklist (verify before committing):
+ *   [ ] Fast        — run only via `./mvnw verify` (Failsafe), not on `./mvnw test`
+ *   [ ] Independent — data is set up fresh; no dependency on execution order
+ *   [ ] Repeatable  — uses "test" profile with H2; no external service dependency
+ *   [ ] Self-validating — HTTP status + response body assertions are mandatory
+ *   [ ] Timely      — written after integration is confirmed; validates business behaviour end-to-end
+ */
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
+class ExampleAcceptanceTest {
+
+    @Autowired
+    private TestRestTemplate restTemplate;
+
+    // ------------------------------------------------------------------
+    // Happy path
+    // ------------------------------------------------------------------
+
+    @Test
+    void should<ExpectedOutcome>When<UserJourney>() {
+        // Arrange
+        Task task = TestDataBuilders.buildPendingLabTask("Acceptance test task", "Description");
+
+        // Act
+        var response = restTemplate.postForEntity("/api/tasks", task, Task.class);
+
+        // Assert
+        assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
+        assertThat(response.getBody()).isNotNull();
+    }
+
+    // ------------------------------------------------------------------
+    // Negative / boundary cases
+    // ------------------------------------------------------------------
+
+    @Test
+    void shouldNot<Behavior>When<InvalidJourney>() {
+        // Arrange
+        // (set up an invalid or missing resource scenario)
+
+        // Act
+        var response = restTemplate.getForEntity("/api/tasks/999999", Task.class);
+
+        // Assert
+        assertThat(response.getStatusCode().is4xxClientError()).isTrue();
+    }
+}
