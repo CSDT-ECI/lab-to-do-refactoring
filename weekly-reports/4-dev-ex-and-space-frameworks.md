@@ -86,12 +86,6 @@ The introduction of the CI/CD pipeline and the unit testing suite has dramatical
 
 ### DevEx Perspective
 
-**🔄 Feedback Loops — Remaining Gaps**
-
-- **No integration tests exist yet.** The `BaseIntegrationTest` class referenced in templates has not been created, leaving an entire layer of the test pyramid empty.
-- **SonarCloud Quality Gate shows _Not Computed_** status. Until the gate is explicitly configured and passing, automated quality enforcement is incomplete.
-- **Security (E) and Reliability (D) ratings** in SonarCloud represent unresolved issues that slow down code review cycles and increase mental load during PR reviews.
-
 **🧠 Cognitive Load — Still High in Production Code**
 
 - **God classes remain** (`TaskController` at ~527 lines, `LoginController` at ~448 lines). These require disproportionate mental effort to navigate, modify, or extend.
