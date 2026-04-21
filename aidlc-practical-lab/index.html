@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calculadora de Huella de Carbono</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Calculadora de Huella de Carbono</h1>
+        <p class="subtitle">Ingresa los tres datos solicitados y calcula tu total.</p>
+      </header>
+
+      <section aria-label="Formulario de calculo">
+        <form id="carbonForm">
+          <div class="field">
+            <label for="carKm">Kilometros en auto</label>
+            <input id="carKm" type="number" min="0" step="any" required />
+          </div>
+          <div class="field">
+            <label for="flightHours">Horas de vuelo</label>
+            <input id="flightHours" type="number" min="0" step="any" required />
+          </div>
+          <div class="field">
+            <label for="electricitySpend">Gasto en electricidad</label>
+            <input id="electricitySpend" type="number" min="0" step="any" required />
+          </div>
+          <button type="button" id="calculateBtn">Calcular</button>
+          <button type="button" id="darkModeBtn">Cambiar a Modo Oscuro</button>
+          <p class="error" id="errorMessage" role="alert"></p>
+        </form>
+      </section>
+
+      <section aria-label="Resultado">
+        <div class="result" id="result">Total de Huella de Carbono en KG: 0</div>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
