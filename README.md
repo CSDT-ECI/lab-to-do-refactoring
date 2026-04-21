@@ -149,7 +149,7 @@ This project evolves progressively through the *Calidad de Software y Deuda Téc
 | **2** | ✨ **Clean Code & XP Practices**    | YAGNI, DRY, KISS principles; XP practices scorecard and phased implementation roadmap | `feature/clean-code-and-xp-practices` | [📄 View](weekly-reports/2-clean-code-and-xp-practices.md) | ✅ Complete |
 | **3** | 🧪 **Testing Debt & Code Quality** | TDD, 187 unit tests, <u>JaCoCo 88% coverage</u>, SonarCloud integration, 3-stage CI/CD pipeline | `feature/test-scaffolding` | [📄 View](weekly-reports/3-testing-debt.md) | ✅ Complete |
 | **4** | 📐 **Developer Experience**        | DevEx framework (Feedback Loops, Cognitive Load, Flow State) and SPACE methodology analysis | `docs/dev-ex-framework` | 🔄 In Review | 🔄 In Review |
-| **5** | 🔒 **DevSecOps / CI-CD**           | Static analysis tools: OWASP Dependency-Check, Semgrep SAST, SonarCloud, Checkstyle, PMD | `feature/ci-enhancements` | 🔄 In Review | 🔄 In Review |
+| **5** | 🔒 **DevSecOps / CI-CD**           | Static analysis tools: OWASP Dependency-Check, Semgrep SAST, SonarCloud, Checkstyle, PMD | `feature/ci-enhancements` | [📄 View](weekly-reports/5-ci-cd-pipeline.md) | ✅ Complete |
 | **6** | 🤖 **AI in SDLC**                  | Spec-Driven Development (SDD), AIDLC guardrails, vibe coding pitfalls, AI red teaming as quality gate | `feature/aidlc-lab` | 🔄 In Review | 🔄 In Review |
 | **7** | 🏛️ **Architectural Smells**       | Architecture debt, quality attributes, functional requirements, business constraints, manual inspection | `feature/architecture-sells` | 🔄 In Review | 🔄 In Review |
 
