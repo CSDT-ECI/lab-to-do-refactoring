@@ -151,7 +151,7 @@ This project evolves progressively through the *Calidad de Software y Deuda Téc
 | **4** | 📐 **Developer Experience**        | DevEx framework (Feedback Loops, Cognitive Load, Flow State) and SPACE methodology analysis | `docs/dev-ex-framework` | [📄 View](weekly-reports/4-dev-ex-and-space-frameworks.md) | ✅ Complete |
 | **5** | 🔒 **DevSecOps / CI-CD**           | Static analysis tools: OWASP Dependency-Check, Semgrep SAST, SonarCloud, Checkstyle, PMD | `feature/ci-enhancements` | [📄 View](weekly-reports/5-ci-cd-pipeline.md) | ✅ Complete |
 | **6** | 🤖 **AI in SDLC**                  | Spec-Driven Development (SDD), AIDLC guardrails, vibe coding pitfalls, AI red teaming as quality gate | `feature/aidlc-lab` | [📄 View](weekly-reports/6-sdd-analysis.md) | ✅ Complete |
-| **7** | 🏛️ **Architectural Smells**       | Architecture debt, quality attributes, functional requirements, business constraints, manual inspection | `feature/architecture-sells` | 🔄 In Review | 🔄 In Review |
+| **7** | 🏛️ **Architectural Smells**       | Architecture debt, quality attributes, functional requirements, business constraints, manual inspection | `feature/architecture-sells` | [📄 View](weekly-reports/7-architectural-smells.md) | ✅ Complete |
 
 ---
 
