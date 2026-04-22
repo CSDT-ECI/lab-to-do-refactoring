@@ -1,4 +1,4 @@
-# Code Smells, Refactoring & Architecture Analysis
+# 🐛 Code Smells, Refactoring & Architecture Analysis
 
 ## Table of Contents
 

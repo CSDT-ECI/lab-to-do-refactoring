@@ -1,4 +1,4 @@
-# 📐 Spec-Driven Development in LabToDo Refactoring
+# 📄 Spec-Driven Development in LabToDo Refactoring
 
 <div align="center">
 

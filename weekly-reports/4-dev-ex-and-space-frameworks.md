@@ -1,4 +1,4 @@
-# 📐 **Developer Experience & Productivity Analysis**
+# 🧑🏻‍💻 Developer Experience & Productivity Analysis
 
 This section evaluates the LabToDo refactoring project through two complementary productivity frameworks: **DevEx** *(Noda, Storey, Forsgren & Greiler, 2023)* and **SPACE** *(Forsgren et al., 2021)*. The analysis covers practices already implemented as well as identified opportunities for improvement.
 

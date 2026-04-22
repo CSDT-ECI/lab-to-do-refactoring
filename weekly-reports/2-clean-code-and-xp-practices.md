@@ -1,4 +1,4 @@
-# 📐 **Software Engineering Principles Analysis**
+# 📐 Software Engineering Principles Analysis
 
 ## Table of Contents
 
