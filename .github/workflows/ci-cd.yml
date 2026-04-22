@@ -1,0 +1,374 @@
+name: CI/CD Pipeline — LabToDo
+
+on:
+  push:
+    branches: [main, develop, "feature/**"]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  security-events: write
+
+# Cancela runs anteriores del mismo PR para ahorrar minutos
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  JAVA_VERSION: "17"
+  JAVA_DISTRIBUTION: "temurin"
+
+# ─────────────────────────────────────────────
+# JOB 1 · BUILD
+# ─────────────────────────────────────────────
+jobs:
+  build:
+    name: 🔨 Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Sonar necesita todo el historial
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          cache: maven
+
+      - name: Compile (skip tests)
+        run: ./mvnw compile -B -DskipTests
+
+      - name: Cache compiled classes for downstream jobs
+        uses: actions/upload-artifact@v4
+        with:
+          name: compiled-classes
+          path: target/
+          retention-days: 1
+
+  # ─────────────────────────────────────────────
+  # JOB 2 · TEST & COVERAGE
+  # (separado de Sonar para poder ejecutarlos en paralelo)
+  # ─────────────────────────────────────────────
+  test:
+    name: 🧪 Test & Coverage
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          cache: maven
+
+      - name: Download compiled classes
+        uses: actions/download-artifact@v4
+        with:
+          name: compiled-classes
+          path: target/
+
+      - name: Run unit tests + enforce 85 % branch coverage
+        run: ./mvnw verify -B
+
+      - name: Upload JaCoCo HTML report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: jacoco-report
+          path: target/site/jacoco/
+          retention-days: 7
+
+      # Publica un resumen de cobertura en el panel del workflow
+      - name: Coverage summary in GitHub Step Summary
+        if: always()
+        run: |
+          echo "## 🧪 Test Coverage" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          # Extrae métricas del XML de JaCoCo
+          COVERED=$(grep -oP 'type="LINE"[^/]*/>' target/site/jacoco/jacoco.xml | \
+            grep -oP 'covered="\K[0-9]+' | awk '{s+=$1}END{print s}')
+          MISSED=$(grep -oP 'type="LINE"[^/]*/>' target/site/jacoco/jacoco.xml | \
+            grep -oP 'missed="\K[0-9]+' | awk '{s+=$1}END{print s}')
+          TOTAL=$((COVERED + MISSED))
+          PCT=$(echo "scale=1; $COVERED * 100 / $TOTAL" | bc)
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Lines covered | $COVERED / $TOTAL |" >> $GITHUB_STEP_SUMMARY
+          echo "| Coverage | **$PCT %** |" >> $GITHUB_STEP_SUMMARY
+
+  # ─────────────────────────────────────────────
+  # JOB 3 · SONARCLOUD (paralelo con test y security)
+  # ─────────────────────────────────────────────
+  sonar:
+    name: 📊 SonarCloud Analysis
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          cache: maven
+
+      - name: Download compiled classes
+        uses: actions/download-artifact@v4
+        with:
+          name: compiled-classes
+          path: target/
+
+      # Ejecuta verify para regenerar jacoco.xml (necesario para Sonar)
+      - name: Generate coverage report
+        run: ./mvnw verify -B -Dsurefire.failIfNoSpecifiedTests=false
+
+      - name: SonarCloud analysis
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          ./mvnw sonar:sonar \
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} \
+            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }} \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
+            -Dsonar.exclusions="src/test/**" \
+            -Dsonar.qualitygate.wait=true \
+            -B
+          # ↑ qualitygate.wait=true hace fallar el job si no pasa el Quality Gate
+
+  # ─────────────────────────────────────────────
+  # JOB 4 · SEGURIDAD: OWASP Dependency Check
+  # (paralelo con test y sonar)
+  # ─────────────────────────────────────────────
+  security:
+    name: 🔒 Security Scan (OWASP)
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          cache: maven
+
+      - name: Download compiled classes
+        uses: actions/download-artifact@v4
+        with:
+          name: compiled-classes
+          path: target/
+
+      - name: OWASP Dependency Check
+        run: |
+          ./mvnw dependency-check:check \
+            -DfailBuildOnCVSS=7 \
+            -DsuppressionsLocation=.owasp-suppressions.xml \
+            -B || true
+          # 'true' evita fallo fatal en el CI; el reporte se sube igualmente
+          # Elimina '|| true' cuando quieras fallar el pipeline en CVSS >= 7
+
+      - name: Upload OWASP HTML report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: owasp-report
+          path: target/dependency-check-report.html
+          retention-days: 7
+
+      - name: OWASP summary
+        if: always()
+        run: |
+          echo "## 🔒 OWASP Dependency Check" >> $GITHUB_STEP_SUMMARY
+          CRITICAL=$(grep -c "Critical" target/dependency-check-report.html || echo 0)
+          HIGH=$(grep -c "High" target/dependency-check-report.html || echo 0)
+          echo "| Severity | Count |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Critical | $CRITICAL |" >> $GITHUB_STEP_SUMMARY
+          echo "| High | $HIGH |" >> $GITHUB_STEP_SUMMARY
+
+  # ─────────────────────────────────────────────
+  # JOB 5 · SAST: Semgrep (análisis detallado)
+  # ─────────────────────────────────────────────
+  semgrep:
+    name: 🧭 SAST Scan (Semgrep)
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Semgrep analysis
+        uses: returntocorp/semgrep-action@v1
+        continue-on-error: true
+        with:
+          config: >-
+            p/security-audit
+            p/owasp-top-ten
+            p/java
+          generateSarif: true
+
+      - name: Set up Python for Semgrep fallback
+        if: always() && hashFiles('semgrep.sarif') == ''
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Generate SARIF fallback with Semgrep
+        if: always() && hashFiles('semgrep.sarif') == ''
+        continue-on-error: true
+        run: |
+          python -m pip install --upgrade pip semgrep
+          semgrep --config p/security-audit --config p/owasp-top-ten --config p/java --sarif --output semgrep.sarif .
+
+      - name: Upload Semgrep SARIF to Code Scanning
+        if: always() && hashFiles('semgrep.sarif') != ''
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: semgrep.sarif
+
+      - name: Upload Semgrep SARIF artifact
+        if: always() && hashFiles('semgrep.sarif') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: semgrep-sarif
+          path: semgrep.sarif
+          retention-days: 7
+
+      - name: Parse and summarize Semgrep results
+        if: always() && hashFiles('semgrep.sarif') != ''
+        run: |
+          python3 << 'EOF'
+          import json
+          import os
+
+          try:
+              with open('semgrep.sarif', 'r') as f:
+                  data = json.load(f)
+              
+              results = data.get('runs', [{}])[0].get('results', [])
+              total = len(results)
+              
+              # Contar por severidad (level)
+              error_count = len([r for r in results if r.get('level') == 'error'])
+              warning_count = len([r for r in results if r.get('level') == 'warning'])
+              note_count = len([r for r in results if r.get('level') == 'note'])
+              
+              # Agrupar por rule y severidad
+              issues_by_rule = {}
+              for r in results:
+                  rule_id = r.get('ruleId', 'unknown')
+                  level = r.get('level', 'note')
+                  if rule_id not in issues_by_rule:
+                      issues_by_rule[rule_id] = {'error': 0, 'warning': 0, 'note': 0}
+                  issues_by_rule[rule_id][level] += 1
+              
+              # Escribir al GitHub Step Summary
+              summary_file = os.environ.get('GITHUB_STEP_SUMMARY', '')
+              with open(summary_file, 'a') as f:
+                  f.write('\n## 🧭 SAST Analysis (Semgrep)\n\n')
+                  f.write('### Summary Statistics\n')
+                  f.write('| Severity | Count |\n')
+                  f.write('|----------|-------|\n')
+                  f.write(f'| **Total** | **{total}** |\n')
+                  f.write(f'| 🔴 Error | {error_count} |\n')
+                  f.write(f'| 🟡 Warning | {warning_count} |\n')
+                  f.write(f'| ℹ️ Note | {note_count} |\n')
+                  
+                  if total == 0:
+                      f.write('\n✅ **No security issues detected!**\n')
+                  else:
+                      f.write('\n### Issues by Rule\n')
+                      # Ordenar por cantidad total de issues
+                      sorted_rules = sorted(
+                          issues_by_rule.items(),
+                          key=lambda x: sum(x[1].values()),
+                          reverse=True
+                      )
+                      
+                      for rule_id, counts in sorted_rules:
+                          rule_short = rule_id.split('.')[-1] if '.' in rule_id else rule_id
+                          total_rule = sum(counts.values())
+                          f.write(f'\n**`{rule_short}`** - {total_rule} issue(s)\n')
+                          if counts['error'] > 0:
+                              f.write(f'  - 🔴 Error: {counts["error"]}\n')
+                          if counts['warning'] > 0:
+                              f.write(f'  - 🟡 Warning: {counts["warning"]}\n')
+                          if counts['note'] > 0:
+                              f.write(f'  - ℹ️ Note: {counts["note"]}\n')
+                  
+                  f.write('\n---\n')
+                  f.write('📄 **Full SARIF Report**: Download from Artifacts → `semgrep-sarif`\n')
+
+          except Exception as e:
+              print(f"Warning: Could not parse SARIF: {e}")
+              # No fallar si no se puede parsear, solo informar
+              exit(0)
+          EOF
+
+  # ─────────────────────────────────────────────
+  # JOB 6 · DEPLOY
+  # ─────────────────────────────────────────────
+  deploy:
+    name: 🚀 Deploy
+    runs-on: ubuntu-latest
+    needs: [test, sonar, security, semgrep]
+    # En PRs solo simula; en push a main/develop despliega
+    if: always() && needs.test.result == 'success'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          cache: maven
+
+      - name: Package application
+        run: ./mvnw package -DskipTests -B
+
+      - name: Simulate deployment
+        run: |
+          echo "========================================"
+          echo "  🚀  SIMULATED DEPLOYMENT"
+          echo "========================================"
+          echo "  Artifact : target/labtodo.jar"
+          echo "  Target   : production-server (simulated)"
+          echo "  Timestamp: $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+          echo "  Git SHA  : ${{ github.sha }}"
+          echo "  Branch   : ${{ github.ref_name }}"
+          echo "========================================"
+          echo "  ✅  Deployment completed successfully"
+          echo "========================================"
+
+      - name: Upload deployment artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: labtodo-jar
+          path: target/labtodo.jar
+          retention-days: 7
+
+      - name: Deploy summary
+        run: |
+          echo "## 🚀 Deploy" >> $GITHUB_STEP_SUMMARY
+          echo "| Campo | Valor |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| SHA | \`${{ github.sha }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Branch | \`${{ github.ref_name }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Timestamp | $(date -u '+%Y-%m-%dT%H:%M:%SZ') |" >> $GITHUB_STEP_SUMMARY

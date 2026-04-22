@@ -1,0 +1,63 @@
+package edu.eci.labinfo.labtodo.integration;
+
+import edu.eci.labinfo.labtodo.support.BaseIntegrationTest;
+import edu.eci.labinfo.labtodo.support.TestDataBuilders;
+import edu.eci.labinfo.labtodo.model.Task;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+/**
+ * Integration test template — copy and rename this file.
+ *
+ * Naming convention:
+ *   File  : <Feature>IT.java
+ *   Method: should<ExpectedBehavior>When<Scenario>
+ *           shouldNot<Behavior>When<Scenario>
+ *
+ * FIRST checklist (verify before committing):
+ *   [ ] Fast        — Spring context reused; no redundant @SpringBootTest on subclass
+ *   [ ] Independent — each test relies on @Transactional rollback from BaseIntegrationTest
+ *   [ ] Repeatable  — uses "test" profile with H2; no MySQL dependency
+ *   [ ] Self-validating — at least one AssertJ assertion per test
+ *   [ ] Timely      — created alongside the persistence or wiring change
+ */
+class ExampleIT extends BaseIntegrationTest {
+
+    @Autowired
+    private ExampleRepository subject;
+
+    // ------------------------------------------------------------------
+    // Happy path
+    // ------------------------------------------------------------------
+
+    @Test
+    void should<ExpectedBehavior>When<Scenario>() {
+        // Arrange
+        Task task = TestDataBuilders.buildPendingLabTask();
+
+        // Act
+        Task saved = subject.save(task);
+
+        // Assert
+        assertThat(saved.getTaskId()).isNotNull();
+        assertThat(saved.getTitle()).isEqualTo(task.getTitle());
+    }
+
+    // ------------------------------------------------------------------
+    // Negative / boundary cases
+    // ------------------------------------------------------------------
+
+    @Test
+    void shouldNot<Behavior>When<InvalidScenario>() {
+        // Arrange
+        long nonExistentId = Long.MAX_VALUE;
+
+        // Act
+        java.util.Optional<Task> result = subject.findById(nonExistentId);
+
+        // Assert
+        assertThat(result).isEmpty();
+    }
+}
