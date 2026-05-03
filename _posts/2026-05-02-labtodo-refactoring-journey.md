@@ -197,9 +197,35 @@ The central contrast was between *Vibe Coding* — issuing vague instructions to
 | **Acceptance Criteria** | Verifiable, measurable requirements in BDD/Gherkin |
 | **Edge Cases** | Failure scenarios, invalid inputs, null states |
 
-In this project, the CLAUDE.md file served as the primary mega-prompt: it defined the allowed technology stack, coding standards (e.g., "never call `Optional.get()` directly"), test writing rules (AAA blocks, `BaseUnitTest` extension, `TestDataBuilders` usage), and explicit guardrails (no `@SpringBootTest` in unit tests, no magic strings, no speculative methods).
+### The Practical Lab — Vibe Coding vs. SDD
 
-**AI red teaming** was applied as a quality gate: after generating each refactored component, a second AI pass was used to stress-test the design against the documented edge cases, identifying gaps before they reached the test suite.
+To make the contrast tangible, the deliverable included a hands-on laboratory: building an **Agile Carbon Footprint Calculator** using pure HTML, CSS, and JavaScript — first through unguided Vibe Coding, then through structured Spec-Driven Development. The artifact is small by design; the point is the *process*, not the product.
+
+#### Phase 1: Vibe Coding — The Butterfly Effect
+
+The lab began with a deliberately vague prompt: *"Make me a nice web page for a carbon footprint calculator. Make it calculate things and look modern."* The initial output looked polished — a textbook example of why Vibe Coding is seductive.
+
+![Vibe Coding — initial lazy prompt result: looks functional, but structurally fragile]({{ site.baseurl }}/aidlc-practical-lab/assets/gifs/01-lazy-prompt.gif)
+
+Three unguided follow-up requests — adding a chart, a PDF export, and switching to monthly calculations — triggered the *Butterfly Effect*: each prompt forced the AI to make drastic architectural decisions in isolation, stacking incoherent layers on top of each other. The PDF export silently injected `html2pdf.js` from an external CDN without authorization, and exported an invisible document because the dark CSS styles were captured as-is against a white PDF background. The chart was eventually removed, but the broken export logic persisted untouched as unresolved debt.
+
+![The Collapse — three unguided iterations produced Frankenstein code with five mixed responsibilities at global scope]({{ site.baseurl }}/aidlc-practical-lab/assets/gifs/02-collapse.gif)
+
+The final `script.js` mixed five distinct responsibilities — calculation, DOM manipulation, localStorage persistence, PDF export, and visual theming — at global scope with no module boundaries. Every new requirement had destroyed a piece of the prior architecture.
+
+#### Phase 2: Spec-Driven Development — Controlled Growth
+
+The second attempt started with a strict Mega-Prompt: role, technological constraints (no frameworks, no CDN libraries, one file), and a single bounded User Story with explicit acceptance criteria. The result was minimal, correct, and verifiable.
+
+![SDD result — light mode: minimal, correct, and matching the User Story contract exactly]({{ site.baseurl }}/aidlc-practical-lab/assets/images/01-light-carbon-footprint-calculator.png)
+
+A second User Story was added in the same chat — dark mode via a CSS class on the `body`. Crucially, the AI added the feature *additively*: the pre-existing calculation logic was untouched, and the dark mode handler was exactly one event listener and a handful of CSS rules — nothing more.
+
+![SDD result — dark mode added non-destructively: prior logic intact, scope bounded by the Spec]({{ site.baseurl }}/aidlc-practical-lab/assets/images/02-dark-carbon-footprint-calculator.png)
+
+In this project, the `CLAUDE.md` file served as the primary mega-prompt for the entire LabToDo refactoring: it defined the allowed technology stack, coding standards (e.g., "never call `Optional.get()` directly"), test writing rules (AAA blocks, `BaseUnitTest` extension, `TestDataBuilders` usage), and explicit guardrails (no `@SpringBootTest` in unit tests, no magic strings, no speculative methods).
+
+**AI red teaming** was applied as a quality gate: after generating each refactored component, a second AI pass stress-tested the design against the documented edge cases — catching gaps before they reached the test suite.
 
 The key finding: SDD does not reduce engineering judgment — it *preserves and amplifies* it by ensuring the AI executes a pre-designed specification rather than improvising one.
 

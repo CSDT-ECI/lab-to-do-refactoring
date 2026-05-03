@@ -36,7 +36,6 @@ feed:
 exclude:
   - index.md
   - DELETE/
-  - aidlc-practical-lab/
   - src/
   - target/
   - mvnw
