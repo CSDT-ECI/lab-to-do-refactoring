@@ -33,6 +33,7 @@ feed:
 
 # ─── Build exclusions (non-web assets) ────────────────────────────────────────
 exclude:
+  - index.md
   - DELETE/
   - aidlc-practical-lab/
   - src/

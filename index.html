@@ -1,0 +1,1406 @@
+---
+layout: null
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="LabToDo Enterprise Refactoring — 7 software quality disciplines applied to a Spring Boot JSF monolith: 0% → 88% coverage, 187 tests, 6-stage DevSecOps pipeline. CSDT_M · ECI · 2026.">
+  <meta property="og:title" content="LabToDo — Enterprise Refactoring Project">
+  <meta property="og:description" content="From 89 code smells and 0% test coverage to a professionally refactored Spring Boot system. CSDT_M course · Universidad ECI · 2026.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://csdt-eci.github.io/lab-to-do-refactoring/">
+  <title>LabToDo — Enterprise Refactoring | CSDT_M · ECI 2026</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* ─── Reset & Root ────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #020617;
+      --bg-surface:   #0f172a;
+      --bg-card:      rgba(15, 23, 42, 0.7);
+      --green:        #22c55e;
+      --green-dark:   #16a34a;
+      --green-light:  rgba(34, 197, 94, 0.10);
+      --green-glow:   rgba(34, 197, 94, 0.22);
+      --indigo:       #818cf8;
+      --amber:        #fbbf24;
+      --text:         #f1f5f9;
+      --text-muted:   #94a3b8;
+      --text-dim:     #64748b;
+      --border:       rgba(255, 255, 255, 0.07);
+      --border-green: rgba(34, 197, 94, 0.28);
+      --shadow:       0 4px 28px rgba(0, 0, 0, 0.45);
+      --shadow-green: 0 8px 40px rgba(34, 197, 94, 0.16);
+      --radius:       12px;
+      --radius-lg:    18px;
+      --nav-h:        68px;
+      --ease:         0.25s ease;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    img { max-width: 100%; height: auto; display: block; }
+    a   { color: var(--green); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ─── Utilities ──────────────────────────────────────────────────────────── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    .section   { padding: 96px 0; }
+
+    .section-label {
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2.5px;
+      color: var(--green);
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.15;
+      letter-spacing: -0.5px;
+      margin-bottom: 14px;
+    }
+
+    .section-desc {
+      font-size: 1rem;
+      color: var(--text-muted);
+      max-width: 620px;
+      line-height: 1.75;
+      margin-bottom: 52px;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 26px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.92rem;
+      font-family: 'Inter', sans-serif;
+      text-decoration: none;
+      transition: all var(--ease);
+      cursor: pointer;
+      border: none;
+    }
+    .btn-primary {
+      background: var(--green);
+      color: #000;
+    }
+    .btn-primary:hover {
+      background: var(--green-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px var(--green-glow);
+      text-decoration: none;
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border-green);
+    }
+    .btn-outline:hover {
+      background: var(--green-light);
+      border-color: var(--green);
+      transform: translateY(-2px);
+      text-decoration: none;
+    }
+
+    /* ─── Navbar ─────────────────────────────────────────────────────────────── */
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      z-index: 1000;
+      transition: background var(--ease), backdrop-filter var(--ease), border-bottom var(--ease);
+    }
+    .navbar.scrolled {
+      background: rgba(2, 6, 23, 0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .navbar-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+    .brand-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 12px var(--green-glow);
+      animation: pulseDot 2.5s ease-in-out infinite;
+    }
+    @keyframes pulseDot {
+      0%, 100% { box-shadow: 0 0 8px var(--green-glow); }
+      50%       { box-shadow: 0 0 20px var(--green-glow); }
+    }
+    .navbar-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      list-style: none;
+    }
+    .navbar-links a {
+      font-size: 0.86rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: color var(--ease);
+    }
+    .navbar-links a:hover { color: var(--text); text-decoration: none; }
+    .navbar-cta {
+      background: var(--green) !important;
+      color: #000 !important;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.83rem;
+      transition: all var(--ease);
+    }
+    .navbar-cta:hover { background: var(--green-dark) !important; transform: translateY(-1px); }
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 6px;
+    }
+    .nav-toggle span {
+      display: block;
+      width: 22px; height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: var(--ease);
+    }
+
+    /* ─── Hero ───────────────────────────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      padding-top: var(--nav-h);
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 90% 70% at 50% -10%, rgba(34,197,94,0.09) 0%, transparent 65%),
+        radial-gradient(ellipse 55% 55% at 85% 85%, rgba(129,140,248,0.07) 0%, transparent 60%),
+        linear-gradient(180deg, #020617 0%, #0a1628 100%);
+    }
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(34,197,94,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34,197,94,0.025) 1px, transparent 1px);
+      background-size: 64px 64px;
+    }
+    .hero-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(110px);
+      pointer-events: none;
+    }
+    .hero-orb-1 {
+      width: 700px; height: 700px;
+      background: rgba(34,197,94,0.07);
+      top: -250px; left: -250px;
+      animation: floatOrb 12s ease-in-out infinite;
+    }
+    .hero-orb-2 {
+      width: 500px; height: 500px;
+      background: rgba(129,140,248,0.06);
+      bottom: -150px; right: -150px;
+      animation: floatOrb 16s ease-in-out infinite reverse;
+    }
+    .hero-orb-3 {
+      width: 350px; height: 350px;
+      background: rgba(251,191,36,0.035);
+      top: 45%; left: 58%;
+      animation: floatOrb 14s ease-in-out infinite;
+      animation-delay: 4s;
+    }
+    @keyframes floatOrb {
+      0%,100% { transform: translate(0,0) scale(1); }
+      33%     { transform: translate(28px,-18px) scale(1.04); }
+      66%     { transform: translate(-18px,14px) scale(0.97); }
+    }
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 840px;
+      margin: 0 auto;
+      padding: 80px 24px 100px;
+      text-align: center;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(34,197,94,0.09);
+      border: 1px solid rgba(34,197,94,0.22);
+      border-radius: 100px;
+      padding: 7px 18px;
+      font-size: 0.77rem;
+      font-weight: 600;
+      color: var(--green);
+      margin-bottom: 28px;
+      letter-spacing: 0.6px;
+    }
+    .eyebrow-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2.2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50%     { opacity: 0.45; transform: scale(0.75); }
+    }
+    .hero-title {
+      font-size: clamp(2.6rem, 7vw, 4.6rem);
+      font-weight: 900;
+      line-height: 1.07;
+      letter-spacing: -2.5px;
+      margin-bottom: 22px;
+      background: linear-gradient(130deg, #ffffff 25%, #86efac 65%, var(--green) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-subtitle {
+      font-size: clamp(1rem, 2.2vw, 1.18rem);
+      color: var(--text-muted);
+      max-width: 640px;
+      margin: 0 auto 38px;
+      line-height: 1.72;
+    }
+    .hero-subtitle strong { color: var(--text); font-weight: 600; }
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 42px;
+    }
+    .hero-badges img { height: 22px; width: auto; border-radius: 4px; }
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .hero-scroll {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-dim);
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .scroll-line {
+      width: 1px; height: 44px;
+      background: linear-gradient(to bottom, var(--green), transparent);
+      animation: scrollPulse 2.2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%,100% { opacity: 0.35; }
+      50%     { opacity: 1; }
+    }
+
+    /* ─── Metrics ────────────────────────────────────────────────────────────── */
+    .metrics {
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 64px 0;
+    }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .metric-item {
+      background: var(--bg-surface);
+      padding: 38px 28px;
+      text-align: center;
+      transition: background var(--ease);
+    }
+    .metric-item:hover { background: rgba(34,197,94,0.04); }
+    .metric-icon { font-size: 1.9rem; margin-bottom: 10px; }
+    .metric-value {
+      font-size: 3.2rem;
+      font-weight: 900;
+      color: var(--green);
+      line-height: 1;
+      letter-spacing: -2px;
+      font-variant-numeric: tabular-nums;
+    }
+    .metric-suffix { font-size: 1.8rem; font-weight: 900; color: var(--green); }
+    .metric-label {
+      font-size: 0.76rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-dim);
+      margin-top: 8px;
+    }
+
+    /* ─── About ──────────────────────────────────────────────────────────────── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+    .about-text p {
+      font-size: 0.97rem;
+      color: var(--text-muted);
+      line-height: 1.78;
+      margin-bottom: 26px;
+    }
+    .about-text p strong { color: var(--text); font-weight: 600; }
+    .highlight-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+    .highlight-list li {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 0.93rem;
+      color: var(--text-muted);
+    }
+    .highlight-list .hi { color: var(--green); font-size: 1rem; flex-shrink: 0; margin-top: 3px; }
+    .about-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .stat-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 20px;
+      transition: border-color var(--ease), transform var(--ease);
+    }
+    .stat-card:hover { border-color: var(--border-green); transform: translateY(-3px); }
+    .stat-num { font-size: 2rem; font-weight: 900; color: var(--green); letter-spacing: -1px; }
+    .stat-label { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; font-weight: 500; line-height: 1.4; }
+
+    /* ─── Deliverables ───────────────────────────────────────────────────────── */
+    .deliverables-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 18px;
+    }
+    .del-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 26px;
+      transition: all var(--ease);
+      position: relative;
+      overflow: hidden;
+    }
+    .del-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--green-light), transparent 55%);
+      opacity: 0;
+      transition: opacity var(--ease);
+    }
+    .del-card:hover { border-color: var(--border-green); transform: translateY(-4px); box-shadow: var(--shadow-green); }
+    .del-card:hover::before { opacity: 1; }
+    .del-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .del-num {
+      width: 34px; height: 34px;
+      border-radius: 9px;
+      background: rgba(34,197,94,0.1);
+      border: 1px solid rgba(34,197,94,0.22);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.85rem;
+      color: var(--green);
+      flex-shrink: 0;
+    }
+    .del-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 100px;
+      background: rgba(34,197,94,0.1);
+      color: var(--green);
+      border: 1px solid rgba(34,197,94,0.22);
+    }
+    .del-icon { font-size: 1.7rem; margin-bottom: 8px; }
+    .del-title { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+    .del-desc { font-size: 0.87rem; color: var(--text-muted); line-height: 1.62; margin-bottom: 18px; }
+    .del-link {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--green);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: gap var(--ease);
+    }
+    .del-link:hover { gap: 9px; text-decoration: none; }
+
+    /* ─── Tech Stack ─────────────────────────────────────────────────────────── */
+    .tech-wrap {
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .tech-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+    .tech-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 9px 16px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--text);
+      transition: all var(--ease);
+    }
+    .tech-pill:hover {
+      border-color: var(--border-green);
+      background: var(--green-light);
+      transform: translateY(-2px);
+    }
+    .tech-pill .ver { font-size: 0.7rem; color: var(--text-dim); font-weight: 400; }
+
+    /* ─── Gallery ────────────────────────────────────────────────────────────── */
+    .gallery-tabs {
+      display: flex;
+      gap: 4px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 32px;
+    }
+    .gtab {
+      padding: 11px 22px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all var(--ease);
+      font-family: 'Inter', sans-serif;
+    }
+    .gtab.active { color: var(--green); border-bottom-color: var(--green); }
+    .gtab:hover:not(.active) { color: var(--text); }
+    .gpanel { display: none; }
+    .gpanel.active { display: grid; }
+    .gallery-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+    .gitem {
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      transition: all var(--ease);
+      cursor: pointer;
+    }
+    .gitem:hover { border-color: var(--border-green); transform: translateY(-3px); box-shadow: var(--shadow-green); }
+    .gitem img {
+      width: 100%;
+      height: 195px;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    .gitem:hover img { transform: scale(1.04); }
+    .gcaption {
+      padding: 11px 14px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ─── Architecture ───────────────────────────────────────────────────────── */
+    .arch-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .arch-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: all var(--ease);
+    }
+    .arch-card:hover { border-color: var(--border-green); transform: translateY(-4px); box-shadow: var(--shadow-green); }
+    .arch-card img {
+      width: 100%;
+      height: 210px;
+      object-fit: contain;
+      background: #ffffff;
+      padding: 14px;
+    }
+    .arch-caption { padding: 14px 18px; border-top: 1px solid var(--border); }
+    .arch-caption h4 { font-size: 0.93rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .arch-caption p  { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
+
+    /* ─── Team ───────────────────────────────────────────────────────────────── */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-bottom: 40px;
+    }
+    .team-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px 22px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      transition: all var(--ease);
+    }
+    .team-card:hover { border-color: var(--border-green); transform: translateY(-3px); box-shadow: var(--shadow-green); }
+    .team-avatar {
+      width: 58px; height: 58px;
+      border-radius: 50%;
+      border: 2px solid var(--green);
+      flex-shrink: 0;
+      object-fit: cover;
+    }
+    .team-name { font-weight: 700; font-size: 0.98rem; color: var(--text); margin-bottom: 3px; }
+    .team-role { font-size: 0.79rem; color: var(--text-muted); margin-bottom: 8px; }
+    .team-gh   { font-size: 0.78rem; color: var(--green); font-weight: 600; }
+    .team-gh:hover { text-decoration: underline; }
+
+    .original-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px 30px;
+    }
+    .original-box h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .orig-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    .orig-author { display: flex; align-items: center; gap: 10px; }
+    .orig-avatar {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .orig-name { font-size: 0.86rem; font-weight: 600; color: var(--text); }
+    .orig-handle { font-size: 0.76rem; color: var(--text-dim); }
+    .orig-handle:hover { color: var(--green); text-decoration: none; }
+
+    /* ─── Blog CTA ───────────────────────────────────────────────────────────── */
+    .blog-cta {
+      background: linear-gradient(135deg, rgba(34,197,94,0.07), rgba(129,140,248,0.05));
+      border: 1px solid var(--border-green);
+      border-radius: var(--radius-lg);
+      padding: 52px 44px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 36px;
+      align-items: center;
+    }
+    .blog-cta-title { font-size: 1.45rem; font-weight: 800; color: var(--text); margin-bottom: 10px; }
+    .blog-cta-desc  { font-size: 0.95rem; color: var(--text-muted); line-height: 1.68; }
+
+    /* ─── Footer ─────────────────────────────────────────────────────────────── */
+    .footer {
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border);
+      padding: 56px 0 32px;
+    }
+    .footer-inner {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 52px;
+      margin-bottom: 44px;
+    }
+    .footer-brand-name { font-size: 1.05rem; font-weight: 800; color: var(--text); margin-bottom: 10px; }
+    .footer-brand p { font-size: 0.86rem; color: var(--text-muted); line-height: 1.65; max-width: 320px; }
+    .footer-col h4 {
+      font-size: 0.77rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--text-dim);
+      margin-bottom: 16px;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col a { font-size: 0.86rem; color: var(--text-muted); transition: color var(--ease); }
+    .footer-col a:hover { color: var(--green); text-decoration: none; }
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .footer-bottom p { font-size: 0.8rem; color: var(--text-dim); }
+    .footer-bottom a { color: var(--green); }
+
+    /* ─── Responsive ─────────────────────────────────────────────────────────── */
+    @media (max-width: 960px) {
+      .about-grid    { grid-template-columns: 1fr; gap: 44px; }
+      .team-grid     { grid-template-columns: 1fr; }
+      .arch-grid     { grid-template-columns: repeat(2, 1fr); }
+      .orig-grid     { grid-template-columns: repeat(2, 1fr); }
+      .metrics-grid  { grid-template-columns: repeat(2, 1fr); }
+      .footer-inner  { grid-template-columns: 1fr 1fr; }
+      .blog-cta      { grid-template-columns: 1fr; text-align: center; }
+    }
+    @media (max-width: 640px) {
+      .section { padding: 70px 0; }
+      .navbar-links { display: none; }
+      .navbar-links.open {
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: var(--nav-h);
+        left: 0; right: 0;
+        background: rgba(2,6,23,0.97);
+        backdrop-filter: blur(24px);
+        padding: 24px;
+        border-bottom: 1px solid var(--border);
+        gap: 20px;
+        z-index: 999;
+      }
+      .nav-toggle  { display: flex; }
+      .gallery-grid { grid-template-columns: 1fr; }
+      .arch-grid   { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr; gap: 32px; }
+      .hero-title  { letter-spacing: -1.5px; }
+      .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+      .about-stats { grid-template-columns: 1fr 1fr; }
+      .orig-grid   { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 440px) {
+      .team-grid { grid-template-columns: 1fr; }
+      .orig-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── NAVBAR ──────────────────────────────────────────────────────────── -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar-inner">
+      <div class="navbar-brand">
+        <span class="brand-dot"></span>
+        LabToDo
+      </div>
+      <ul class="navbar-links" id="navLinks">
+        <li><a href="#about">About</a></li>
+        <li><a href="#deliverables">Deliverables</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#team">Team</a></li>
+        <li>
+          <a href="{{ site.baseurl }}/2026/05/02/labtodo-refactoring-journey/"
+             class="navbar-cta">Blog Post</a>
+        </li>
+      </ul>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ─── HERO ────────────────────────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <div class="hero-orb hero-orb-3"></div>
+
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <span class="eyebrow-dot"></span>
+        CSDT_M &nbsp;·&nbsp; Universidad ECI &nbsp;·&nbsp; 2026
+      </div>
+
+      <h1 class="hero-title">
+        LabToDo<br>Enterprise Refactoring
+      </h1>
+
+      <p class="hero-subtitle">
+        Transforming a legacy <strong>Spring Boot + JSF/PrimeFaces</strong> monolith
+        into a maintainable, testable, and professionally architected system —
+        through seven progressive software quality disciplines.
+      </p>
+
+      <div class="hero-badges">
+        <img src="https://img.shields.io/badge/Java-17-ED8B00?style=flat-square&logo=openjdk&logoColor=white" alt="Java 17">
+        <img src="https://img.shields.io/badge/Spring_Boot-3.2.0-6DB33F?style=flat-square&logo=springboot&logoColor=white" alt="Spring Boot">
+        <img src="https://img.shields.io/badge/Coverage-88%25-22c55e?style=flat-square" alt="88% Coverage">
+        <img src="https://img.shields.io/badge/Tests-187-22c55e?style=flat-square" alt="187 Tests">
+        <img src="https://img.shields.io/badge/SonarCloud-Monitored-F3702A?style=flat-square&logo=sonarcloud&logoColor=white" alt="SonarCloud">
+        <img src="https://img.shields.io/badge/CI%2FCD-6_Stages-2088FF?style=flat-square&logo=githubactions&logoColor=white" alt="CI/CD">
+        <img src="https://img.shields.io/badge/License-CC_BY--SA_4.0-blue?style=flat-square" alt="License">
+      </div>
+
+      <div class="hero-actions">
+        <a href="https://github.com/CSDT-ECI/lab-to-do-refactoring"
+           class="btn btn-primary" target="_blank" rel="noopener">
+          ★ &nbsp;View on GitHub
+        </a>
+        <a href="{{ site.baseurl }}/2026/05/02/labtodo-refactoring-journey/"
+           class="btn btn-outline">
+          Read the Journey &nbsp;→
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-scroll">
+      <div class="scroll-line"></div>
+      Scroll
+    </div>
+  </section>
+
+  <!-- ─── METRICS ─────────────────────────────────────────────────────────── -->
+  <section class="metrics">
+    <div class="container">
+      <div class="metrics-grid">
+        <div class="metric-item">
+          <div class="metric-icon">🧪</div>
+          <div>
+            <span class="metric-value" data-target="88">0</span><span class="metric-suffix">%</span>
+          </div>
+          <div class="metric-label">JaCoCo Line Coverage</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-icon">✅</div>
+          <div><span class="metric-value" data-target="187">0</span></div>
+          <div class="metric-label">Unit Tests Written</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-icon">🔒</div>
+          <div><span class="metric-value" data-target="6">0</span></div>
+          <div class="metric-label">CI/CD Pipeline Stages</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-icon">📚</div>
+          <div><span class="metric-value" data-target="7">0</span></div>
+          <div class="metric-label">CSDT_M Deliverables</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── ABOUT ───────────────────────────────────────────────────────────── -->
+  <section class="section" id="about">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-text reveal">
+          <div class="section-label">About the Project</div>
+          <h2 class="section-title">From technical debt<br>to clean architecture</h2>
+          <p>
+            <strong>LabToDo</strong> is a task management system built for the computer science laboratory
+            at <em>Universidad Escuela Colombiana de Ingeniería Julio Garavito</em>. It manages tasks,
+            user assignments, and semester tracking with a role-based authentication system
+            (<em>Administrator</em>, <em>Monitor</em>, <em>Student</em>).
+          </p>
+          <p>
+            This refactoring initiative applied seven CSDT_M disciplines to measure and progressively
+            reduce the debt accumulated in the original codebase — starting from a system with no tests,
+            89 code smells, and a 527-line controller mixing 15+ unrelated responsibilities.
+          </p>
+          <ul class="highlight-list">
+            <li>
+              <span class="hi">→</span>
+              <span>Test coverage raised from <strong style="color:var(--green)">0% to 88%</strong>,
+              surpassing the 85% JaCoCo quality gate</span>
+            </li>
+            <li>
+              <span class="hi">→</span>
+              <span>6-stage DevSecOps pipeline integrating OWASP, Semgrep SAST, and SonarCloud —
+              runs complete in under 5 minutes</span>
+            </li>
+            <li>
+              <span class="hi">→</span>
+              <span>7 architectural smells mapped against the Sharma taxonomy and ISO/IEC 25010
+              quality model</span>
+            </li>
+            <li>
+              <span class="hi">→</span>
+              <span>Spec-Driven Development applied via AIDLC guardrails as an AI-assisted quality gate</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="about-stats reveal" style="transition-delay:0.15s">
+          <div class="stat-card">
+            <div class="stat-num">89</div>
+            <div class="stat-label">Code smells identified by SonarCloud</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">47</div>
+            <div class="stat-label">SOLID violations catalogued manually</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">156+</div>
+            <div class="stat-label">Magic strings targeted for elimination</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">12.4</div>
+            <div class="stat-label">Avg cyclomatic complexity before refactoring</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── DELIVERABLES ────────────────────────────────────────────────────── -->
+  <section class="section tech-wrap" id="deliverables">
+    <div class="container">
+      <div class="section-label">CSDT_M Course</div>
+      <h2 class="section-title">Seven engineering disciplines</h2>
+      <p class="section-desc">Each deliverable targeted a distinct dimension of software quality debt,
+        building progressively toward a complete quality engineering practice.</p>
+
+      <div class="deliverables-grid">
+
+        <div class="del-card reveal">
+          <div class="del-card-head">
+            <div class="del-num">01</div>
+            <span class="del-badge">✅ Complete</span>
+          </div>
+          <div class="del-icon">🐛</div>
+          <div class="del-title">Code Smells & Refactoring</div>
+          <p class="del-desc">Catalogued 10 high-impact code smells with file-level evidence —
+            unsafe <code>Optional.get()</code>, god classes, 156 magic strings, O(n²) loops.
+            Applied 8 refactoring patterns with before/after comparisons.</p>
+          <a href="https://github.com/CSDT-ECI/lab-to-do-refactoring/blob/main/weekly-reports/1-code-smells-and-refactoring.md"
+             class="del-link" target="_blank" rel="noopener">Read full report &nbsp;→</a>
+        </div>
+
+        <div class="del-card reveal" style="transition-delay:0.06s">
+          <div class="del-card-head">
+            <div class="del-num">02</div>
+            <span class="del-badge">✅ Complete</span>
+          </div>
+          <div class="del-icon">✨</div>
+          <div class="del-title">Clean Code & XP Practices</div>
+          <p class="del-desc">Evaluated YAGNI, DRY, and KISS compliance with documented violations.
+            Scored XP adoption and produced a phased implementation roadmap for the team.</p>
+          <a href="https://github.com/CSDT-ECI/lab-to-do-refactoring/blob/main/weekly-reports/2-clean-code-and-xp-practices.md"
+             class="del-link" target="_blank" rel="noopener">Read full report &nbsp;→</a>
+        </div>
+
+        <div class="del-card reveal" style="transition-delay:0.12s">
+          <div class="del-card-head">
+            <div class="del-num">03</div>
+            <span class="del-badge">✅ Complete</span>
+          </div>
+          <div class="del-icon">🧪</div>
+          <div class="del-title">Testing Debt & Code Quality</div>
+          <p class="del-desc">Identified 6 testing debt anti-patterns including dead scaffolding and
+            untestable controller coupling. Wrote 187 tests across 3 layers — raising coverage
+            from 0% to 88% with a JaCoCo gate enforced in CI.</p>
+          <a href="https://github.com/CSDT-ECI/lab-to-do-refactoring/blob/main/weekly-reports/3-testing-debt.md"
+             class="del-link" target="_blank" rel="noopener">Read full report &nbsp;→</a>
+        </div>
+
+        <div class="del-card reveal" style="transition-delay:0.06s">
+          <div class="del-card-head">
+            <div class="del-num">04</div>
+            <span class="del-badge">✅ Complete</span>
+          </div>
+          <div class="del-icon">🧑‍💻</div>
+          <div class="del-title">Developer Experience</div>
+          <p class="del-desc">Analyzed productivity through DevEx (Feedback Loops, Cognitive Load,
+            Flow State) and SPACE frameworks. Pipeline averages ~2m 5s — well within the sub-5-minute
+            target for fast feedback.</p>
+          <a href="https://github.com/CSDT-ECI/lab-to-do-refactoring/blob/main/weekly-reports/4-dev-ex-and-space-frameworks.md"
+             class="del-link" target="_blank" rel="noopener">Read full report &nbsp;→</a>
+        </div>
+
+        <div class="del-card reveal" style="transition-delay:0.12s">
+          <div class="del-card-head">
+            <div class="del-num">05</div>
+            <span class="del-badge">✅ Complete</span>
+          </div>
+          <div class="del-icon">🔒</div>
+          <div class="del-title">DevSecOps / CI-CD</div>
+          <p class="del-desc">Designed a 6-stage diamond pipeline: Build → {Test · SonarCloud · OWASP ·
+            Semgrep} in parallel → Deploy. Security findings surface at development time, not deployment time.
+            Concurrency control cancels stale runs automatically.</p>
+          <a href="https://github.com/CSDT-ECI/lab-to-do-refactoring/blob/main/weekly-reports/5-ci-cd-pipeline.md"
+             class="del-link" target="_blank" rel="noopener">Read full report &nbsp;→</a>
+        </div>
+
+        <div class="del-card reveal" style="transition-delay:0.18s">
+          <div class="del-card-head">
+            <div class="del-num">06</div>
+            <span class="del-badge">✅ Complete</span>
+          </div>
+          <div class="del-icon">🤖</div>
+          <div class="del-title">AI in SDLC</div>
+          <p class="del-desc">Applied Spec-Driven Development (SDD) from the AIDLC framework — the
+            CLAUDE.md file as a mega-prompt defining context, constraints, acceptance criteria, and
+            edge cases. AI red teaming used as a quality gate after each generation step.</p>
+          <a href="https://github.com/CSDT-ECI/lab-to-do-refactoring/blob/main/weekly-reports/6-sdd-analysis.md"
+             class="del-link" target="_blank" rel="noopener">Read full report &nbsp;→</a>
+        </div>
+
+        <div class="del-card reveal" style="transition-delay:0.06s">
+          <div class="del-card-head">
+            <div class="del-num">07</div>
+            <span class="del-badge">✅ Complete</span>
+          </div>
+          <div class="del-icon">🏛️</div>
+          <div class="del-title">Architectural Smells</div>
+          <p class="del-desc">Identified 7 architectural smells using the Sharma taxonomy and ISO/IEC 25010,
+            combining SonarCloud with manual structural inspection. God controllers, layer violations,
+            and framework entanglement documented with concrete remediation paths.</p>
+          <a href="https://github.com/CSDT-ECI/lab-to-do-refactoring/blob/main/weekly-reports/7-architectural-smells.md"
+             class="del-link" target="_blank" rel="noopener">Read full report &nbsp;→</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── TECH STACK ───────────────────────────────────────────────────────── -->
+  <section class="section" id="tech">
+    <div class="container">
+      <div class="section-label">Technology Stack</div>
+      <h2 class="section-title">Built on proven technologies</h2>
+      <p class="section-desc">The original application stack — the system analyzed and improved throughout
+        the seven CSDT_M deliverables.</p>
+
+      <div class="tech-grid reveal">
+        <span class="tech-pill">☕ Java <span class="ver">17 LTS</span></span>
+        <span class="tech-pill">🌿 Spring Boot <span class="ver">3.2.0</span></span>
+        <span class="tech-pill">🖥️ JSF + PrimeFaces <span class="ver">3.0 / 13.0.3</span></span>
+        <span class="tech-pill">🔗 JoinFaces <span class="ver">5.2.0</span></span>
+        <span class="tech-pill">🗄️ Spring Data JPA + Hibernate <span class="ver">3.2.0</span></span>
+        <span class="tech-pill">🐬 MySQL <span class="ver">8.2.0</span></span>
+        <span class="tech-pill">🔐 Spring Security Crypto <span class="ver">6.2.0</span></span>
+        <span class="tech-pill">📦 Apache Maven <span class="ver">3.9.5</span></span>
+        <span class="tech-pill">🧪 JUnit 5 + Mockito</span>
+        <span class="tech-pill">📊 JaCoCo <span class="ver">0.8.11</span></span>
+        <span class="tech-pill">☁️ SonarCloud</span>
+        <span class="tech-pill">🛡️ OWASP Dependency-Check</span>
+        <span class="tech-pill">🔍 Semgrep SAST</span>
+        <span class="tech-pill">⚙️ GitHub Actions</span>
+        <span class="tech-pill">🐳 Docker + Compose</span>
+        <span class="tech-pill">🤖 Claude Code (AI)</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── GALLERY ──────────────────────────────────────────────────────────── -->
+  <section class="section tech-wrap" id="gallery">
+    <div class="container">
+      <div class="section-label">Evidence &amp; Results</div>
+      <h2 class="section-title">Quality metrics in action</h2>
+      <p class="section-desc">Real screenshots from every tool integrated during the refactoring initiative —
+        from coverage reports to security scans.</p>
+
+      <div class="gallery-tabs">
+        <button class="gtab active" data-tab="cicd">CI/CD &amp; Coverage</button>
+        <button class="gtab" data-tab="devex">Developer Experience</button>
+      </div>
+
+      <!-- CI/CD Tab -->
+      <div class="gpanel active gallery-grid" id="tab-cicd">
+        <div class="gitem reveal">
+          <img src="{{ site.baseurl }}/assets/images/ci-cd/01-jacoco-unit-test-coverage.png"
+               alt="JaCoCo 88% line coverage report" loading="lazy">
+          <div class="gcaption">JaCoCo — 88% Line Coverage Report</div>
+        </div>
+        <div class="gitem reveal" style="transition-delay:0.06s">
+          <img src="{{ site.baseurl }}/assets/images/ci-cd/02-sonar-cloud-project-metrics.png"
+               alt="SonarCloud quality metrics dashboard" loading="lazy">
+          <div class="gcaption">SonarCloud — Quality Metrics Dashboard</div>
+        </div>
+        <div class="gitem reveal" style="transition-delay:0.12s">
+          <img src="{{ site.baseurl }}/assets/images/ci-cd/03-git-hub-actions-ci-cd-pipeline-execution.png"
+               alt="GitHub Actions 6-stage pipeline execution" loading="lazy">
+          <div class="gcaption">GitHub Actions — 6-Stage Pipeline Execution</div>
+        </div>
+        <div class="gitem reveal" style="transition-delay:0.18s">
+          <img src="{{ site.baseurl }}/assets/images/ci-cd/04-full-pipeline-execution.png"
+               alt="Full pipeline diamond dependency graph" loading="lazy">
+          <div class="gcaption">Full Pipeline — Diamond Dependency Graph</div>
+        </div>
+        <div class="gitem reveal" style="transition-delay:0.06s">
+          <img src="{{ site.baseurl }}/assets/images/ci-cd/05-test-and-coverage-summary.png"
+               alt="Test and coverage summary — all 187 tests" loading="lazy">
+          <div class="gcaption">Test &amp; Coverage Summary — All 187 Tests</div>
+        </div>
+        <div class="gitem reveal" style="transition-delay:0.12s">
+          <img src="{{ site.baseurl }}/assets/images/ci-cd/06-owasp-dependency-check.png"
+               alt="OWASP Dependency Check results" loading="lazy">
+          <div class="gcaption">OWASP — Dependency Vulnerability Scan</div>
+        </div>
+        <div class="gitem reveal" style="transition-delay:0.18s">
+          <img src="{{ site.baseurl }}/assets/images/ci-cd/07-sast-semgrep-summary.png"
+               alt="Semgrep SAST scan summary" loading="lazy">
+          <div class="gcaption">Semgrep — SAST Security Scan</div>
+        </div>
+        <div class="gitem reveal" style="transition-delay:0.24s">
+          <img src="{{ site.baseurl }}/assets/images/ci-cd/08-deploy-summary-completed.png"
+               alt="Deploy stage completed successfully" loading="lazy">
+          <div class="gcaption">Deploy Stage — Pipeline Completed Successfully</div>
+        </div>
+      </div>
+
+      <!-- DevEx Tab -->
+      <div class="gpanel gallery-grid" id="tab-devex">
+        <div class="gitem reveal">
+          <img src="{{ site.baseurl }}/assets/images/dev-ex/01-devex-three-dimensions.png"
+               alt="DevEx Three Core Dimensions" loading="lazy">
+          <div class="gcaption">DevEx — Three Core Dimensions Framework</div>
+        </div>
+        <div class="gitem reveal" style="transition-delay:0.06s">
+          <img src="{{ site.baseurl }}/assets/images/dev-ex/02-space-five-dimensions.png"
+               alt="SPACE Five Dimensions of Developer Productivity" loading="lazy">
+          <div class="gcaption">SPACE — Five Dimensions of Productivity</div>
+        </div>
+        <div class="gitem reveal" style="transition-delay:0.12s">
+          <img src="{{ site.baseurl }}/assets/images/dev-ex/03-pipeline-feedback-loop.png"
+               alt="CI/CD Feedback Loop timing — ~2m 5s average" loading="lazy">
+          <div class="gcaption">CI/CD Feedback Loop — ~2m 5s Average Runtime</div>
+        </div>
+        <div class="gitem reveal" style="transition-delay:0.18s">
+          <img src="{{ site.baseurl }}/assets/images/dev-ex/04-space-metrics-dashboard.png"
+               alt="SPACE metrics dashboard" loading="lazy">
+          <div class="gcaption">SPACE Metrics — Productivity Dashboard</div>
+        </div>
+        <div class="gitem reveal" style="transition-delay:0.06s">
+          <img src="{{ site.baseurl }}/assets/images/dev-ex/05-space-gap-analysis.png"
+               alt="SPACE gap analysis — current vs target" loading="lazy">
+          <div class="gcaption">SPACE Gap Analysis — Current vs. Target</div>
+        </div>
+        <div class="gitem reveal" style="transition-delay:0.12s">
+          <img src="{{ site.baseurl }}/assets/images/dev-ex/06-improvement-roadmap.png"
+               alt="DevEx improvement roadmap" loading="lazy">
+          <div class="gcaption">DevEx Improvement Roadmap</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── ARCHITECTURE ─────────────────────────────────────────────────────── -->
+  <section class="section" id="architecture">
+    <div class="container">
+      <div class="section-label">System Design</div>
+      <h2 class="section-title">Architecture diagrams</h2>
+      <p class="section-desc">Visual documentation of the LabToDo domain model, use cases,
+        and deployment infrastructure.</p>
+
+      <div class="arch-grid">
+        <div class="arch-card reveal">
+          <img src="{{ site.baseurl }}/assets/images/casos-de-uso.png"
+               alt="Use Case Diagram — LabToDo role-based task management">
+          <div class="arch-caption">
+            <h4>Use Case Diagram</h4>
+            <p>Role-based interactions: Administrator, Monitor, and Student</p>
+          </div>
+        </div>
+        <div class="arch-card reveal" style="transition-delay:0.10s">
+          <img src="{{ site.baseurl }}/assets/images/conceptos.png"
+               alt="Domain Concept Diagram — LabToDo core entities">
+          <div class="arch-caption">
+            <h4>Domain Concept Diagram</h4>
+            <p>Core entities: Task, User, Comment, and Semester</p>
+          </div>
+        </div>
+        <div class="arch-card reveal" style="transition-delay:0.20s">
+          <img src="{{ site.baseurl }}/assets/images/despliegue.png"
+               alt="Deployment Diagram — Docker infrastructure">
+          <div class="arch-caption">
+            <h4>Deployment Diagram</h4>
+            <p>Docker-based: Spring Boot container + MySQL database</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── TEAM ─────────────────────────────────────────────────────────────── -->
+  <section class="section tech-wrap" id="team">
+    <div class="container">
+      <div class="section-label">The People</div>
+      <h2 class="section-title">Meet the team</h2>
+      <p class="section-desc">The CSDT_M refactoring team and the original project authors from
+        the ECI computer science laboratory.</p>
+
+      <div class="team-grid">
+        <div class="team-card reveal">
+          <img class="team-avatar" src="https://github.com/andresserrato2004.png"
+               alt="Andrés Serrato" loading="lazy">
+          <div>
+            <div class="team-name">Andrés Serrato</div>
+            <div class="team-role">Full Stack Developer · CSDT_M Team</div>
+            <a href="https://github.com/andresserrato2004" class="team-gh"
+               target="_blank" rel="noopener">↗ @andresserrato2004</a>
+          </div>
+        </div>
+        <div class="team-card reveal" style="transition-delay:0.08s">
+          <img class="team-avatar" src="https://github.com/JAPV-X2612.png"
+               alt="Jesús Alfonso Pinzón Vega" loading="lazy">
+          <div>
+            <div class="team-name">Jesús Pinzón</div>
+            <div class="team-role">Full Stack Developer · CSDT_M Team</div>
+            <a href="https://github.com/JAPV-X2612" class="team-gh"
+               target="_blank" rel="noopener">↗ @JAPV-X2612</a>
+          </div>
+        </div>
+        <div class="team-card reveal" style="transition-delay:0.16s">
+          <img class="team-avatar" src="https://github.com/SergioBejarano.png"
+               alt="Sergio Bejarano" loading="lazy">
+          <div>
+            <div class="team-name">Sergio Bejarano</div>
+            <div class="team-role">Full Stack Developer · CSDT_M Team</div>
+            <a href="https://github.com/SergioBejarano" class="team-gh"
+               target="_blank" rel="noopener">↗ @SergioBejarano</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="original-box reveal">
+        <h3>🏛️ Original Project Authors — ECI Lab Monitors (2023-2)</h3>
+        <div class="orig-grid">
+          <div class="orig-author">
+            <img class="orig-avatar" src="https://github.com/ELS4NTA.png" alt="Daniel Santanilla" loading="lazy">
+            <div>
+              <div class="orig-name">Daniel Santanilla</div>
+              <a href="https://github.com/ELS4NTA" class="orig-handle"
+                 target="_blank" rel="noopener">@ELS4NTA</a>
+            </div>
+          </div>
+          <div class="orig-author">
+            <img class="orig-avatar" src="https://github.com/AndresOnate.png" alt="Andrés Oñate" loading="lazy">
+            <div>
+              <div class="orig-name">Andrés Oñate</div>
+              <a href="https://github.com/AndresOnate" class="orig-handle"
+                 target="_blank" rel="noopener">@AndresOnate</a>
+            </div>
+          </div>
+          <div class="orig-author">
+            <img class="orig-avatar" src="https://github.com/DavidVal6.png" alt="David Valencia" loading="lazy">
+            <div>
+              <div class="orig-name">David Valencia</div>
+              <a href="https://github.com/DavidVal6" class="orig-handle"
+                 target="_blank" rel="noopener">@DavidVal6</a>
+            </div>
+          </div>
+          <div class="orig-author">
+            <img class="orig-avatar" src="https://github.com/An6ie02.png" alt="Angie Mojica" loading="lazy">
+            <div>
+              <div class="orig-name">Angie Mojica</div>
+              <a href="https://github.com/An6ie02" class="orig-handle"
+                 target="_blank" rel="noopener">@An6ie02</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── BLOG CTA ─────────────────────────────────────────────────────────── -->
+  <section class="section" id="blog">
+    <div class="container">
+      <div class="blog-cta reveal">
+        <div>
+          <div class="section-label" style="margin-bottom:8px">Technical Blog</div>
+          <div class="blog-cta-title">Read the full refactoring journey</div>
+          <p class="blog-cta-desc">
+            A detailed technical retrospective across all 7 deliverables — from cataloguing 89 code smells
+            and building 187 tests, to designing a 6-stage DevSecOps pipeline and applying Spec-Driven
+            Development as an AI quality gate.
+          </p>
+        </div>
+        <a href="{{ site.baseurl }}/2026/05/02/labtodo-refactoring-journey/"
+           class="btn btn-primary">Read the Post &nbsp;→</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ───────────────────────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <div class="footer-brand-name">🔧 LabToDo — Enterprise Refactoring</div>
+          <p>Enterprise-grade refactoring initiative developed as part of the
+            <em>Calidad de Software y Deuda Técnica</em> (CSDT_M) course at
+            Universidad Escuela Colombiana de Ingeniería Julio Garavito, 2026.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Reports</h4>
+          <ul>
+            <li><a href="https://github.com/CSDT-ECI/lab-to-do-refactoring/blob/main/weekly-reports/1-code-smells-and-refactoring.md" target="_blank">Code Smells</a></li>
+            <li><a href="https://github.com/CSDT-ECI/lab-to-do-refactoring/blob/main/weekly-reports/3-testing-debt.md" target="_blank">Testing Debt</a></li>
+            <li><a href="https://github.com/CSDT-ECI/lab-to-do-refactoring/blob/main/weekly-reports/5-ci-cd-pipeline.md" target="_blank">DevSecOps</a></li>
+            <li><a href="https://github.com/CSDT-ECI/lab-to-do-refactoring/blob/main/weekly-reports/7-architectural-smells.md" target="_blank">Architecture</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Links</h4>
+          <ul>
+            <li><a href="https://github.com/CSDT-ECI/lab-to-do-refactoring" target="_blank">Repository</a></li>
+            <li><a href="{{ site.baseurl }}/2026/05/02/labtodo-refactoring-journey/">Blog Post</a></li>
+            <li><a href="{{ site.baseurl }}/feed.xml">RSS Feed</a></li>
+            <li><a href="https://github.com/Laboratorio-de-Informatica/LabToDo" target="_blank">Original Project</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 CSDT-ECI Team &nbsp;·&nbsp;
+          <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>
+        </p>
+        <p>Universidad Escuela Colombiana de Ingeniería Julio Garavito · CSDT_M 2026</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ─── JAVASCRIPT ───────────────────────────────────────────────────────── -->
+  <script>
+    // Navbar scroll effect
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 28);
+    }, { passive: true });
+
+    // Mobile nav toggle
+    const navToggle = document.getElementById('navToggle');
+    const navLinks  = document.getElementById('navLinks');
+    navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+    navLinks.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => navLinks.classList.remove('open'));
+    });
+
+    // Reveal on scroll
+    const revealObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          revealObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -36px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+    // Animated counters (easeOutCubic)
+    function animateCounter(el, target, ms = 1800) {
+      const t0 = performance.now();
+      const step = (now) => {
+        const p = Math.min((now - t0) / ms, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(eased * target);
+        if (p < 1) requestAnimationFrame(step);
+        else el.textContent = target;
+      };
+      requestAnimationFrame(step);
+    }
+    const counterObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          animateCounter(e.target, parseInt(e.target.dataset.target, 10));
+          counterObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    document.querySelectorAll('.metric-value[data-target]').forEach(el => counterObs.observe(el));
+
+    // Gallery tabs
+    document.querySelectorAll('.gtab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.gtab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.gpanel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
