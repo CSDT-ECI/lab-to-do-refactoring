@@ -13,6 +13,7 @@ author: "CSDT-ECI Team"
 # ─── Deployment ───────────────────────────────────────────────────────────────
 url: "https://csdt-eci.github.io"
 baseurl: "/lab-to-do-refactoring"
+future: true
 
 # ─── Social ───────────────────────────────────────────────────────────────────
 github_username: "CSDT-ECI"
