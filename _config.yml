@@ -1,0 +1,52 @@
+theme: minima
+
+# ─── Site Identity ────────────────────────────────────────────────────────────
+title: "LabToDo — Enterprise Refactoring"
+description: >-
+  An enterprise-grade refactoring initiative progressively transforming a legacy
+  Spring Boot + JSF/PrimeFaces monolith into a maintainable, testable, and
+  professionally architected system. Developed as part of the Calidad de
+  Software y Deuda Técnica (CSDT_M) course at Universidad Escuela Colombiana
+  de Ingeniería Julio Garavito, 2026.
+author: "CSDT-ECI Team"
+
+# ─── Deployment ───────────────────────────────────────────────────────────────
+url: "https://csdt-eci.github.io"
+baseurl: "/lab-to-do-refactoring"
+
+# ─── Social ───────────────────────────────────────────────────────────────────
+github_username: "CSDT-ECI"
+
+# ─── Navigation ───────────────────────────────────────────────────────────────
+header_pages:
+  - index.md
+
+# ─── Plugins (GitHub Pages whitelisted) ───────────────────────────────────────
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# ─── Feed ─────────────────────────────────────────────────────────────────────
+feed:
+  path: feed.xml
+
+# ─── Build exclusions (non-web assets) ────────────────────────────────────────
+exclude:
+  - DELETE/
+  - aidlc-practical-lab/
+  - src/
+  - target/
+  - mvnw
+  - mvnw.cmd
+  - Dockerfile
+  - docker-compose.yml
+  - pom.xml
+  - sonar-project.properties
+  - CLAUDE.md
+  - CSDT-2026.md
+  - CSDT_PrimeraEntrega2026.md
+  - ORIGINAL_README.md
+  - Gemfile
+  - Gemfile.lock
+  - "*.cmd"
