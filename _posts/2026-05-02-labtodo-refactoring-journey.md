@@ -174,7 +174,7 @@ Jobs 2–5 execute in **parallel** after a shared build artifact is produced by 
 | 4 | OWASP Dependency-Check | Known CVEs in Maven dependencies |
 | 5 | Semgrep SAST | Pattern-based static security analysis |
 
-<img src="{{ site.baseurl }}/assets/images/ci-cd/03-git-hub-actions-ci-cd-pipeline-execution.png" alt="GitHub Actions pipeline execution — all 6 stages" width="90%">
+<img src="{{ site.baseurl }}/assets/images/ci-cd/04-full-pipeline-execution.png" alt="GitHub Actions pipeline execution — all 6 stages" width="90%">
 
 <img src="{{ site.baseurl }}/assets/images/ci-cd/06-owasp-dependency-check.png" alt="OWASP Dependency Check results" width="90%">
 
