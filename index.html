@@ -463,6 +463,7 @@ layout: null
       background: linear-gradient(135deg, var(--green-light), transparent 55%);
       opacity: 0;
       transition: opacity var(--ease);
+      pointer-events: none;
     }
     .del-card:hover { border-color: var(--border-green); transform: translateY(-4px); box-shadow: var(--shadow-green); }
     .del-card:hover::before { opacity: 1; }
@@ -1109,26 +1110,6 @@ layout: null
           <img src="{{ site.baseurl }}/assets/images/ci-cd/04-full-pipeline-execution.png"
                alt="Full pipeline diamond dependency graph" loading="lazy">
           <div class="gcaption">Full Pipeline — Diamond Dependency Graph</div>
-        </div>
-        <div class="gitem reveal" style="transition-delay:0.06s">
-          <img src="{{ site.baseurl }}/assets/images/ci-cd/05-test-and-coverage-summary.png"
-               alt="Test and coverage summary — all 187 tests" loading="lazy">
-          <div class="gcaption">Test &amp; Coverage Summary — All 187 Tests</div>
-        </div>
-        <div class="gitem reveal" style="transition-delay:0.12s">
-          <img src="{{ site.baseurl }}/assets/images/ci-cd/06-owasp-dependency-check.png"
-               alt="OWASP Dependency Check results" loading="lazy">
-          <div class="gcaption">OWASP — Dependency Vulnerability Scan</div>
-        </div>
-        <div class="gitem reveal" style="transition-delay:0.18s">
-          <img src="{{ site.baseurl }}/assets/images/ci-cd/07-sast-semgrep-summary.png"
-               alt="Semgrep SAST scan summary" loading="lazy">
-          <div class="gcaption">Semgrep — SAST Security Scan</div>
-        </div>
-        <div class="gitem reveal" style="transition-delay:0.24s">
-          <img src="{{ site.baseurl }}/assets/images/ci-cd/08-deploy-summary-completed.png"
-               alt="Deploy stage completed successfully" loading="lazy">
-          <div class="gcaption">Deploy Stage — Pipeline Completed Successfully</div>
         </div>
       </div>
 
