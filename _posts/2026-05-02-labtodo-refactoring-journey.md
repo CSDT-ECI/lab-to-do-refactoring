@@ -1,7 +1,8 @@
 ---
 layout: post
 title: "From 0% Coverage to Clean Architecture: The LabToDo Refactoring Journey"
-date: 2026-05-02
+date: 2026-01-15
+permalink: /journey/
 categories: [refactoring, software-quality]
 tags: [spring-boot, clean-code, tdd, devsecops, solid, architecture]
 description: >-
