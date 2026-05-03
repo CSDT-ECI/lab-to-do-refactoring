@@ -176,6 +176,7 @@ tmp/
 *.temp
 *.bak
 *.swp
+DELETE/
 
 # ===================================
 # Backup Files

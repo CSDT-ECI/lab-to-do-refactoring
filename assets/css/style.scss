@@ -1,0 +1,433 @@
+---
+---
+
+// ─── Variable Overrides (must precede @import to take effect) ─────────────────
+$brand-color:       #2dba4e;
+$background-color:  #f6f8fa;
+$text-color:        #24292e;
+$grey-color:        #586069;
+$grey-color-light:  #e1e4e8;
+$base-font-family:  -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                    "Helvetica Neue", Arial, sans-serif;
+$base-font-size:    16px;
+$base-line-height:  1.7;
+$spacing-unit:      30px;
+
+@import "minima";
+
+// ─── Custom Design System ─────────────────────────────────────────────────────
+
+// Palette
+$color-dark:        #0d1117;
+$color-dark-2:      #161b22;
+$color-border:      #e1e4e8;
+$color-green-dark:  #1a8c38;
+$color-green-glow:  rgba(45, 186, 78, 0.14);
+$shadow-sm:         0 1px 6px rgba(0, 0, 0, 0.07);
+$shadow-md:         0 4px 18px rgba(0, 0, 0, 0.10);
+$radius:            10px;
+
+// ─── Global ───────────────────────────────────────────────────────────────────
+
+body {
+  font-family: $base-font-family;
+  color: $text-color;
+  line-height: $base-line-height;
+}
+
+.page-content { background-color: $background-color; }
+
+.wrapper { max-width: 1000px; }
+
+// ─── Site Header ──────────────────────────────────────────────────────────────
+
+.site-header {
+  background: linear-gradient(135deg, $color-dark 0%, $color-dark-2 100%);
+  border-bottom: 3px solid $brand-color;
+  min-height: 64px;
+
+  .site-title {
+    color: #ffffff !important;
+    font-weight: 700;
+    font-size: 1.18rem;
+    letter-spacing: -0.3px;
+
+    &:visited { color: #ffffff !important; }
+    &:hover   { color: $brand-color !important; text-decoration: none; }
+  }
+
+  .site-nav {
+    .page-link {
+      color: rgba(255, 255, 255, 0.85);
+      font-weight: 500;
+      font-size: 0.9rem;
+
+      &:hover { color: $brand-color; text-decoration: none; }
+    }
+
+    .menu-icon > svg path { fill: rgba(255, 255, 255, 0.85); }
+
+    @media (max-width: 600px) {
+      background-color: $color-dark;
+      border-color: #30363d;
+      .page-link { color: rgba(255, 255, 255, 0.85); }
+    }
+  }
+}
+
+// ─── Hero Banner ──────────────────────────────────────────────────────────────
+
+.hero-banner {
+  background: linear-gradient(135deg, $color-dark 0%, $color-dark-2 55%, #0f3460 100%);
+  color: #ffffff;
+  border-radius: 12px;
+  padding: 52px 44px;
+  margin-bottom: 44px;
+  text-align: center;
+
+  h1 {
+    font-size: 2.25rem;
+    font-weight: 800;
+    margin-bottom: 14px;
+    color: #ffffff;
+    border: none;
+    padding: 0;
+  }
+
+  .hero-subtitle {
+    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.78);
+    max-width: 680px;
+    margin: 0 auto 28px;
+    line-height: 1.65;
+
+    strong { color: #ffffff; }
+  }
+
+  .hero-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 20px;
+
+    img { border-radius: 4px; }
+  }
+
+  .hero-cta {
+    display: inline-block;
+    background: $brand-color;
+    color: #ffffff !important;
+    padding: 11px 28px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none !important;
+    transition: background 0.2s, transform 0.15s;
+    margin-top: 8px;
+
+    &:hover {
+      background: $color-green-dark;
+      transform: translateY(-2px);
+    }
+  }
+}
+
+// ─── Headings ─────────────────────────────────────────────────────────────────
+
+h1, h2, h3, h4 { font-weight: 700; line-height: 1.3; }
+
+h2 {
+  font-size: 1.55rem;
+  color: $color-dark;
+  border-bottom: 2px solid $brand-color;
+  padding-bottom: 8px;
+  margin-top: 52px;
+}
+
+h3 { font-size: 1.18rem; color: $color-dark; margin-top: 28px; }
+
+// ─── Metrics Grid ─────────────────────────────────────────────────────────────
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin: 32px 0;
+}
+
+.metric-card {
+  background: #ffffff;
+  border: 1px solid $color-border;
+  border-radius: $radius;
+  padding: 26px 20px;
+  text-align: center;
+  box-shadow: $shadow-sm;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px $color-green-glow;
+    border-color: $brand-color;
+  }
+
+  .metric-icon { font-size: 1.75rem; margin-bottom: 6px; }
+
+  .metric-value {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: $brand-color;
+    line-height: 1;
+  }
+
+  .metric-label {
+    display: block;
+    font-size: 0.78rem;
+    color: $grey-color;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-top: 7px;
+  }
+}
+
+// ─── Tables ───────────────────────────────────────────────────────────────────
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: $shadow-sm;
+  margin: 20px 0;
+  font-size: 0.9rem;
+
+  th {
+    background: $color-dark;
+    color: #ffffff;
+    font-weight: 600;
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+  }
+
+  td {
+    padding: 11px 16px;
+    border-bottom: 1px solid #f1f1f1;
+    vertical-align: middle;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td     { background: #f6f8fa; }
+}
+
+// ─── Diagrams ─────────────────────────────────────────────────────────────────
+
+.diagram-container {
+  text-align: center;
+  margin: 32px 0;
+
+  img {
+    max-width: 88%;
+    border: 1px solid $color-border;
+    border-radius: 8px;
+    box-shadow: $shadow-md;
+  }
+
+  .diagram-caption {
+    font-size: 0.84rem;
+    color: $grey-color;
+    margin-top: 10px;
+    font-style: italic;
+  }
+}
+
+// ─── Author Cards ─────────────────────────────────────────────────────────────
+
+.author-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin: 28px 0;
+}
+
+.author-card {
+  background: #ffffff;
+  border: 1px solid $color-border;
+  border-radius: $radius;
+  padding: 28px 20px;
+  text-align: center;
+  box-shadow: $shadow-sm;
+  transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
+
+  &:hover {
+    border-color: $brand-color;
+    box-shadow: 0 6px 20px $color-green-glow;
+    transform: translateY(-3px);
+  }
+
+  img {
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    border: 3px solid $brand-color;
+    margin-bottom: 14px;
+  }
+
+  .author-name {
+    font-weight: 700;
+    font-size: 1rem;
+    color: $color-dark;
+    display: block;
+  }
+
+  .author-role {
+    font-size: 0.82rem;
+    color: $grey-color;
+    margin-top: 5px;
+    display: block;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  a:hover { color: $brand-color; }
+}
+
+// ─── Code ─────────────────────────────────────────────────────────────────────
+
+pre, code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.875rem;
+}
+
+pre {
+  background: $color-dark;
+  color: #c9d1d9;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+}
+
+code {
+  background: #f0f0f0;
+  color: #c7254e;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+pre code { background: transparent; color: inherit; padding: 0; }
+
+// ─── Post List (home layout) ──────────────────────────────────────────────────
+
+.post-list-heading {
+  font-size: 1.55rem;
+  color: $color-dark;
+  border-bottom: 2px solid $brand-color;
+  padding-bottom: 8px;
+}
+
+.post-list {
+  list-style: none;
+  margin-left: 0;
+
+  > li {
+    background: #ffffff;
+    border: 1px solid $color-border;
+    border-radius: $radius;
+    padding: 26px 28px;
+    margin-bottom: 16px;
+    box-shadow: $shadow-sm;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+
+    &:hover {
+      border-color: $brand-color;
+      box-shadow: 0 4px 16px $color-green-glow;
+      transform: translateY(-2px);
+    }
+  }
+}
+
+.post-meta {
+  font-size: 0.82rem;
+  color: $grey-color;
+  font-weight: 500;
+}
+
+.post-link {
+  font-size: 1.22rem;
+  font-weight: 700;
+  color: $color-dark;
+  text-decoration: none;
+
+  &:hover { color: $brand-color; }
+}
+
+// ─── Post Content ─────────────────────────────────────────────────────────────
+
+.post-header {
+  background: linear-gradient(135deg, $color-dark, $color-dark-2);
+  border-radius: $radius;
+  padding: 38px 36px;
+  margin-bottom: 36px;
+
+  .post-title {
+    color: #ffffff;
+    font-size: 1.9rem;
+  }
+
+  .post-meta { color: rgba(255, 255, 255, 0.6); }
+}
+
+.post-content {
+  img {
+    max-width: 100%;
+    border: 1px solid $color-border;
+    border-radius: 8px;
+    box-shadow: $shadow-md;
+    display: block;
+    margin: 24px auto;
+  }
+}
+
+// ─── Site Footer ──────────────────────────────────────────────────────────────
+
+.site-footer {
+  background: $color-dark;
+  color: rgba(255, 255, 255, 0.65);
+  border-top: 3px solid $brand-color;
+
+  .footer-heading { color: #ffffff; font-size: 0.95rem; }
+
+  a {
+    color: $brand-color;
+    &:hover { color: lighten($brand-color, 12%); }
+  }
+
+  .footer-col-wrapper { color: rgba(255, 255, 255, 0.65); }
+  .contact-list, .social-media-list { list-style: none; margin-left: 0; }
+}
+
+// ─── Responsive ───────────────────────────────────────────────────────────────
+
+@media (max-width: 768px) {
+  .hero-banner {
+    padding: 36px 24px;
+    h1 { font-size: 1.75rem; }
+  }
+
+  .metrics-grid    { grid-template-columns: repeat(2, 1fr); }
+  .author-grid     { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+  .metrics-grid    { grid-template-columns: 1fr 1fr; }
+  .author-grid     { grid-template-columns: 1fr; }
+
+  .hero-banner {
+    padding: 28px 18px;
+    h1 { font-size: 1.5rem; }
+    .hero-subtitle { font-size: 0.95rem; }
+  }
+}
